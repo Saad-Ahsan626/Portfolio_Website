@@ -15,8 +15,6 @@ dependencies:
   hooks_riverpod: ^2.5.1
   flutter_hooks: ^0.20.5
 
-  # Navigation
-  go_router: ^13.2.0
 
   # Animations
   flutter_animate: ^4.5.0
@@ -37,6 +35,5 @@ flutter:
 
   assets:
     - assets/data/
-    - assets/images/
 
   fonts: []
