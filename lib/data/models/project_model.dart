@@ -7,6 +7,7 @@ class ProjectModel {
     required this.githubUrl,
     this.liveUrl,
     this.imageUrl,
+    this.featured = false,
   });
 
   final String id;
@@ -16,6 +17,7 @@ class ProjectModel {
   final String githubUrl;
   final String? liveUrl;
   final String? imageUrl;
+  final bool featured;
 
   factory ProjectModel.fromJson(Map<String, dynamic> json) => ProjectModel(
         id: json['id'] as String,
@@ -25,5 +27,6 @@ class ProjectModel {
         githubUrl: json['githubUrl'] as String,
         liveUrl: json['liveUrl'] as String?,
         imageUrl: json['imageUrl'] as String?,
+        featured: json['featured'] as bool? ?? false,
       );
 }
