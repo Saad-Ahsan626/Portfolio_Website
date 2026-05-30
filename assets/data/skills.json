@@ -1,0 +1,8 @@
+[
+  { "id": "s1", "name": "Flutter", "category": "Mobile" },
+  { "id": "s2", "name": "Dart", "category": "Language" },
+  { "id": "s3", "name": "Riverpod", "category": "State Management" },
+  { "id": "s4", "name": "Firebase", "category": "Backend" },
+  { "id": "s5", "name": "REST APIs", "category": "Integration" },
+  { "id": "s6", "name": "Git", "category": "Tools" }
+]

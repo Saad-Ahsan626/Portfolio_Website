@@ -1,0 +1,11 @@
+[
+  {
+    "id": "p1",
+    "title": "Project Name",
+    "description": "Short description of what this project does and the problem it solves.",
+    "techStack": ["Flutter", "Dart", "Firebase"],
+    "githubUrl": "https://github.com/yourusername/project",
+    "liveUrl": "https://project.demo.com",
+    "imageUrl": null
+  }
+]
