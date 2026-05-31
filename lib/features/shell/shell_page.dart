@@ -43,22 +43,30 @@ class ShellPage extends ConsumerWidget {
             },
             child: SingleChildScrollView(
               controller: scrollController,
-              child: Column(
-                children: [
-                  // Top padding for sticky nav
-                  const SizedBox(height: 80),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: AppSpacing.containerMax,
+                  ),
+                  child: Column(
+                    children: [
+                      // Top padding for sticky nav
+                      const SizedBox(height: 80),
 
-                  HomeSection(key: sectionKeys[SectionIndex.home]),
-                  _sectionDivider(),
-                  ProjectsSection(key: sectionKeys[SectionIndex.projects]),
-                  _sectionDivider(),
-                  ExperienceSection(key: sectionKeys[SectionIndex.experience]),
-                  _sectionDivider(),
-                  ContactSection(key: sectionKeys[SectionIndex.contact]),
+                      HomeSection(key: sectionKeys[SectionIndex.home]),
+                      _sectionDivider(),
+                      ProjectsSection(key: sectionKeys[SectionIndex.projects]),
+                      _sectionDivider(),
+                      ExperienceSection(
+                          key: sectionKeys[SectionIndex.experience]),
+                      _sectionDivider(),
+                      ContactSection(key: sectionKeys[SectionIndex.contact]),
 
-                  const SizedBox(height: AppSpacing.xl),
-                  const SiteFooter(),
-                ],
+                      const SizedBox(height: AppSpacing.xl),
+                      const SiteFooter(),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
