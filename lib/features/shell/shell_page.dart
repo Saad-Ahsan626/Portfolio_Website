@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio/features/shell/widgets/mobile_drawer.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../providers/scroll_provider.dart';
@@ -20,6 +21,7 @@ class ShellPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      drawer: const MobileDrawer(),
       body: Stack(
         children: [
           // Radial gradient background

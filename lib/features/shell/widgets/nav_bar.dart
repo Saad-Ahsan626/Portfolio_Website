@@ -96,9 +96,12 @@ class NavBar extends ConsumerWidget {
 
                       // Mobile: hamburger (placeholder for Phase 1)
                       if (!Responsive.isDesktop(context))
-                        Icon(
-                          Icons.menu,
-                          color: AppColors.onSurface,
+                        Builder(
+                          builder: (ctx) => IconButton(
+                            icon: const Icon(Icons.menu,
+                                color: AppColors.onSurface),
+                            onPressed: () => Scaffold.of(ctx).openDrawer(),
+                          ),
                         ),
                     ],
                   ),
