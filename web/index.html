@@ -1,46 +1,118 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="portfolio">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <!-- ── Primary SEO ── -->
+  <title>YourName — Flutter Developer</title>
+  <meta name="description"
+    content="Flutter developer specialising in high-performance cross-platform mobile applications. Available for freelance projects.">
+  <meta name="keywords"
+    content="Flutter developer, Dart, mobile app development, cross-platform, Firebase, Riverpod">
+  <meta name="author" content="YourName">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://yourname.me/">
 
-  <!-- Favicon -->
+  <!-- ── Open Graph (WhatsApp, Facebook, LinkedIn previews) ── -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourname.me/">
+  <meta property="og:title" content="YourName — Flutter Developer">
+  <meta property="og:description"
+    content="Flutter developer specialising in high-performance cross-platform mobile applications.">
+  <meta property="og:image" content="https://yourname.me/icons/og-image.png">
+
+  <!-- ── Twitter Card ── -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://yourname.me/">
+  <meta name="twitter:title" content="YourName — Flutter Developer">
+  <meta name="twitter:description"
+    content="Flutter developer specialising in high-performance cross-platform mobile apps.">
+  <meta name="twitter:image" content="https://yourname.me/icons/og-image.png">
+
+  <!-- ── Icons ── -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>portfolio</title>
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
   <link rel="manifest" href="manifest.json">
-</head>
-<body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
 
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
+  <!-- ── Theme colour (browser chrome on mobile) ── -->
+  <meta name="theme-color" content="#101415">
+  <meta name="msapplication-navbutton-color" content="#101415">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- ── Font preconnect (reduces FOUT) ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- ── Flutter bootstrap ── -->
   <script src="flutter_bootstrap.js" async></script>
+
+  <style>
+    /* Hide scrollbar during Flutter load */
+    body {
+      background-color: #101415;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* Loading screen */
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: #101415;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    #loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-ring {
+      width: 48px;
+      height: 48px;
+      border: 2px solid rgba(0, 180, 255, 0.15);
+      border-top-color: #00b4ff;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    .loader-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      color: rgba(189, 200, 210, 0.6);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loading screen — hidden once Flutter renders -->
+  <div id="loading">
+    <div class="loader-ring"></div>
+    <div class="loader-name">INITIALISING...</div>
+  </div>
+
+  <script>
+    // Hide loading screen once Flutter first frame is drawn
+    window.addEventListener('flutter-first-frame', () => {
+      const loader = document.getElementById('loading');
+      loader.classList.add('hidden');
+      setTimeout(() => loader.remove(), 600);
+      document.body.style.overflow = '';
+    });
+  </script>
 </body>
 </html>
