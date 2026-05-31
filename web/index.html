@@ -95,6 +95,20 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    ::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #101415; }
+::-webkit-scrollbar-thumb {
+  background: #3e4851;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: #00b4ff; }
+
+/* Text selection */
+::selection {
+  background: rgba(0, 180, 255, 0.25);
+  color: #e0e3e5;
+}
   </style>
 </head>
 
