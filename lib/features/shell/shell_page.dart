@@ -8,6 +8,7 @@ import '../../features/projects/projects_section.dart';
 import '../../features/experience/experience_section.dart';
 import '../../features/contact/contact_section.dart';
 import 'widgets/nav_bar.dart';
+import 'widgets/site_footer.dart';
 
 class ShellPage extends ConsumerWidget {
   const ShellPage({super.key});
@@ -54,6 +55,7 @@ class ShellPage extends ConsumerWidget {
                   ContactSection(key: sectionKeys[SectionIndex.contact]),
 
                   const SizedBox(height: AppSpacing.xl),
+                  const SiteFooter(),
                 ],
               ),
             ),
