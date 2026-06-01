@@ -90,6 +90,20 @@ class ShellPage extends ConsumerWidget {
     List<GlobalKey> keys,
     BuildContext context,
   ) {
+    // ── NEW: Fetch the scroll controller ──
+    final scrollController = ref.read(scrollControllerProvider);
+
+    // ── NEW: Safety catch for bouncing at the absolute top ──
+    if (scrollController.hasClients && scrollController.offset <= 0) {
+      if (ref.read(activeSectionProvider) != SectionIndex.home) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(activeSectionProvider.notifier).state = SectionIndex.home;
+        });
+      }
+      return; // Exit early since we know we are at the top
+    }
+
+    // Standard boundary math for the rest of the page
     for (int i = keys.length - 1; i >= 0; i--) {
       final ctx = keys[i].currentContext;
       if (ctx == null) continue;
@@ -100,14 +114,12 @@ class ShellPage extends ConsumerWidget {
       final position = box.localToGlobal(Offset.zero);
 
       if (position.dy <= 120) {
-        // Check if it's already the active section to prevent infinite rebuild loops
         if (ref.read(activeSectionProvider) != i) {
-          // Defer the state update to the end of the frame
           WidgetsBinding.instance.addPostFrameCallback((_) {
             ref.read(activeSectionProvider.notifier).state = i;
           });
         }
-        break; // Found the active section, stop checking the rest
+        break;
       }
     }
   }
