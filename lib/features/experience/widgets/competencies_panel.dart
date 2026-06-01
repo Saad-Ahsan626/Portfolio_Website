@@ -5,23 +5,12 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../shared/widgets/primary_button.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../providers/portfolio_provider.dart';
 
 class CompetenciesPanel extends StatelessWidget {
   const CompetenciesPanel({super.key});
 
-  static const _skills = [
-    'Dart',
-    'Flutter SDK',
-    'Firebase',
-    'State Management',
-    'CI/CD',
-    'Unit Testing',
-    'Kotlin',
-    'Swift',
-    'REST APIs',
-    'Clean Architecture',
-    'Git',
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -116,9 +105,14 @@ class _VisualPanel extends StatelessWidget {
   }
 }
 
-class _SkillsPanel extends StatelessWidget {
+class _SkillsPanel extends ConsumerWidget {
+  const _SkillsPanel();
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // ── NEW: Watch the provider ──
+    final skillsAsync = ref.watch(skillsProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -126,41 +120,46 @@ class _SkillsPanel extends StatelessWidget {
           'Core Competencies',
           style: AppTypography.headlineMd.copyWith(color: AppColors.onSurface),
         ),
-
         const SizedBox(height: AppSpacing.md),
 
-        // Skills cloud
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: CompetenciesPanel._skills
-              .asMap()
-              .entries
-              .map(
-                (e) => _SkillPill(label: e.value)
-                    .animate(delay: Duration(milliseconds: 200 + e.key * 60))
-                    .fadeIn(duration: 300.ms)
-                    .slideY(
-                        begin: 0.2,
-                        end: 0,
-                        duration: 300.ms,
-                        curve: Curves.easeOut),
-              )
-              .toList(),
+        // ── NEW: Handle async states ──
+        skillsAsync.when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: AppColors.electricCyan),
+          ),
+          error: (e, _) => Text(
+            'Failed to load skills.',
+            style: AppTypography.bodyMd.copyWith(color: AppColors.error),
+          ),
+          data: (skills) => Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: skills
+                .asMap()
+                .entries
+                .map(
+                  (e) => _SkillPill(label: e.value.name) // Use .name from SkillModel
+                      .animate(delay: Duration(milliseconds: 200 + e.key * 60))
+                      .fadeIn(duration: 300.ms)
+                      .slideY(
+                          begin: 0.2,
+                          end: 0,
+                          duration: 300.ms,
+                          curve: Curves.easeOut),
+                )
+                .toList(),
+          ),
         ),
 
         const SizedBox(height: AppSpacing.md),
-
         PrimaryButton(
           label: 'Download Full Resume',
           icon: Icons.download_rounded,
           onPressed: () {},
         ),
       ],
-    )
-        .animate()
-        .fadeIn(duration: 500.ms)
-        .slideX(begin: 0.1, end: 0, duration: 500.ms, curve: Curves.easeOut);
+    ).animate().fadeIn(duration: 500.ms).slideX(
+        begin: 0.1, end: 0, duration: 500.ms, curve: Curves.easeOut);
   }
 }
 
