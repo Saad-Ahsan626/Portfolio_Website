@@ -6,6 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../providers/scroll_provider.dart';
+import '../../../providers/theme_provider.dart';
 
 class NavBar extends ConsumerWidget {
   const NavBar({super.key});
@@ -82,26 +83,46 @@ class NavBar extends ConsumerWidget {
                       // Nav links (desktop only)
                       if (Responsive.isDesktop(context))
                         Row(
-                          children: _navItems.map((item) {
-                            final isActive = activeSection == item.index;
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.only(left: AppSpacing.lg),
-                              child: InkWell(
-                                onTap: () => scrollTo(item.index),
-                                borderRadius: BorderRadius.circular(4),
-                                child: AnimatedDefaultTextStyle(
-                                  duration: const Duration(milliseconds: 200),
-                                  style: AppTypography.labelCaps.copyWith(
-                                    color: isActive
-                                        ? AppColors.electricCyan
-                                        : AppColors.onSurfaceVariant,
+                          children: [
+                            ..._navItems.map((item) {
+                              final isActive = activeSection == item.index;
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.only(left: AppSpacing.lg),
+                                child: InkWell(
+                                  onTap: () => scrollTo(item.index),
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: AnimatedDefaultTextStyle(
+                                    duration: const Duration(milliseconds: 200),
+                                    style: AppTypography.labelCaps.copyWith(
+                                      color: isActive
+                                          ? AppColors.electricCyan
+                                          : AppColors.onSurfaceVariant,
+                                    ),
+                                    child: Text(item.label.toUpperCase()),
                                   ),
-                                  child: Text(item.label.toUpperCase()),
                                 ),
+                              );
+                            }),
+
+                            // ── NEW: Theme Toggle Button ──
+                            const SizedBox(width: AppSpacing.lg),
+                            IconButton(
+                              splashRadius: 24,
+                              icon: Icon(
+                                ref.watch(isDarkModeProvider)
+                                    ? Icons.light_mode_rounded
+                                    : Icons.dark_mode_rounded,
+                                color: AppColors.onSurfaceVariant,
+                                size: 20,
                               ),
-                            );
-                          }).toList(),
+                              onPressed: () {
+                                ref
+                                    .read(isDarkModeProvider.notifier)
+                                    .update((state) => !state);
+                              },
+                            ),
+                          ],
                         ),
 
                       // Mobile: hamburger (placeholder for Phase 1)

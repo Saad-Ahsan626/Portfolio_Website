@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'features/shell/shell_page.dart';
+import 'providers/theme_provider.dart'; // <-- Add this import
 
-// Enables mouse drag-scrolling on Flutter Web
 class _WebScrollBehavior extends MaterialScrollBehavior {
   @override
   Set<PointerDeviceKind> get dragDevices => {
@@ -19,11 +19,16 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // ── NEW: Watch the theme state ──
+    final isDarkMode = ref.watch(isDarkModeProvider);
+
     return MaterialApp(
-      title: 'YourName — Flutter Developer',
+      title:
+          'Muhammad Saad Ahsan — Flutter Developer', // Added your name for polish!
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
-      scrollBehavior: _WebScrollBehavior(), // ← enables drag scroll on desktop
+      // ── NEW: Apply the dynamic theme ──
+      theme: isDarkMode ? AppTheme.dark : ThemeData.light(),
+      scrollBehavior: _WebScrollBehavior(),
       home: const ShellPage(),
     );
   }
