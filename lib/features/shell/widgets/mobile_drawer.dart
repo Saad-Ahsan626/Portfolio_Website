@@ -24,11 +24,22 @@ class MobileDrawer extends ConsumerWidget {
 
     void scrollTo(int index) {
       Navigator.of(context).pop(); // close drawer first
+      
       Future.delayed(const Duration(milliseconds: 300), () {
         final ctx = sectionKeys[index].currentContext;
         if (ctx == null) return;
-        Scrollable.ensureVisible(
-          ctx,
+        
+        final box = ctx.findRenderObject() as RenderBox?;
+        if (box == null) return;
+
+        // Fetch the scroll controller
+        final scrollController = ref.read(scrollControllerProvider);
+        
+        final absoluteOffset = box.localToGlobal(Offset.zero).dy + scrollController.offset;
+        final targetOffset = absoluteOffset - 100; // Account for the 80px header
+
+        scrollController.animateTo(
+          targetOffset < 0 ? 0 : targetOffset,
           duration: const Duration(milliseconds: 600),
           curve: Curves.easeInOut,
         );

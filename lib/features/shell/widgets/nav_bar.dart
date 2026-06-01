@@ -26,11 +26,21 @@ class NavBar extends ConsumerWidget {
     void scrollTo(int index) {
       final ctx = sectionKeys[index].currentContext;
       if (ctx == null) return;
-      Scrollable.ensureVisible(
-        ctx,
+
+      final box = ctx.findRenderObject() as RenderBox?;
+      if (box == null) return;
+
+      // Calculate absolute position by adding current scroll offset to the relative position
+      final absoluteOffset =
+          box.localToGlobal(Offset.zero).dy + scrollController.offset;
+
+      // Subtract 80px for the NavBar + 20px for breathing room
+      final targetOffset = absoluteOffset - 100;
+
+      scrollController.animateTo(
+        targetOffset < 0 ? 0 : targetOffset,
         duration: const Duration(milliseconds: 600),
         curve: Curves.easeInOut,
-        alignment: 0.0,
       );
     }
 
