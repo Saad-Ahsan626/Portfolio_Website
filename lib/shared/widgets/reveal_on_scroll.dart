@@ -3,7 +3,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio/providers/scroll_visibility_provider.dart';
 
-
 class RevealOnScroll extends ConsumerStatefulWidget {
   const RevealOnScroll({
     super.key,
@@ -33,14 +32,25 @@ class _RevealOnScrollState extends ConsumerState<RevealOnScroll> {
 
   void _checkVisibility() {
     if (!mounted) return;
+
     final ctx = _key.currentContext;
     if (ctx == null) return;
+
     final box = ctx.findRenderObject() as RenderBox?;
     if (box == null) return;
+
     final position = box.localToGlobal(Offset.zero);
     final screenHeight = MediaQuery.sizeOf(context).height;
+
+    // Check if the element is currently visible in the viewport
     if (position.dy < screenHeight * 0.92) {
-      ref.read(scrollVisibilityProvider.notifier).markVisible(widget.id);
+      // Defer the state update to the end of the frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Ensure the widget is still mounted before updating
+        if (mounted) {
+          ref.read(scrollVisibilityProvider.notifier).markVisible(widget.id);
+        }
+      });
     }
   }
 

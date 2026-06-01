@@ -93,12 +93,21 @@ class ShellPage extends ConsumerWidget {
     for (int i = keys.length - 1; i >= 0; i--) {
       final ctx = keys[i].currentContext;
       if (ctx == null) continue;
+
       final box = ctx.findRenderObject() as RenderBox?;
       if (box == null) continue;
+
       final position = box.localToGlobal(Offset.zero);
+
       if (position.dy <= 120) {
-        ref.read(activeSectionProvider.notifier).state = i;
-        break;
+        // Check if it's already the active section to prevent infinite rebuild loops
+        if (ref.read(activeSectionProvider) != i) {
+          // Defer the state update to the end of the frame
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref.read(activeSectionProvider.notifier).state = i;
+          });
+        }
+        break; // Found the active section, stop checking the rest
       }
     }
   }
