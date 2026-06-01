@@ -8,6 +8,7 @@ import '../../core/utils/responsive.dart';
 import '../../providers/portfolio_provider.dart';
 import '../../shared/widgets/section_label.dart';
 import 'widgets/project_card.dart';
+import '../../data/models/project_model.dart';
 
 class ProjectsSection extends ConsumerWidget {
   const ProjectsSection({super.key});
@@ -83,6 +84,9 @@ class _SectionHeader extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // Responsive grid
 // ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Responsive grid (Fix for Bug #2 and Bug #4)
+// ─────────────────────────────────────────────────────────────────────────────
 class _ProjectsGrid extends StatelessWidget {
   const _ProjectsGrid({
     required this.projects,
@@ -90,38 +94,46 @@ class _ProjectsGrid extends StatelessWidget {
     required this.isDesktop,
   });
 
-  final List projects;
+  // Bug #4 Fix: Replaced 'final List projects;' with strict typing
+  final List<ProjectModel> projects;
   final bool isMobile;
   final bool isDesktop;
 
   @override
   Widget build(BuildContext context) {
-    // columns: mobile=1, tablet=2, desktop=3
-    final crossAxisCount = isMobile
-        ? 1
-        : isDesktop
-            ? 3
-            : 2;
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        mainAxisSpacing: AppSpacing.lg,
-        crossAxisSpacing: AppSpacing.lg,
-        // Card height grows with content — use childAspectRatio tuned per breakpoint
-        childAspectRatio: isMobile
-            ? 0.75
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Define columns based on breakpoint
+        final crossAxisCount = isMobile
+            ? 1
             : isDesktop
-                ? 0.62
-                : 0.68,
-      ),
-      itemCount: projects.length,
-      itemBuilder: (context, index) => ProjectCard(
-        project: projects[index],
-        animationDelay: Duration(milliseconds: index * 100),
-      ),
+                ? 3
+                : 2;
+        const spacing = AppSpacing.lg;
+
+        // Calculate the exact width each card should take
+        final totalSpacing = spacing * (crossAxisCount - 1);
+        final itemWidth =
+            (constraints.maxWidth - totalSpacing) / crossAxisCount;
+
+        // Bug #2 Fix: Wrap allows dynamic intrinsic heights based on content
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: projects.asMap().entries.map((entry) {
+            final index = entry.key;
+            final project = entry.value;
+
+            return SizedBox(
+              width: itemWidth,
+              child: ProjectCard(
+                project: project,
+                animationDelay: Duration(milliseconds: index * 100),
+              ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 }
