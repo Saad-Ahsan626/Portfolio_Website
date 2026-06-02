@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:math' as math;
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -39,7 +40,8 @@ class ProjectsSection extends ConsumerWidget {
 
             // ── Projects grid ────────────────────────────────────
             projectsAsync.when(
-              loading: () => const _LoadingGrid(),
+              loading: () =>
+                  _LoadingGrid(isMobile: isMobile, isDesktop: isDesktop),
               error: (e, _) => _ErrorState(error: e.toString()),
               data: (projects) => _ProjectsGrid(
                 projects: projects,
@@ -113,8 +115,19 @@ class _ProjectsGrid extends StatelessWidget {
 
         // Calculate the exact width each card should take
         final totalSpacing = spacing * (crossAxisCount - 1);
-        final itemWidth =
+        double itemWidth =
             (constraints.maxWidth - totalSpacing) / crossAxisCount;
+
+        // Prevent cards from becoming too narrow on small screens — if computed
+        // item width falls below a sensible minimum, fall back to single column.
+        const double minCardWidth = 260; // sensible minimum for card content
+        if (itemWidth < minCardWidth) {
+          // switch to a single column layout for readability
+          final fallbackCrossAxisCount = 1;
+          final fallbackTotalSpacing = spacing * (fallbackCrossAxisCount - 1);
+          itemWidth = (constraints.maxWidth - fallbackTotalSpacing) /
+              fallbackCrossAxisCount;
+        }
 
         // Bug #2 Fix: Wrap allows dynamic intrinsic heights based on content
         return Wrap(
@@ -139,23 +152,34 @@ class _ProjectsGrid extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Loading skeleton
+// Loading skeleton (responsive)
 // ─────────────────────────────────────────────────────────────────────────────
 class _LoadingGrid extends StatelessWidget {
-  const _LoadingGrid();
+  const _LoadingGrid({this.isMobile = false, this.isDesktop = false});
+
+  final bool isMobile;
+  final bool isDesktop;
 
   @override
   Widget build(BuildContext context) {
+    final crossAxisCount = isMobile
+        ? 1
+        : isDesktop
+            ? 3
+            : 2;
+    final spacing = AppSpacing.lg;
+    final childAspectRatio = isMobile ? 3.5 : 0.62;
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: AppSpacing.lg,
-        crossAxisSpacing: AppSpacing.lg,
-        childAspectRatio: 0.62,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        mainAxisSpacing: spacing,
+        crossAxisSpacing: spacing,
+        childAspectRatio: childAspectRatio,
       ),
-      itemCount: 3,
+      itemCount: math.max(3, crossAxisCount),
       itemBuilder: (_, __) => _SkeletonCard(),
     );
   }
