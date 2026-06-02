@@ -221,9 +221,9 @@ class _WorkspaceVisual extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-          ).animate(delay: 600.ms).fadeIn(duration: 400.ms).slideY(
-              begin: 0.3, end: 0, duration: 400.ms, curve: Curves.easeOut),
+            ).animate(delay: 600.ms).fadeIn(duration: 400.ms).slideY(
+                begin: 0.3, end: 0, duration: 400.ms, curve: Curves.easeOut),
+          ),
         ),
       ],
     );
@@ -330,8 +330,10 @@ class _ContactForm extends ConsumerWidget {
       }
     });
 
+    final isMobile = Responsive.isMobile(context);
+
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 640),
+      constraints: const BoxConstraints(maxWidth: 920),
       child: Center(
         child: Column(
           children: [
@@ -358,51 +360,117 @@ class _ContactForm extends ConsumerWidget {
 
             const SizedBox(height: AppSpacing.lg),
 
-            // Name
-            FloatingLabelField(
-              label: 'NAME',
-              controller: _nameController,
-              onChanged: notifier.updateName,
-              errorText: formState.nameError,
-            )
-                .animate(delay: 200.ms)
-                .fadeIn(duration: 400.ms)
-                .slideY(begin: 0.2, end: 0, duration: 400.ms),
+            // Responsive layout: two-column on desktop, stacked on mobile
+            isMobile
+                ? Column(
+                    children: [
+                      // Name
+                      FloatingLabelField(
+                        label: 'NAME',
+                        controller: _nameController,
+                        onChanged: notifier.updateName,
+                        errorText: formState.nameError,
+                      ),
 
-            const SizedBox(height: AppSpacing.lg),
+                      const SizedBox(height: AppSpacing.lg),
 
-            // Email
-            FloatingLabelField(
-              label: 'EMAIL',
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              onChanged: notifier.updateEmail,
-              errorText: formState.emailError,
-            )
-                .animate(delay: 300.ms)
-                .fadeIn(duration: 400.ms)
-                .slideY(begin: 0.2, end: 0, duration: 400.ms),
+                      // Email
+                      FloatingLabelField(
+                        label: 'EMAIL',
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: notifier.updateEmail,
+                        errorText: formState.emailError,
+                      ),
 
-            const SizedBox(height: AppSpacing.lg),
+                      const SizedBox(height: AppSpacing.lg),
 
-            // Message
-            FloatingLabelField(
-              label: 'MESSAGE',
-              controller: _messageController,
-              maxLines: 4,
-              onChanged: notifier.updateMessage,
-              errorText: formState.messageError,
-            )
-                .animate(delay: 400.ms)
-                .fadeIn(duration: 400.ms)
-                .slideY(begin: 0.2, end: 0, duration: 400.ms),
+                      // Message
+                      FloatingLabelField(
+                        label: 'MESSAGE',
+                        controller: _messageController,
+                        maxLines: 4,
+                        onChanged: notifier.updateMessage,
+                        errorText: formState.messageError,
+                      ),
 
-            const SizedBox(height: AppSpacing.lg),
+                      const SizedBox(height: AppSpacing.lg),
 
-            // Submit button
-            _SubmitButton(formState: formState, notifier: notifier)
-                .animate(delay: 500.ms)
-                .fadeIn(duration: 400.ms),
+                      _SubmitButton(formState: formState, notifier: notifier),
+                    ],
+                  )
+                : Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          children: [
+                            // Name
+                            FloatingLabelField(
+                              label: 'NAME',
+                              controller: _nameController,
+                              onChanged: notifier.updateName,
+                              errorText: formState.nameError,
+                            ),
+
+                            const SizedBox(height: AppSpacing.lg),
+
+                            // Email
+                            FloatingLabelField(
+                              label: 'EMAIL',
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              onChanged: notifier.updateEmail,
+                              errorText: formState.emailError,
+                            ),
+
+                            const SizedBox(height: AppSpacing.lg),
+
+                            _SubmitButton(
+                                formState: formState, notifier: notifier),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.lg),
+                      Expanded(
+                        flex: 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Message
+                            FloatingLabelField(
+                              label: 'MESSAGE',
+                              controller: _messageController,
+                              maxLines: 8,
+                              onChanged: notifier.updateMessage,
+                              errorText: formState.messageError,
+                            ),
+
+                            const SizedBox(height: AppSpacing.lg),
+
+                            // Contact metadata / social links
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Email',
+                                  style: AppTypography.labelCaps.copyWith(
+                                    color: AppColors.onSurfaceVariant,
+                                  ),
+                                ),
+                                Text(
+                                  'your.email@domain.com',
+                                  style: AppTypography.bodyMd
+                                      .copyWith(color: AppColors.onSurface),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
           ],
         ),
       ),
