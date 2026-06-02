@@ -83,7 +83,7 @@ class _HeroRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = _HeroContent();
+    final content = _HeroContent(isMobile: isMobile);
     final visual = const HeroVisual();
 
     if (isMobile) {
@@ -117,16 +117,24 @@ class _HeroRow extends StatelessWidget {
 // Hero Content (left column)
 // ─────────────────────────────────────────────────────────────────────────────
 class _HeroContent extends StatelessWidget {
+  const _HeroContent({this.isMobile = false});
+
+  final bool isMobile;
+
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
         // Available badge
-        const SectionLabel('Available for work')
-            .animate()
-            .fadeIn(duration: 400.ms)
-            .slideY(begin: -0.3, end: 0, duration: 400.ms),
+        Align(
+          alignment: isMobile ? Alignment.center : Alignment.centerLeft,
+          child: const SectionLabel('Available for work')
+              .animate()
+              .fadeIn(duration: 400.ms)
+              .slideY(begin: -0.3, end: 0, duration: 400.ms),
+        ),
 
         const SizedBox(height: AppSpacing.md),
 
@@ -148,6 +156,7 @@ class _HeroContent extends StatelessWidget {
           style: AppTypography.bodyLg.copyWith(
             color: AppColors.onSurfaceVariant,
           ),
+          textAlign: isMobile ? TextAlign.center : TextAlign.left,
         ).animate(delay: 400.ms).fadeIn(duration: 400.ms).slideY(
             begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
 
@@ -157,6 +166,7 @@ class _HeroContent extends StatelessWidget {
         Wrap(
           spacing: AppSpacing.md,
           runSpacing: AppSpacing.sm,
+          alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
           children: [
             PrimaryButton(
               label: 'View My Work',
@@ -178,6 +188,7 @@ class _HeroContent extends StatelessWidget {
         Wrap(
           spacing: AppSpacing.sm,
           runSpacing: AppSpacing.sm,
+          alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
           children: HomeSection._skillChips
               .asMap()
               .entries
