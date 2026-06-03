@@ -45,7 +45,9 @@ class _DesktopFooter extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _Logo(),
-        _Links(),
+        // Wrap prevents overflow when viewport is between 768–1024px by
+        // letting links flow onto a second line instead of hard-clipping.
+        Flexible(child: _Links()),
         _Copyright(),
       ],
     );
@@ -83,8 +85,10 @@ class _Logo extends StatelessWidget {
 class _Links extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 0, // horizontal gap handled by each link's own padding
+      runSpacing: AppSpacing.sm,
       children: SiteFooter._links
           .map(
             (link) => Padding(
