@@ -83,7 +83,7 @@ class _SectionHeader extends StatelessWidget {
         const SectionLabel('Journey & Expertise')
             .animate()
             .fadeIn(duration: 400.ms)
-            .slideY(begin: -0.3, end: 0, duration: 400.ms),
+            .slideY(begin: 0.3, end: 0, duration: 400.ms),
         const SizedBox(height: AppSpacing.base),
         Text(
           'Experience & Milestones',
