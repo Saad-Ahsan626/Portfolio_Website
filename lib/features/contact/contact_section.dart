@@ -78,7 +78,7 @@ class _AboutPanel extends StatelessWidget {
         const SectionLabel('Authentic Craftsmanship')
             .animate()
             .fadeIn(duration: 400.ms)
-            .slideY(begin: -0.3, end: 0, duration: 400.ms),
+            .slideY(begin: 0.3, end: 0, duration: 400.ms),
         const SizedBox(height: AppSpacing.md),
         RichText(
           text: TextSpan(
@@ -124,7 +124,15 @@ class _AboutPanel extends StatelessWidget {
         children: [
           textContent,
           const SizedBox(height: AppSpacing.lg),
-          visualPanel,
+          // Extra bottom + left padding to make room for the badge that
+          // hangs -24px outside the Stack (clipBehavior: Clip.none).
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: AppSpacing.md,
+              left: AppSpacing.md,
+            ),
+            child: visualPanel,
+          ),
         ],
       );
     }
@@ -134,7 +142,18 @@ class _AboutPanel extends StatelessWidget {
       children: [
         Expanded(flex: 7, child: textContent),
         const SizedBox(width: AppSpacing.xl),
-        Expanded(flex: 5, child: visualPanel),
+        // Same padding on desktop so the badge doesn't clip against the
+        // containing Row's bounds.
+        Expanded(
+          flex: 5,
+          child: Padding(
+            padding: const EdgeInsets.only(
+              bottom: AppSpacing.md,
+              left: AppSpacing.md,
+            ),
+            child: visualPanel,
+          ),
+        ),
       ],
     );
   }
