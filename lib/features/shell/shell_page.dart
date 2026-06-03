@@ -22,20 +22,30 @@ class ShellPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       drawer: const MobileDrawer(),
+      // Use the Scaffold's appBar slot with a fixed-height PreferredSize so
+      // Flutter knows the nav is exactly 80px — no Stack, no Positioned, no
+      // unbounded height constraints that cause overflow on first render.
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(80),
+        child: NavBar(),
+      ),
       body: Stack(
         children: [
-          // Radial gradient background
-          Container(
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.topRight,
-                radius: 1.4,
-                colors: [Color(0xFF1E293B), AppColors.midnightNavy],
+          // Radial gradient background — fills the body area below the nav.
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.topRight,
+                  radius: 1.4,
+                  colors: [Color(0xFF1E293B), AppColors.midnightNavy],
+                ),
               ),
             ),
           ),
 
-          // Main scrollable content
+          // Main scrollable content — no top SizedBox needed, Scaffold
+          // handles the appBar offset automatically.
           NotificationListener<ScrollNotification>(
             onNotification: (notification) {
               _updateActiveSection(ref, sectionKeys, context);
@@ -50,9 +60,6 @@ class ShellPage extends ConsumerWidget {
                   ),
                   child: Column(
                     children: [
-                      // Top padding for sticky nav
-                      const SizedBox(height: 80),
-
                       HomeSection(key: sectionKeys[SectionIndex.home]),
                       _sectionDivider(),
                       ProjectsSection(key: sectionKeys[SectionIndex.projects]),
@@ -69,14 +76,6 @@ class ShellPage extends ConsumerWidget {
                 ),
               ),
             ),
-          ),
-
-          // Sticky nav on top of everything
-          const Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: NavBar(),
           ),
         ],
       ),
@@ -113,7 +112,9 @@ class ShellPage extends ConsumerWidget {
 
       final position = box.localToGlobal(Offset.zero);
 
-      if (position.dy <= 120) {
+      // With Scaffold appBar handling the nav offset, sections start at y=0
+      // in the body. Use 40px as the trigger threshold.
+      if (position.dy <= 40) {
         if (ref.read(activeSectionProvider) != i) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             ref.read(activeSectionProvider.notifier).state = i;
