@@ -133,14 +133,16 @@ class _HeroContent extends StatelessWidget {
           child: const SectionLabel('Available for work')
               .animate()
               .fadeIn(duration: 400.ms)
-              .slideY(begin: -0.3, end: 0, duration: 400.ms),
+              .slideY(begin: 0.3, end: 0, duration: 400.ms),
         ),
 
         const SizedBox(height: AppSpacing.md),
 
         // Typing headline
-        SizedBox(
-          height: Responsive.isMobile(context) ? 80 : 100,
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: Responsive.isMobile(context) ? 80 : 100,
+          ),
           child: const TypingText(
             texts: HomeSection._typingTexts,
           ),
@@ -227,14 +229,24 @@ class _StatsRow extends StatelessWidget {
         ),
       ),
       child: isMobile
-          ? GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: AppSpacing.lg,
-              crossAxisSpacing: AppSpacing.lg,
-              childAspectRatio: 2.5,
-              children: _buildStatCards(),
+          ? LayoutBuilder(
+              builder: (context, constraints) {
+                // Derive aspect ratio from available width so text never clips.
+                // Each card is half the row width minus the spacing.
+                final cardWidth =
+                    (constraints.maxWidth - AppSpacing.lg) / 2;
+                // ~56px is enough for two lines of text at labelCaps size.
+                final aspectRatio = (cardWidth / 56).clamp(1.8, 3.5);
+                return GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  mainAxisSpacing: AppSpacing.lg,
+                  crossAxisSpacing: AppSpacing.lg,
+                  childAspectRatio: aspectRatio,
+                  children: _buildStatCards(),
+                );
+              },
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
