@@ -103,15 +103,17 @@ class _DesktopRow extends StatelessWidget {
 
           // Centre column: track + node
           Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Track above node (not for first item)
+              // Track above node (not for first item) — fixed height segment
               if (index > 0)
                 SizedBox(
+                  width: 2,
                   height: AppSpacing.md,
                   child: const TimelineTrack(),
                 ),
               TimelineNode(isActive: experience.isCurrent),
-              // Track below node (not for last item)
+              // Track below node fills remaining IntrinsicHeight space
               if (!isLast) Expanded(child: const TimelineTrack()),
             ],
           ),
@@ -174,6 +176,7 @@ class _MobileRow extends StatelessWidget {
         children: [
           // Left rail: node + track
           Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               TimelineNode(isActive: experience.isCurrent),
               if (!isLast) Expanded(child: const TimelineTrack()),
