@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
@@ -8,8 +7,13 @@ import '../../../core/utils/responsive.dart';
 import '../../../providers/scroll_provider.dart';
 import '../../../providers/theme_provider.dart';
 
+/// NavBar implements PreferredSizeWidget so it can be used directly in
+/// Scaffold.appBar via PreferredSize — giving it a guaranteed fixed height
+/// with zero overflow risk on any platform or first-frame timing.
 class NavBar extends ConsumerWidget {
   const NavBar({super.key});
+
+  static const double navHeight = 80;
 
   static const _navItems = [
     (label: 'About', index: SectionIndex.home),
@@ -27,128 +31,131 @@ class NavBar extends ConsumerWidget {
     void scrollTo(int index) {
       final ctx = sectionKeys[index].currentContext;
       if (ctx == null) return;
-
       final box = ctx.findRenderObject() as RenderBox?;
       if (box == null) return;
-
-      // Calculate absolute position by adding current scroll offset to the relative position
+      // localToGlobal gives position relative to screen; adding the current
+      // scroll offset converts it to the document-absolute position.
       final absoluteOffset =
           box.localToGlobal(Offset.zero).dy + scrollController.offset;
-
-      // Subtract 80px for the NavBar + 20px for breathing room
-      final targetOffset = absoluteOffset - 100;
-
+      // Subtract 20px breathing room (nav height handled by Scaffold now).
+      final targetOffset = (absoluteOffset - 20).clamp(0.0, double.infinity);
       scrollController.animateTo(
-        targetOffset < 0 ? 0 : targetOffset,
+        targetOffset,
         duration: const Duration(milliseconds: 600),
         curve: Curves.easeInOut,
       );
     }
 
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          height: 80,
-          decoration: BoxDecoration(
-            color: AppColors.navBackground,
-            border: Border(
-              bottom: BorderSide(
-                color: AppColors.outlineVariant.withOpacity(0.4),
-                width: 1,
-              ),
+    return Material(
+      color: Colors.transparent,
+      elevation: 0,
+      child: Container(
+        height: navHeight,
+        decoration: BoxDecoration(
+          color: AppColors.navBackground,
+          border: Border(
+            bottom: BorderSide(
+              color: AppColors.outlineVariant.withValues(alpha: 0.4),
+              width: 1,
             ),
           ),
-          child: Column(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Responsive.isMobile(context)
-                        ? AppSpacing.md
-                        : AppSpacing.xl,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Logo / Name
-                      Text(
-                        'YourName.dev',
-                        style: AppTypography.headlineMd.copyWith(
-                          color: AppColors.onSurface,
-                          fontWeight: FontWeight.bold,
-                        ),
+        ),
+        child: Stack(
+          children: [
+            // ── Nav content row ────────────────────────────────────
+            Positioned.fill(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Responsive.isMobile(context)
+                      ? AppSpacing.md
+                      : AppSpacing.xl,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Logo
+                    Text(
+                      'YourName.dev',
+                      style: AppTypography.headlineMd.copyWith(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    // Desktop nav links + theme toggle
+                    if (Responsive.isDesktop(context))
+                      Row(
+                        children: [
+                          ..._navItems.map((item) {
+                            final isActive = activeSection == item.index;
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(left: AppSpacing.lg),
+                              child: InkWell(
+                                onTap: () => scrollTo(item.index),
+                                borderRadius: BorderRadius.circular(4),
+                                child: AnimatedDefaultTextStyle(
+                                  duration: const Duration(milliseconds: 200),
+                                  style: AppTypography.labelCaps.copyWith(
+                                    color: isActive
+                                        ? AppColors.electricCyan
+                                        : AppColors.onSurfaceVariant,
+                                  ),
+                                  child: Text(item.label.toUpperCase()),
+                                ),
+                              ),
+                            );
+                          }),
+                          const SizedBox(width: AppSpacing.lg),
+                          IconButton(
+                            splashRadius: 24,
+                            icon: Icon(
+                              ref.watch(isDarkModeProvider)
+                                  ? Icons.light_mode_rounded
+                                  : Icons.dark_mode_rounded,
+                              color: AppColors.onSurfaceVariant,
+                              size: 20,
+                            ),
+                            onPressed: () => ref
+                                .read(isDarkModeProvider.notifier)
+                                .update((s) => !s),
+                          ),
+                        ],
                       ),
 
-                      // Nav links (desktop only)
-                      if (Responsive.isDesktop(context))
-                        Row(
-                          children: [
-                            ..._navItems.map((item) {
-                              final isActive = activeSection == item.index;
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.only(left: AppSpacing.lg),
-                                child: InkWell(
-                                  onTap: () => scrollTo(item.index),
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: AnimatedDefaultTextStyle(
-                                    duration: const Duration(milliseconds: 200),
-                                    style: AppTypography.labelCaps.copyWith(
-                                      color: isActive
-                                          ? AppColors.electricCyan
-                                          : AppColors.onSurfaceVariant,
-                                    ),
-                                    child: Text(item.label.toUpperCase()),
-                                  ),
-                                ),
-                              );
-                            }),
-
-                            // ── NEW: Theme Toggle Button ──
-                            const SizedBox(width: AppSpacing.lg),
-                            IconButton(
-                              splashRadius: 24,
-                              icon: Icon(
-                                ref.watch(isDarkModeProvider)
-                                    ? Icons.light_mode_rounded
-                                    : Icons.dark_mode_rounded,
-                                color: AppColors.onSurfaceVariant,
-                                size: 20,
-                              ),
-                              onPressed: () {
-                                ref
-                                    .read(isDarkModeProvider.notifier)
-                                    .update((state) => !state);
-                              },
-                            ),
-                          ],
+                    // Mobile hamburger
+                    if (!Responsive.isDesktop(context))
+                      Builder(
+                        builder: (ctx) => IconButton(
+                          icon: const Icon(Icons.menu,
+                              color: AppColors.onSurface),
+                          onPressed: () => Scaffold.of(ctx).openDrawer(),
                         ),
-
-                      // Mobile: hamburger (placeholder for Phase 1)
-                      if (!Responsive.isDesktop(context))
-                        Builder(
-                          builder: (ctx) => IconButton(
-                            icon: const Icon(Icons.menu,
-                                color: AppColors.onSurface),
-                            onPressed: () => Scaffold.of(ctx).openDrawer(),
-                          ),
-                        ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
+            ),
 
-              // Scroll progress indicator (1px, primary color)
-              _ScrollProgressBar(),
-            ],
-          ),
+            // ── Scroll progress bar pinned to bottom ──────────────
+            // Positioned widget is outside layout flow → zero overflow risk.
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: _ScrollProgressBar(),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Scroll progress indicator drawn with CustomPainter — no Material widget,
+// no internal minimum-height constraints.
+// ─────────────────────────────────────────────────────────────────────────────
 class _ScrollProgressBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -160,16 +167,32 @@ class _ScrollProgressBar extends ConsumerWidget {
         double progress = 0;
         if (scrollController.hasClients &&
             scrollController.position.maxScrollExtent > 0) {
-          progress = scrollController.offset /
-              scrollController.position.maxScrollExtent;
+          progress = (scrollController.offset /
+                  scrollController.position.maxScrollExtent)
+              .clamp(0.0, 1.0);
         }
-        return LinearProgressIndicator(
-          value: progress,
-          minHeight: 1,
-          backgroundColor: Colors.transparent,
-          valueColor: const AlwaysStoppedAnimation(AppColors.electricCyan),
+        return CustomPaint(
+          size: const Size(double.infinity, 2),
+          painter: _ProgressPainter(progress: progress),
         );
       },
     );
   }
+}
+
+class _ProgressPainter extends CustomPainter {
+  const _ProgressPainter({required this.progress});
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (progress <= 0) return;
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width * progress, size.height),
+      Paint()..color = AppColors.electricCyan,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_ProgressPainter old) => old.progress != progress;
 }
