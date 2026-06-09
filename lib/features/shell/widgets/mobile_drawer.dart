@@ -23,6 +23,9 @@ class MobileDrawer extends ConsumerWidget {
     final sectionKeys = ref.watch(sectionKeysProvider);
 
     void scrollTo(int index) {
+      // Capture the scroll controller before the drawer unmounts
+      final scrollController = ref.read(scrollControllerProvider);
+      
       Navigator.of(context).pop(); // close drawer first
       
       Future.delayed(const Duration(milliseconds: 300), () {
@@ -32,9 +35,6 @@ class MobileDrawer extends ConsumerWidget {
         final box = ctx.findRenderObject() as RenderBox?;
         if (box == null) return;
 
-        // Fetch the scroll controller
-        final scrollController = ref.read(scrollControllerProvider);
-        
         final absoluteOffset = box.localToGlobal(Offset.zero).dy + scrollController.offset;
         final targetOffset = absoluteOffset - 100; // Account for the 80px header
 
