@@ -233,8 +233,7 @@ class _StatsRow extends StatelessWidget {
               builder: (context, constraints) {
                 // Derive aspect ratio from available width so text never clips.
                 // Each card is half the row width minus the spacing.
-                final cardWidth =
-                    (constraints.maxWidth - AppSpacing.lg) / 2;
+                final cardWidth = (constraints.maxWidth - AppSpacing.lg) / 2;
                 // ~56px is enough for two lines of text at labelCaps size.
                 final aspectRatio = (cardWidth / 56).clamp(1.8, 3.5);
                 return GridView.count(
@@ -248,8 +247,10 @@ class _StatsRow extends StatelessWidget {
                 );
               },
             )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+          : Wrap(
+              alignment: WrapAlignment.spaceAround,
+              spacing: AppSpacing.lg,
+              runSpacing: AppSpacing.lg,
               children: _buildStatCards(),
             ),
     );

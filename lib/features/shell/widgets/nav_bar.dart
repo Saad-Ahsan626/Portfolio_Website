@@ -82,45 +82,50 @@ class NavBar extends ConsumerWidget {
                       ),
                     ),
 
-                    // Desktop nav links + theme toggle
                     if (Responsive.isDesktop(context))
-                      Row(
-                        children: [
-                          ..._navItems.map((item) {
-                            final isActive = activeSection == item.index;
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.only(left: AppSpacing.lg),
-                              child: InkWell(
-                                onTap: () => scrollTo(item.index),
-                                borderRadius: BorderRadius.circular(4),
-                                child: AnimatedDefaultTextStyle(
-                                  duration: const Duration(milliseconds: 200),
-                                  style: AppTypography.labelCaps.copyWith(
-                                    color: isActive
-                                        ? AppColors.electricCyan
-                                        : AppColors.onSurfaceVariant,
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerRight,
+                          child: Row(
+                            children: [
+                              ..._navItems.map((item) {
+                                final isActive = activeSection == item.index;
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: AppSpacing.lg),
+                                  child: InkWell(
+                                    onTap: () => scrollTo(item.index),
+                                    borderRadius: BorderRadius.circular(4),
+                                    child: AnimatedDefaultTextStyle(
+                                      duration: const Duration(milliseconds: 200),
+                                      style: AppTypography.labelCaps.copyWith(
+                                        color: isActive
+                                            ? AppColors.electricCyan
+                                            : AppColors.onSurfaceVariant,
+                                      ),
+                                      child: Text(item.label.toUpperCase()),
+                                    ),
                                   ),
-                                  child: Text(item.label.toUpperCase()),
+                                );
+                              }),
+                              const SizedBox(width: AppSpacing.lg),
+                              IconButton(
+                                splashRadius: 24,
+                                icon: Icon(
+                                  ref.watch(isDarkModeProvider)
+                                      ? Icons.light_mode_rounded
+                                      : Icons.dark_mode_rounded,
+                                  color: AppColors.onSurfaceVariant,
+                                  size: 20,
                                 ),
+                                onPressed: () => ref
+                                    .read(isDarkModeProvider.notifier)
+                                    .update((s) => !s),
                               ),
-                            );
-                          }),
-                          const SizedBox(width: AppSpacing.lg),
-                          IconButton(
-                            splashRadius: 24,
-                            icon: Icon(
-                              ref.watch(isDarkModeProvider)
-                                  ? Icons.light_mode_rounded
-                                  : Icons.dark_mode_rounded,
-                              color: AppColors.onSurfaceVariant,
-                              size: 20,
-                            ),
-                            onPressed: () => ref
-                                .read(isDarkModeProvider.notifier)
-                                .update((s) => !s),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
 
                     // Mobile hamburger
@@ -166,6 +171,8 @@ class _ScrollProgressBar extends ConsumerWidget {
       builder: (context, _) {
         double progress = 0;
         if (scrollController.hasClients &&
+            scrollController.position.hasPixels &&
+            scrollController.position.hasContentDimensions &&
             scrollController.position.maxScrollExtent > 0) {
           progress = (scrollController.offset /
                   scrollController.position.maxScrollExtent)
