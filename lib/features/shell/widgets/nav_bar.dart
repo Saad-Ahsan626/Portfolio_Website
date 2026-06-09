@@ -75,7 +75,7 @@ class NavBar extends ConsumerWidget {
                   children: [
                     // Logo
                     Text(
-                      'YourName.dev',
+                      'Muhammad Saad Ahsan',
                       style: AppTypography.headlineMd.copyWith(
                         color: AppColors.onSurface,
                         fontWeight: FontWeight.bold,
@@ -92,13 +92,14 @@ class NavBar extends ConsumerWidget {
                               ..._navItems.map((item) {
                                 final isActive = activeSection == item.index;
                                 return Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: AppSpacing.lg),
+                                  padding: const EdgeInsets.only(
+                                      left: AppSpacing.lg),
                                   child: InkWell(
                                     onTap: () => scrollTo(item.index),
                                     borderRadius: BorderRadius.circular(4),
                                     child: AnimatedDefaultTextStyle(
-                                      duration: const Duration(milliseconds: 200),
+                                      duration:
+                                          const Duration(milliseconds: 200),
                                       style: AppTypography.labelCaps.copyWith(
                                         color: isActive
                                             ? AppColors.electricCyan

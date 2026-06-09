@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../providers/scroll_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MobileDrawer extends ConsumerWidget {
   const MobileDrawer({super.key});
@@ -25,18 +26,20 @@ class MobileDrawer extends ConsumerWidget {
     void scrollTo(int index) {
       // Capture the scroll controller before the drawer unmounts
       final scrollController = ref.read(scrollControllerProvider);
-      
+
       Navigator.of(context).pop(); // close drawer first
-      
+
       Future.delayed(const Duration(milliseconds: 300), () {
         final ctx = sectionKeys[index].currentContext;
         if (ctx == null || !ctx.mounted) return;
-        
+
         final box = ctx.findRenderObject() as RenderBox?;
         if (box == null) return;
 
-        final absoluteOffset = box.localToGlobal(Offset.zero).dy + scrollController.offset;
-        final targetOffset = absoluteOffset - 100; // Account for the 80px header
+        final absoluteOffset =
+            box.localToGlobal(Offset.zero).dy + scrollController.offset;
+        final targetOffset =
+            absoluteOffset - 100; // Account for the 80px header
 
         scrollController.animateTo(
           targetOffset < 0 ? 0 : targetOffset,
@@ -62,7 +65,7 @@ class MobileDrawer extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'YourName.dev',
+                        'Muhammad Saad Ahsan',
                         style: AppTypography.headlineMd.copyWith(
                           color: AppColors.onSurface,
                           fontWeight: FontWeight.bold,
@@ -94,12 +97,12 @@ class MobileDrawer extends ConsumerWidget {
                   const Spacer(),
 
                   // Footer social links
-  const                 Wrap(
+                  const Wrap(
                     spacing: AppSpacing.md,
                     children: [
-                      _SocialLink(label: 'GitHub', icon: Icons.terminal),
-                      _SocialLink(label: 'LinkedIn', icon: Icons.link_rounded),
-                      _SocialLink(label: 'Email', icon: Icons.mail_outline),
+                      _SocialLink(label: 'GitHub', icon: Icons.terminal, url: 'https://github.com/Saad-Ahsan626'),
+                      _SocialLink(label: 'LinkedIn', icon: Icons.link_rounded, url: 'https://www.linkedin.com/in/saad-ahsan-55201336a/'),
+                      _SocialLink(label: 'Email', icon: Icons.mail_outline, url: 'mailto:saadahsan039@gmail.com'),
                     ],
                   ),
 
@@ -179,14 +182,20 @@ class _DrawerNavItem extends StatelessWidget {
 }
 
 class _SocialLink extends StatelessWidget {
-  const _SocialLink({required this.label, required this.icon});
+  const _SocialLink({required this.label, required this.icon, required this.url});
   final String label;
   final IconData icon;
+  final String url;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () async {
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri);
+        }
+      },
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

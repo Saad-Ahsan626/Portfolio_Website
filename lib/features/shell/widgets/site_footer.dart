@@ -3,15 +3,15 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/responsive.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SiteFooter extends StatelessWidget {
   const SiteFooter({super.key});
 
   static const _links = [
-    (label: 'GitHub', icon: Icons.terminal),
-    (label: 'LinkedIn', icon: Icons.link_rounded),
-    (label: 'Twitter', icon: Icons.alternate_email_rounded),
-    (label: 'Email', icon: Icons.mail_outline_rounded),
+    (label: 'GitHub', icon: Icons.terminal, url: 'https://github.com/Saad-Ahsan626'),
+    (label: 'LinkedIn', icon: Icons.link_rounded, url: 'https://www.linkedin.com/in/saad-ahsan-55201336a/'),
+    (label: 'Email', icon: Icons.mail_outline_rounded, url: 'mailto:saadahsan039@gmail.com'),
   ];
 
   @override
@@ -93,7 +93,7 @@ class _Links extends StatelessWidget {
           .map(
             (link) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-              child: _FooterLink(label: link.label, icon: link.icon),
+              child: _FooterLink(label: link.label, icon: link.icon, url: link.url),
             ),
           )
           .toList(),
@@ -102,9 +102,10 @@ class _Links extends StatelessWidget {
 }
 
 class _FooterLink extends StatefulWidget {
-  const _FooterLink({required this.label, required this.icon});
+  const _FooterLink({required this.label, required this.icon, required this.url});
   final String label;
   final IconData icon;
+  final String url;
 
   @override
   State<_FooterLink> createState() => _FooterLinkState();
@@ -115,10 +116,17 @@ class _FooterLinkState extends State<_FooterLink> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      cursor: SystemMouseCursors.click,
+    return GestureDetector(
+      onTap: () async {
+        final uri = Uri.parse(widget.url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri);
+        }
+      },
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _hovered = true),
+        onExit: (_) => setState(() => _hovered = false),
+        cursor: SystemMouseCursors.click,
       child: AnimatedDefaultTextStyle(
         duration: const Duration(milliseconds: 200),
         style: AppTypography.labelCaps.copyWith(
@@ -139,7 +147,7 @@ class _FooterLinkState extends State<_FooterLink> {
           ],
         ),
       ),
-    );
+    ));
   }
 }
 
