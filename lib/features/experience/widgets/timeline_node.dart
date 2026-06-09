@@ -107,14 +107,14 @@ class _DesktopRow extends StatelessWidget {
             children: [
               // Track above node (not for first item) — fixed height segment
               if (index > 0)
-                SizedBox(
+                const SizedBox(
                   width: 2,
                   height: AppSpacing.md,
-                  child: const TimelineTrack(),
+                  child: TimelineTrack(),
                 ),
               TimelineNode(isActive: experience.isCurrent),
               // Track below node fills remaining IntrinsicHeight space
-              if (!isLast) Expanded(child: const TimelineTrack()),
+              if (!isLast) const Expanded(child: TimelineTrack()),
             ],
           ),
 
@@ -179,7 +179,7 @@ class _MobileRow extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               TimelineNode(isActive: experience.isCurrent),
-              if (!isLast) Expanded(child: const TimelineTrack()),
+              if (!isLast) const Expanded(child: TimelineTrack()),
             ],
           ),
 
@@ -237,7 +237,7 @@ class _ExperienceCardState extends State<_ExperienceCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         transform: _hovered
-            ? (Matrix4.identity()..translate(0.0, -4.0))
+            ? Matrix4.translationValues(0.0, -4.0, 0.0)
             : Matrix4.identity(),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
@@ -251,8 +251,8 @@ class _ExperienceCardState extends State<_ExperienceCard> {
                 borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                 border: Border.all(
                   color: _hovered
-                      ? Colors.white.withOpacity(0.2)
-                      : Colors.white.withOpacity(0.05),
+                      ? Colors.white.withValues(alpha: 0.2)
+                      : Colors.white.withValues(alpha: 0.05),
                   width: 1,
                 ),
               ),
@@ -315,7 +315,7 @@ class _ExperienceCardState extends State<_ExperienceCard> {
                               ),
                               decoration: BoxDecoration(
                                 color: AppColors.secondaryContainer
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                                 borderRadius:
                                     BorderRadius.circular(AppSpacing.radiusSm),
                               ),

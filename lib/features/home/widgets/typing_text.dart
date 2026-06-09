@@ -116,7 +116,7 @@ class _TypingTextState extends State<TypingText>
               color: AppColors.onSurface,
               shadows: [
                 Shadow(
-                  color: AppColors.primary.withOpacity(0.25),
+                  color: AppColors.primary.withValues(alpha: 0.25),
                   blurRadius: 20,
                 ),
               ],

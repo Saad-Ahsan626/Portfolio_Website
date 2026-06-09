@@ -16,7 +16,7 @@ class TechTag extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.secondaryContainer.withOpacity(0.5),
+        color: AppColors.secondaryContainer.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
       ),
       child: Text(

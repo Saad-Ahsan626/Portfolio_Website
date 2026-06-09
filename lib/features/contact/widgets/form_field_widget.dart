@@ -29,7 +29,6 @@ class _FloatingLabelFieldState extends State<FloatingLabelField>
     with SingleTickerProviderStateMixin {
   late final FocusNode _focus;
   late final AnimationController _animController;
-  late final Animation<double> _labelAnim;
   bool _hasFocus = false;
   bool _hasText = false;
 
@@ -40,10 +39,6 @@ class _FloatingLabelFieldState extends State<FloatingLabelField>
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 200),
-    );
-    _labelAnim = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOut,
     );
 
     _focus.addListener(() {
@@ -114,38 +109,38 @@ class _FloatingLabelFieldState extends State<FloatingLabelField>
                   }
                   widget.onChanged(v);
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   filled: true,
                   fillColor: AppColors.surfaceContainerLow,
-                  contentPadding: const EdgeInsets.symmetric(
+                  contentPadding: EdgeInsets.symmetric(
                     horizontal: AppSpacing.sm,
                     vertical: AppSpacing.md,
                   ),
-                  border: const UnderlineInputBorder(
+                  border: UnderlineInputBorder(
                     borderSide: BorderSide(
                       color: AppColors.outlineVariant,
                       width: 2,
                     ),
                   ),
-                  enabledBorder: const UnderlineInputBorder(
+                  enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
                       color: AppColors.outlineVariant,
                       width: 2,
                     ),
                   ),
-                  focusedBorder: const UnderlineInputBorder(
+                  focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
                       color: AppColors.electricCyan,
                       width: 2,
                     ),
                   ),
-                  errorBorder: const UnderlineInputBorder(
+                  errorBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
                       color: AppColors.error,
                       width: 2,
                     ),
                   ),
-                  focusedErrorBorder: const UnderlineInputBorder(
+                  focusedErrorBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
                       color: AppColors.error,
                       width: 2,

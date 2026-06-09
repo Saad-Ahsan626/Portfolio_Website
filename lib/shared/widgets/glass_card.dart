@@ -34,7 +34,7 @@ class _GlassCardState extends State<GlassCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         transform: widget.enableHover && _hovered
-            ? (Matrix4.identity()..translate(0.0, -4.0))
+            ? Matrix4.translationValues(0.0, -4.0, 0.0)
             : Matrix4.identity(),
         decoration: BoxDecoration(
           color: AppColors.surfaceContainerLow,

@@ -24,7 +24,7 @@ class SiteFooter extends StatelessWidget {
         vertical: AppSpacing.xl,
         horizontal: isMobile ? AppSpacing.md : AppSpacing.xl,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.surfaceContainerLowest,
         border: Border(
           top: BorderSide(color: AppColors.outlineVariant, width: 1),
@@ -149,7 +149,7 @@ class _Copyright extends StatelessWidget {
     return Text(
       '© 2024 Flutter Developer Portfolio. Built with precision.',
       style: AppTypography.bodyMd.copyWith(
-        color: AppColors.onSurfaceVariant.withOpacity(0.6),
+        color: AppColors.onSurfaceVariant.withValues(alpha: 0.6),
       ),
       textAlign: TextAlign.center,
     );

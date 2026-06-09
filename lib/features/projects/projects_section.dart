@@ -123,8 +123,8 @@ class _ProjectsGrid extends StatelessWidget {
         const double minCardWidth = 260; // sensible minimum for card content
         if (itemWidth < minCardWidth) {
           // switch to a single column layout for readability
-          final fallbackCrossAxisCount = 1;
-          final fallbackTotalSpacing = spacing * (fallbackCrossAxisCount - 1);
+          const fallbackCrossAxisCount = 1;
+          const fallbackTotalSpacing = spacing * (fallbackCrossAxisCount - 1);
           itemWidth = (constraints.maxWidth - fallbackTotalSpacing) /
               fallbackCrossAxisCount;
         }
@@ -167,7 +167,7 @@ class _LoadingGrid extends StatelessWidget {
         : isDesktop
             ? 3
             : 2;
-    final spacing = AppSpacing.lg;
+    const spacing = AppSpacing.lg;
     final childAspectRatio = isMobile ? 3.5 : 0.62;
 
     return GridView.builder(
@@ -196,7 +196,7 @@ class _SkeletonCard extends StatelessWidget {
       ),
     ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(
           duration: 1200.ms,
-          color: AppColors.primary.withOpacity(0.04),
+          color: AppColors.primary.withValues(alpha: 0.04),
         );
   }
 }

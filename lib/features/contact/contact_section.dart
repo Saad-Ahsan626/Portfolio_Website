@@ -181,7 +181,7 @@ class _WorkspaceVisual extends StatelessWidget {
                   color: const Color(0x661E293B),
                   borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(alpha: 0.05),
                     width: 1,
                   ),
                 ),
@@ -193,7 +193,7 @@ class _WorkspaceVisual extends StatelessWidget {
                       child: Icon(
                         Icons.computer_rounded,
                         size: 100,
-                        color: AppColors.primary.withOpacity(0.25),
+                        color: AppColors.primary.withValues(alpha: 0.25),
                       ),
                     ),
                   ),
@@ -221,7 +221,7 @@ class _WorkspaceVisual extends StatelessWidget {
                   color: const Color(0x661E293B),
                   borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.08),
+                    color: Colors.white.withValues(alpha: 0.08),
                     width: 1,
                   ),
                 ),
@@ -292,7 +292,7 @@ class _ToolkitSection extends StatelessWidget {
             Expanded(
               child: Container(
                 height: 1,
-                color: AppColors.outlineVariant.withOpacity(0.3),
+                color: AppColors.outlineVariant.withValues(alpha: 0.3),
               ),
             ),
           ],

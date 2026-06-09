@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
 
 class PhoneMockup extends StatelessWidget {
   const PhoneMockup({
@@ -56,9 +55,9 @@ class PhoneMockup extends StatelessWidget {
                   child: Container(
                     width: 80,
                     height: 20,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.surfaceContainer,
-                      borderRadius: const BorderRadius.only(
+                      borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(12),
                         bottomRight: Radius.circular(12),
                       ),
@@ -80,7 +79,7 @@ class PhoneMockup extends StatelessWidget {
         child: Icon(
           placeholderIcon,
           size: 64,
-          color: AppColors.primary.withOpacity(0.3),
+          color: AppColors.primary.withValues(alpha: 0.3),
         ),
       ),
     );

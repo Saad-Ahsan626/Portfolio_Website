@@ -34,12 +34,12 @@ class _SkillChipState extends State<SkillChip> {
         ),
         decoration: BoxDecoration(
           color: _hovered
-              ? AppColors.electricCyan.withOpacity(0.08)
-              : AppColors.tertiary.withOpacity(0.05),
+              ? AppColors.electricCyan.withValues(alpha: 0.08)
+              : AppColors.tertiary.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
           border: Border.all(
             color: _hovered
-                ? AppColors.electricCyan.withOpacity(0.3)
+                ? AppColors.electricCyan.withValues(alpha: 0.3)
                 : AppColors.glassBorder,
             width: 1,
           ),

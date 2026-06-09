@@ -84,13 +84,13 @@ class _HeroRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final content = _HeroContent(isMobile: isMobile);
-    final visual = const HeroVisual();
+    const visual = HeroVisual();
 
     if (isMobile) {
       // Stack vertically — visual on top, content below
       return Column(
         children: [
-          SizedBox(
+          const SizedBox(
             width: double.infinity,
             height: 280,
             child: visual,
@@ -107,7 +107,7 @@ class _HeroRow extends StatelessWidget {
       children: [
         Expanded(flex: 5, child: content),
         const SizedBox(width: AppSpacing.xl),
-        Expanded(flex: 4, child: visual),
+        const Expanded(flex: 4, child: visual),
       ],
     );
   }
@@ -223,7 +223,7 @@ class _StatsRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             width: 1,
           ),
         ),

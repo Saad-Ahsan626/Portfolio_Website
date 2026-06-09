@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_typography.dart';
 
 class HeroVisual extends StatelessWidget {
   const HeroVisual({super.key});
@@ -22,7 +21,7 @@ class HeroVisual extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.electricCyan.withOpacity(0.12),
+                    color: AppColors.electricCyan.withValues(alpha: 0.12),
                     blurRadius: 120,
                     spreadRadius: 20,
                   ),
@@ -38,10 +37,10 @@ class HeroVisual extends StatelessWidget {
               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.tertiary.withOpacity(0.05),
+                  color: AppColors.tertiary.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -49,7 +48,7 @@ class HeroVisual extends StatelessWidget {
                   child: Icon(
                     Icons.phone_iphone_rounded,
                     size: 160,
-                    color: AppColors.primary.withOpacity(0.4),
+                    color: AppColors.primary.withValues(alpha: 0.4),
                   ),
                 ),
               ),
@@ -60,8 +59,8 @@ class HeroVisual extends StatelessWidget {
           Positioned(
             top: 24,
             right: 24,
-            child: _FloatingBadge(
-              child: const Icon(Icons.phone_iphone,
+            child: const _FloatingBadge(
+              child: Icon(Icons.phone_iphone,
                   color: AppColors.primary, size: 32),
             ).animate(onPlay: (c) => c.repeat(reverse: true)).moveY(
                 begin: 0, end: -8, duration: 3000.ms, curve: Curves.easeInOut),
@@ -71,7 +70,7 @@ class HeroVisual extends StatelessWidget {
           Positioned(
             bottom: 24,
             left: 24,
-            child: _FloatingBadge(
+            child: const _FloatingBadge(
               child: Icon(Icons.code, color: AppColors.secondary, size: 28),
             )
                 .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -79,7 +78,7 @@ class HeroVisual extends StatelessWidget {
                 .then()
                 .shimmer(
                     duration: 2000.ms,
-                    color: AppColors.electricCyan.withOpacity(0.3)),
+                    color: AppColors.electricCyan.withValues(alpha: 0.3)),
           ),
 
           // Pulsing ring in center
@@ -91,7 +90,7 @@ class HeroVisual extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: AppColors.primary.withOpacity(0.2),
+                    color: AppColors.primary.withValues(alpha: 0.2),
                     width: 2,
                   ),
                 ),
@@ -120,9 +119,9 @@ class _FloatingBadge extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
-            color: AppColors.tertiary.withOpacity(0.05),
+            color: AppColors.tertiary.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-            border: Border.all(color: Colors.white.withOpacity(0.08), width: 1),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
           ),
           child: child,
         ),

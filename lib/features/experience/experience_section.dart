@@ -137,7 +137,7 @@ class _LoadingSkeleton extends StatelessWidget {
                         ),
                       ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(
                           duration: 1200.ms,
-                          color: AppColors.primary.withOpacity(0.04),
+                          color: AppColors.primary.withValues(alpha: 0.04),
                         )
                     : const SizedBox.shrink(),
               ),
@@ -155,7 +155,7 @@ class _LoadingSkeleton extends StatelessWidget {
                         ),
                       ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(
                           duration: 1200.ms,
-                          color: AppColors.primary.withOpacity(0.04),
+                          color: AppColors.primary.withValues(alpha: 0.04),
                         )
                     : const SizedBox.shrink(),
               ),

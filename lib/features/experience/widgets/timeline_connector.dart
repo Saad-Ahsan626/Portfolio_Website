@@ -21,7 +21,7 @@ class TimelineNode extends StatelessWidget {
         boxShadow: isActive
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.7),
+                  color: AppColors.primary.withValues(alpha: 0.7),
                   blurRadius: 12,
                   spreadRadius: 2,
                 ),
@@ -40,8 +40,8 @@ class TimelineTrack extends StatelessWidget {
     // No fixed height — must always be placed inside an Expanded so the
     // parent (IntrinsicHeight row) can measure it correctly without hitting
     // double.infinity which causes a 99999px RenderFlex overflow.
-    return DecoratedBox(
-      decoration: const BoxDecoration(
+    return const DecoratedBox(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -54,7 +54,7 @@ class TimelineTrack extends StatelessWidget {
           stops: [0.0, 0.1, 0.9, 1.0],
         ),
       ),
-      child: const SizedBox(width: 2),
+      child: SizedBox(width: 2),
     );
   }
 }

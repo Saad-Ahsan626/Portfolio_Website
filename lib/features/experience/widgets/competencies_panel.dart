@@ -22,7 +22,7 @@ class CompetenciesPanel extends StatelessWidget {
             children: [
               _VisualPanel(),
               const SizedBox(height: AppSpacing.lg),
-              _SkillsPanel(),
+              const _SkillsPanel(),
             ],
           )
         : Row(
@@ -30,7 +30,7 @@ class CompetenciesPanel extends StatelessWidget {
             children: [
               Expanded(child: _VisualPanel()),
               const SizedBox(width: AppSpacing.lg),
-              Expanded(child: _SkillsPanel()),
+              const Expanded(child: _SkillsPanel()),
             ],
           );
   }
@@ -48,7 +48,7 @@ class _VisualPanel extends StatelessWidget {
           children: [
             // Gradient placeholder (replace with Image.network if you have an asset)
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -62,7 +62,7 @@ class _VisualPanel extends StatelessWidget {
                 child: Icon(
                   Icons.code_rounded,
                   size: 80,
-                  color: AppColors.primary.withOpacity(0.2),
+                  color: AppColors.primary.withValues(alpha: 0.2),
                 ),
               ),
             ),
@@ -76,7 +76,7 @@ class _VisualPanel extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      AppColors.background.withOpacity(0.85),
+                      AppColors.background.withValues(alpha: 0.85),
                     ],
                     stops: const [0.4, 1.0],
                   ),

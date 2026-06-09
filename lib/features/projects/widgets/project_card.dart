@@ -35,7 +35,7 @@ class _ProjectCardState extends State<ProjectCard> {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOutBack,
         transform: _hovered
-            ? (Matrix4.identity()..translate(0.0, -4.0))
+            ? Matrix4.translationValues(0.0, -4.0, 0.0)
             : Matrix4.identity(),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
@@ -50,14 +50,14 @@ class _ProjectCardState extends State<ProjectCard> {
                 borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                 border: Border.all(
                   color: _hovered
-                      ? Colors.white.withOpacity(0.2)
-                      : Colors.white.withOpacity(0.05),
+                      ? Colors.white.withValues(alpha: 0.2)
+                      : Colors.white.withValues(alpha: 0.05),
                   width: 1,
                 ),
                 boxShadow: _hovered
                     ? [
                         BoxShadow(
-                          color: AppColors.electricCyan.withOpacity(0.06),
+                          color: AppColors.electricCyan.withValues(alpha: 0.06),
                           blurRadius: 40,
                           offset: const Offset(0, 20),
                         ),
@@ -177,7 +177,7 @@ class _ActionButtonState extends State<_ActionButton> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: _hovered
-                  ? AppColors.electricCyan.withOpacity(0.1)
+                  ? AppColors.electricCyan.withValues(alpha: 0.1)
                   : Colors.transparent,
               border: Border.all(
                 color: AppColors.primary,

@@ -31,7 +31,7 @@ class _GhostButtonState extends State<GhostButton> {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: _hovered
-              ? AppColors.electricCyan.withOpacity(0.1)
+              ? AppColors.electricCyan.withValues(alpha: 0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
           border: Border.all(color: AppColors.electricCyan, width: 1),
