@@ -27,7 +27,7 @@ class MobileDrawer extends ConsumerWidget {
       
       Future.delayed(const Duration(milliseconds: 300), () {
         final ctx = sectionKeys[index].currentContext;
-        if (ctx == null) return;
+        if (ctx == null || !ctx.mounted) return;
         
         final box = ctx.findRenderObject() as RenderBox?;
         if (box == null) return;
@@ -94,7 +94,7 @@ class MobileDrawer extends ConsumerWidget {
                   const Spacer(),
 
                   // Footer social links
-                  Wrap(
+  const                 Wrap(
                     spacing: AppSpacing.md,
                     children: [
                       _SocialLink(label: 'GitHub', icon: Icons.terminal),
@@ -108,7 +108,7 @@ class MobileDrawer extends ConsumerWidget {
                   Text(
                     '© 2024 Built with Flutter',
                     style: AppTypography.labelCaps.copyWith(
-                      color: AppColors.onSurfaceVariant.withOpacity(0.5),
+                      color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -143,12 +143,12 @@ class _DrawerNavItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       decoration: BoxDecoration(
         color: isActive
-            ? AppColors.electricCyan.withOpacity(0.1)
+            ? AppColors.electricCyan.withValues(alpha: 0.1)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
         border: Border.all(
           color: isActive
-              ? AppColors.electricCyan.withOpacity(0.3)
+              ? AppColors.electricCyan.withValues(alpha: 0.3)
               : Colors.transparent,
           width: 1,
         ),
