@@ -4,77 +4,80 @@ class AppColors {
   AppColors._();
 
   // --- Surfaces ---
-  static const Color surface = Color(0xFF101415);
-  static const Color surfaceDim = Color(0xFF101415);
-  static const Color surfaceBright = Color(0xFF363A3B);
-  static const Color surfaceContainerLowest = Color(0xFF0B0F10);
-  static const Color surfaceContainerLow = Color(0xFF191C1E);
-  static const Color surfaceContainer = Color(0xFF1D2022);
-  static const Color surfaceContainerHigh = Color(0xFF272A2C);
-  static const Color surfaceContainerHighest = Color(0xFF323537);
+  static const Color surface = Color(0xFF09090B); // Deep brutalist black
+  static const Color surfaceDim = Color(0xFF000000); // Pure black
+  static const Color surfaceBright = Color(0xFF1E1E1E); 
+  static const Color surfaceContainerLowest = Color(0xFF000000);
+  static const Color surfaceContainerLow = Color(0xFF09090B);
+  static const Color surfaceContainer = Color(0xFF121212);
+  static const Color surfaceContainerHigh = Color(0xFF1E1E1E);
+  static const Color surfaceContainerHighest = Color(0xFF2C2C2C);
 
   // --- On Surface ---
-  static const Color onSurface = Color(0xFFE0E3E5);
-  static const Color onSurfaceVariant = Color(0xFFBDC8D2);
-  static const Color inverseSurface = Color(0xFFE0E3E5);
-  static const Color inverseOnSurface = Color(0xFF2D3133);
+  static const Color onSurface = Color(0xFFFFFFFF); // Stark white
+  static const Color onSurfaceVariant = Color(0xFFA1A1AA); // Light gray
+  static const Color inverseSurface = Color(0xFFFFFFFF);
+  static const Color inverseOnSurface = Color(0xFF000000);
 
   // --- Outline ---
-  static const Color outline = Color(0xFF87929C);
-  static const Color outlineVariant = Color(0xFF3E4851);
+  static const Color outline = Color(0xFFFFFFFF); // High contrast outline
+  static const Color outlineVariant = Color(0xFF3F3F46); // Darker border
 
   // --- Primary ---
-  static const Color primary = Color(0xFF89CEFF);
-  static const Color onPrimary = Color(0xFF00344D);
-  static const Color primaryContainer = Color(0xFF00B4FF);
-  static const Color onPrimaryContainer = Color(0xFF004361);
-  static const Color inversePrimary = Color(0xFF006591);
-  static const Color primaryFixed = Color(0xFFC9E6FF);
-  static const Color primaryFixedDim = Color(0xFF89CEFF);
-  static const Color onPrimaryFixed = Color(0xFF001E2F);
-  static const Color onPrimaryFixedVariant = Color(0xFF004C6E);
-  static const Color surfaceTint = Color(0xFF89CEFF);
+  // Using stark white as primary for brutalist feel
+  static const Color primary = Color(0xFFFFFFFF);
+  static const Color onPrimary = Color(0xFF000000);
+  static const Color primaryContainer = Color(0xFFFFFFFF);
+  static const Color onPrimaryContainer = Color(0xFF000000);
+  static const Color inversePrimary = Color(0xFF000000);
+  static const Color primaryFixed = Color(0xFFFFFFFF);
+  static const Color primaryFixedDim = Color(0xFFE4E4E7);
+  static const Color onPrimaryFixed = Color(0xFF000000);
+  static const Color onPrimaryFixedVariant = Color(0xFF18181B);
+  static const Color surfaceTint = Color(0xFFFFFFFF);
 
   // --- Secondary ---
-  static const Color secondary = Color(0xFFB7C8E1);
-  static const Color onSecondary = Color(0xFF213145);
-  static const Color secondaryContainer = Color(0xFF3A4A5F);
-  static const Color onSecondaryContainer = Color(0xFFA9BAD3);
-  static const Color secondaryFixed = Color(0xFFD3E4FE);
-  static const Color secondaryFixedDim = Color(0xFFB7C8E1);
-  static const Color onSecondaryFixed = Color(0xFF0B1C30);
-  static const Color onSecondaryFixedVariant = Color(0xFF38485D);
+  // Using gray shades for secondary elements
+  static const Color secondary = Color(0xFFA1A1AA);
+  static const Color onSecondary = Color(0xFF000000);
+  static const Color secondaryContainer = Color(0xFF27272A);
+  static const Color onSecondaryContainer = Color(0xFFFFFFFF);
+  static const Color secondaryFixed = Color(0xFFE4E4E7);
+  static const Color secondaryFixedDim = Color(0xFFA1A1AA);
+  static const Color onSecondaryFixed = Color(0xFF000000);
+  static const Color onSecondaryFixedVariant = Color(0xFF18181B);
 
-  // --- Tertiary ---
-  static const Color tertiary = Color(0xFFBEC6E0);
-  static const Color onTertiary = Color(0xFF283044);
-  static const Color tertiaryContainer = Color(0xFFA1A9C2);
-  static const Color onTertiaryContainer = Color(0xFF363E53);
-  static const Color tertiaryFixed = Color(0xFFDAE2FD);
-  static const Color tertiaryFixedDim = Color(0xFFBEC6E0);
-  static const Color onTertiaryFixed = Color(0xFF131B2E);
-  static const Color onTertiaryFixedVariant = Color(0xFF3F465C);
+  // --- Tertiary (Accent) ---
+  // Brutalist Gold/Yellow accent
+  static const Color tertiary = Color(0xFFC6A87C);
+  static const Color onTertiary = Color(0xFF000000);
+  static const Color tertiaryContainer = Color(0xFFD4AF37);
+  static const Color onTertiaryContainer = Color(0xFF000000);
+  static const Color tertiaryFixed = Color(0xFFFDE68A);
+  static const Color tertiaryFixedDim = Color(0xFFC6A87C);
+  static const Color onTertiaryFixed = Color(0xFF000000);
+  static const Color onTertiaryFixedVariant = Color(0xFF45350A);
 
   // --- Error ---
-  static const Color error = Color(0xFFFFB4AB);
-  static const Color onError = Color(0xFF690005);
-  static const Color errorContainer = Color(0xFF93000A);
+  static const Color error = Color(0xFFFF453A);
+  static const Color onError = Color(0xFF000000);
+  static const Color errorContainer = Color(0xFF3B0703);
   static const Color onErrorContainer = Color(0xFFFFDAD6);
 
   // --- Background ---
-  static const Color background = Color(0xFF101415);
-  static const Color onBackground = Color(0xFFE0E3E5);
-  static const Color surfaceVariant = Color(0xFF323537);
+  static const Color background = Color(0xFF09090B);
+  static const Color onBackground = Color(0xFFFFFFFF);
+  static const Color surfaceVariant = Color(0xFF18181B);
 
   // --- Semantic Aliases (use these in UI code) ---
-  static const Color electricCyan = primaryContainer;   // #00B4FF — CTAs, highlights
-  static const Color slateBlue = secondary;             // decorative, secondary text
-  static const Color midnightNavy = Color(0xFF0F172A);  // deepest background
-  static const Color iceWhite = Color(0xFFF8FAFC);      // body text in dark mode
+  static const Color electricCyan = tertiary;           // Replaced with Gold
+  static const Color slateBlue = secondary;             // Gray secondary
+  static const Color midnightNavy = Color(0xFF000000);  // Deepest background
+  static const Color iceWhite = Color(0xFFFFFFFF);      // Stark white
 
   // --- Glass & Overlay Utilities ---
-  static const Color glassBackground = Color(0x4D101415);   // 30% surface
-  static const Color glassBorder = Color(0x0DFFFFFF);        // white 5%
-  static const Color glassBorderHover = Color(0x33FFFFFF);   // white 20%
-  static const Color navBackground = Color(0xB3101415);      // 70% surface
+  static const Color glassBackground = Color(0x33000000);   // Darker glass
+  static const Color glassBorder = Color(0x1AFFFFFF);       
+  static const Color glassBorderHover = Color(0x4DFFFFFF);   
+  static const Color navBackground = Color(0xFF09090B);     // Solid dark for brutalism
 }
