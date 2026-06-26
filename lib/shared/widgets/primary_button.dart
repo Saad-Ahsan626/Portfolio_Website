@@ -20,14 +20,14 @@ class PrimaryButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.electricCyan,
-        foregroundColor: AppColors.onPrimaryFixed,
+        backgroundColor: AppColors.onSurface, // Stark white
+        foregroundColor: AppColors.surface, // Pure black text
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.md,
+          horizontal: AppSpacing.xl,
+          vertical: AppSpacing.lg,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero, // Sharp corners
         ),
         elevation: 0,
       ),
