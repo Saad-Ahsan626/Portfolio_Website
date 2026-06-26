@@ -75,10 +75,10 @@ class NavBar extends ConsumerWidget {
                   children: [
                     // Logo
                     Text(
-                      'Muhammad Saad Ahsan',
-                      style: AppTypography.headlineMd.copyWith(
+                      '',
+                      style: AppTypography.display.copyWith(
+                        fontSize: 28, // Scaled down for nav
                         color: AppColors.onSurface,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
 
@@ -102,7 +102,7 @@ class NavBar extends ConsumerWidget {
                                           const Duration(milliseconds: 200),
                                       style: AppTypography.labelCaps.copyWith(
                                         color: isActive
-                                            ? AppColors.electricCyan
+                                            ? AppColors.tertiary
                                             : AppColors.onSurfaceVariant,
                                       ),
                                       child: Text(item.label.toUpperCase()),
@@ -197,7 +197,7 @@ class _ProgressPainter extends CustomPainter {
     if (progress <= 0) return;
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width * progress, size.height),
-      Paint()..color = AppColors.electricCyan,
+      Paint()..color = AppColors.tertiary, // Updated to Gold
     );
   }
 
