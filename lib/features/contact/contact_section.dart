@@ -17,11 +17,11 @@ class ContactSection extends ConsumerWidget {
 
   static const _toolkit = [
     (label: 'Flutter', icon: Icons.flutter_dash),
-    (label: 'Dart', icon: Icons.terminal),
-    (label: 'Firebase', icon: Icons.cloud_outlined),
+    (label: 'Dart', icon: Icons.code),
+    (label: 'Python', icon: Icons.terminal),
     (label: 'Riverpod', icon: Icons.layers_outlined),
-    (label: 'Git/CI/CD', icon: Icons.merge_type_rounded),
-    (label: 'Rive', icon: Icons.animation_rounded),
+    (label: 'Firebase', icon: Icons.cloud_outlined),
+    (label: 'Gemini API', icon: Icons.auto_awesome),
   ];
 
   @override
@@ -75,7 +75,7 @@ class _AboutPanel extends StatelessWidget {
     final textContent = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionLabel('Authentic Craftsmanship')
+        const SectionLabel('About Me')
             .animate()
             .fadeIn(duration: 400.ms)
             .slideY(begin: 0.3, end: 0, duration: 400.ms),
@@ -89,7 +89,7 @@ class _AboutPanel extends StatelessWidget {
             children: const [
               TextSpan(text: 'Architecting seamless mobile experiences with '),
               TextSpan(
-                text: 'Flutter',
+                text: 'Flutter & AI',
                 style: TextStyle(color: AppColors.electricCyan),
               ),
               TextSpan(text: '.'),
@@ -99,10 +99,7 @@ class _AboutPanel extends StatelessWidget {
             begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
         const SizedBox(height: AppSpacing.md),
         Text(
-          'I am a dedicated Flutter Developer specialising in building '
-          'high-performance, cross-platform applications. With a focus on '
-          'technical precision and sophisticated UI/UX, I bridge the gap '
-          'between complex backend logic and fluid user interactions.',
+          'I am a dedicated Flutter Developer and Computer Science student specializing in building high-performance, cross-platform applications. With a strong foundation in modern state management and an active interest in developing \'Agentic Apps\' powered by AI, I bridge the gap between complex backend logic and fluid user interactions. I am currently preparing for software engineering internships and am always open to discussing mobile product visions.',
           style:
               AppTypography.bodyLg.copyWith(color: AppColors.onSurfaceVariant),
         ).animate(delay: 300.ms).fadeIn(duration: 400.ms).slideY(
