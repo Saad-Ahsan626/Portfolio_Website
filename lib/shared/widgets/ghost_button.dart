@@ -31,21 +31,23 @@ class _GhostButtonState extends State<GhostButton> {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: _hovered
-              ? AppColors.electricCyan.withValues(alpha: 0.1)
+              ? AppColors.onSurface // Stark white on hover
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-          border: Border.all(color: AppColors.electricCyan, width: 1),
+          borderRadius: BorderRadius.zero, // Sharp corners
+          border: Border.all(
+              color: _hovered ? AppColors.onSurface : AppColors.outline, 
+              width: 1), // 1px border
         ),
         child: TextButton(
           onPressed: widget.onPressed,
           style: TextButton.styleFrom(
-            foregroundColor: AppColors.electricCyan,
+            foregroundColor: _hovered ? AppColors.surface : AppColors.onSurface,
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.md,
+              horizontal: AppSpacing.xl,
+              vertical: AppSpacing.lg,
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.zero, // Sharp corners
             ),
           ),
           child: Row(
