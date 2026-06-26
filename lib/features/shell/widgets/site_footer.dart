@@ -9,9 +9,21 @@ class SiteFooter extends StatelessWidget {
   const SiteFooter({super.key});
 
   static const _links = [
-    (label: 'GitHub', icon: Icons.terminal, url: 'https://github.com/Saad-Ahsan626'),
-    (label: 'LinkedIn', icon: Icons.link_rounded, url: 'https://www.linkedin.com/in/saad-ahsan-55201336a/'),
-    (label: 'Email', icon: Icons.mail_outline_rounded, url: 'mailto:saadahsan039@gmail.com'),
+    (
+      label: 'GitHub',
+      icon: Icons.terminal,
+      url: 'https://github.com/Saad-Ahsan626'
+    ),
+    (
+      label: 'LinkedIn',
+      icon: Icons.link_rounded,
+      url: 'https://www.linkedin.com/in/saad-ahsan-55201336a/'
+    ),
+    (
+      label: 'Email',
+      icon: Icons.mail_outline_rounded,
+      url: 'mailto:saadahsan039@gmail.com'
+    ),
   ];
 
   @override
@@ -25,9 +37,9 @@ class SiteFooter extends StatelessWidget {
         horizontal: isMobile ? AppSpacing.md : AppSpacing.xl,
       ),
       decoration: const BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
+        color: AppColors.surface, // Stark black
         border: Border(
-          top: BorderSide(color: AppColors.outlineVariant, width: 1),
+          top: BorderSide(color: AppColors.outline, width: 2), // Sharp thick border
         ),
       ),
       child: ConstrainedBox(
@@ -45,8 +57,6 @@ class _DesktopFooter extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _Logo(),
-        // Wrap prevents overflow when viewport is between 768–1024px by
-        // letting links flow onto a second line instead of hard-clipping.
         Flexible(child: _Links()),
         _Copyright(),
       ],
@@ -73,10 +83,10 @@ class _Logo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'YourName.dev',
-      style: AppTypography.headlineMd.copyWith(
+      'SAAD', // Brutalist short name
+      style: AppTypography.display.copyWith(
+        fontSize: 32, // Slightly smaller display font for footer
         color: AppColors.onSurface,
-        fontWeight: FontWeight.bold,
       ),
     );
   }
@@ -87,13 +97,14 @@ class _Links extends StatelessWidget {
   Widget build(BuildContext context) {
     return Wrap(
       alignment: WrapAlignment.center,
-      spacing: 0, // horizontal gap handled by each link's own padding
+      spacing: 0, 
       runSpacing: AppSpacing.sm,
       children: SiteFooter._links
           .map(
             (link) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-              child: _FooterLink(label: link.label, icon: link.icon, url: link.url),
+              child: _FooterLink(
+                  label: link.label, icon: link.icon, url: link.url),
             ),
           )
           .toList(),
@@ -102,7 +113,8 @@ class _Links extends StatelessWidget {
 }
 
 class _FooterLink extends StatefulWidget {
-  const _FooterLink({required this.label, required this.icon, required this.url});
+  const _FooterLink(
+      {required this.label, required this.icon, required this.url});
   final String label;
   final IconData icon;
   final String url;
@@ -117,37 +129,39 @@ class _FooterLinkState extends State<_FooterLink> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async {
-        final uri = Uri.parse(widget.url);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      },
-      child: MouseRegion(
-        onEnter: (_) => setState(() => _hovered = true),
-        onExit: (_) => setState(() => _hovered = false),
-        cursor: SystemMouseCursors.click,
-      child: AnimatedDefaultTextStyle(
-        duration: const Duration(milliseconds: 200),
-        style: AppTypography.labelCaps.copyWith(
-          color: _hovered ? AppColors.electricCyan : AppColors.onSurfaceVariant,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              widget.icon,
-              size: 14,
+        onTap: () async {
+          final uri = Uri.parse(widget.url);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          }
+        },
+        child: MouseRegion(
+          onEnter: (_) => setState(() => _hovered = true),
+          onExit: (_) => setState(() => _hovered = false),
+          cursor: SystemMouseCursors.click,
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 100), // snappy
+            style: AppTypography.labelCaps.copyWith(
               color: _hovered
-                  ? AppColors.electricCyan
-                  : AppColors.onSurfaceVariant,
+                  ? AppColors.tertiary // Gold
+                  : AppColors.onSurface,
             ),
-            const SizedBox(width: AppSpacing.xs),
-            Text(widget.label),
-          ],
-        ),
-      ),
-    ));
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  widget.icon,
+                  size: 14,
+                  color: _hovered
+                      ? AppColors.tertiary
+                      : AppColors.onSurface,
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                Text(widget.label.toUpperCase()), // Ensure uppercase
+              ],
+            ),
+          ),
+        ));
   }
 }
 
@@ -155,9 +169,9 @@ class _Copyright extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      '© 2024 Flutter Developer Portfolio. Built with precision.',
-      style: AppTypography.bodyMd.copyWith(
-        color: AppColors.onSurfaceVariant.withValues(alpha: 0.6),
+      '© 2026. ALL RIGHTS RESERVED.',
+      style: AppTypography.labelCaps.copyWith(
+        color: AppColors.onSurfaceVariant,
       ),
       textAlign: TextAlign.center,
     );
