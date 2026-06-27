@@ -8,6 +8,7 @@ import '../../features/home/home_section.dart';
 import '../../features/projects/projects_section.dart';
 import '../../features/experience/experience_section.dart';
 import '../../features/contact/contact_section.dart';
+import '../../core/utils/responsive.dart';
 import 'widgets/nav_bar.dart';
 import 'widgets/site_footer.dart';
 
@@ -25,9 +26,9 @@ class ShellPage extends ConsumerWidget {
       // Use the Scaffold's appBar slot with a fixed-height PreferredSize so
       // Flutter knows the nav is exactly 80px — no Stack, no Positioned, no
       // unbounded height constraints that cause overflow on first render.
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: NavBar(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(Responsive.isMobile(context) ? 60 : 80),
+        child: const NavBar(),
       ),
       body: Stack(
         children: [
@@ -112,9 +113,12 @@ class ShellPage extends ConsumerWidget {
 
       final position = box.localToGlobal(Offset.zero);
 
-      // With Scaffold appBar handling the nav offset, sections start at y=0
-      // in the body. Use 40px as the trigger threshold.
-      if (position.dy <= 40) {
+      // Scaffold appBar reserves space. Sections stop scrolling exactly at
+      // (appBarHeight + 20). Set threshold slightly below that.
+      final appBarHeight = Responsive.isMobile(context) ? 60.0 : 80.0;
+      final triggerThreshold = appBarHeight + 40.0;
+
+      if (position.dy <= triggerThreshold) {
         if (ref.read(activeSectionProvider) != i) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             ref.read(activeSectionProvider.notifier).state = i;
