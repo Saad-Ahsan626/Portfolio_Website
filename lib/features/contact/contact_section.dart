@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:simple_icons/simple_icons.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -16,12 +17,12 @@ class ContactSection extends ConsumerWidget {
   const ContactSection({super.key});
 
   static const _toolkit = [
-    (label: 'Flutter', icon: Icons.flutter_dash),
-    (label: 'Dart', icon: Icons.code),
-    (label: 'Python', icon: Icons.terminal),
+    (label: 'Flutter', icon: SimpleIcons.flutter),
+    (label: 'Dart', icon: SimpleIcons.dart),
+    (label: 'Python', icon: SimpleIcons.python),
     (label: 'Riverpod', icon: Icons.layers_outlined),
-    (label: 'Firebase', icon: Icons.cloud_outlined),
-    (label: 'Gemini API', icon: Icons.auto_awesome),
+    (label: 'Firebase', icon: SimpleIcons.firebase),
+    (label: 'Gemini API', icon: SimpleIcons.googlegemini),
   ];
 
   @override
@@ -184,15 +185,9 @@ class _WorkspaceVisual extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                  child: Container(
-                    color: AppColors.surfaceContainerLow,
-                    child: Center(
-                      child: Icon(
-                        Icons.computer_rounded,
-                        size: 100,
-                        color: AppColors.primary.withValues(alpha: 0.25),
-                      ),
-                    ),
+                  child: Image.asset(
+                    'assets/images/workspace.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -476,7 +471,7 @@ class _ContactForm extends ConsumerWidget {
                                   ),
                                 ),
                                 Text(
-                                  'your.email@domain.com',
+                                  'saadahsan039@gmail.com',
                                   style: AppTypography.bodyMd
                                       .copyWith(color: AppColors.onSurface),
                                 ),
