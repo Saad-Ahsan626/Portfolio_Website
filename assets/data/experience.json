@@ -1,11 +1,17 @@
 [
   {
-    "id": "e1",
-    "role": "Flutter Developer",
-    "company": "Company Name",
-    "duration": "Jan 2024 – Present",
-    "description": "What you built and the impact it had.",
-    "techStack": ["Flutter", "Riverpod", "REST APIs"],
-    "isCurrent": true
+    "id": "exp_1",
+    "role": "Computer Science Student & Independent Developer",
+    "company": "Self / Academic",
+    "duration": "2024 — Present",
+    "description": "Developing cross-platform mobile and full-stack web applications. Focusing on scalable MVVM architecture, advanced state management, and the integration of agentic AI models (like the Gemini API) to prepare for enterprise-level software engineering.",
+    "techStack": [
+      "Flutter",
+      "Dart",
+      "Python",
+      "Firebase"
+    ],
+    "isCurrent": true,
+    "icon": "work"
   }
 ]

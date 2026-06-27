@@ -1,11 +1,39 @@
 [
   {
-    "id": "p1",
-    "title": "Project Name",
-    "description": "Short description of what this project does and the problem it solves.",
-    "techStack": ["Flutter", "Dart", "Firebase"],
-    "githubUrl": "https://github.com/yourusername/project",
-    "liveUrl": "https://project.demo.com",
-    "imageUrl": null
+    "id": "proj_1",
+    "title": "The Ai Wardrobe Assistant",
+    "description": "An intelligent application utilizing KNN and Naive Bayes for precise color classification, paired with A* search algorithms to seamlessly coordinate and optimize outfits.",
+    "techStack": [
+      "Python",
+      "Machine Learning",
+      "Agentic AI"
+    ],
+    "githubUrl": "https://github.com/Saad-Ahsan626",
+    "featured": true
+  },
+  {
+    "id": "proj_2",
+    "title": "First Aid Assistant",
+    "description": "A robust, offline-first mobile application featuring local notifications for emergency data and native Jameel Noori Nastaleeq typography integration for localized user experiences.",
+    "techStack": [
+      "Flutter",
+      "Riverpod",
+      "Local Storage"
+    ],
+    "githubUrl": "https://github.com/Saad-Ahsan626",
+    "featured": true
+  },
+  {
+    "id": "proj_3",
+    "title": "Note App",
+    "description": "A full-stack cross-platform notes application implementing clean MVVM architecture for strict separation of logic and UI, powered by a real-time cloud backend.",
+    "techStack": [
+      "Flutter",
+      "Firebase",
+      "MVVM"
+    ],
+    "githubUrl": "https://github.com/Saad-Ahsan626/Note-App",
+    "liveUrl": "https://github.com/Saad-Ahsan626/Note-App",
+    "featured": false
   }
 ]

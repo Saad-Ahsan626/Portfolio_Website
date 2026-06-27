@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:portfolio/features/home/widgets/typing_text.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -85,73 +86,61 @@ class _HeroContent extends StatelessWidget {
       children: [
         const SizedBox(height: AppSpacing.md),
 
-        // Massive Brutalist Text
+        // Dynamic Hero Header
         Text(
-          "HEY, I'M",
-          style: AppTypography.display.copyWith(color: AppColors.onSurface),
-          textAlign: TextAlign.left,
-        )
-            .animate(delay: 100.ms)
-            .fadeIn(duration: 400.ms)
-            .slideY(begin: 0.1, end: 0),
+          "I BUILD",
+          style: AppTypography.display
+              .copyWith(color: AppColors.onSurfaceVariant, fontSize: 48),
+        ),
 
-        // Text inside a white box (Inverted)
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          margin: const EdgeInsets.only(top: 4),
-          child: Text(
-            "MUHAMMAD SAAD AHSAN",
-            style: AppTypography.display.copyWith(
-              color: AppColors.onSurface,
-              height: 1.1,
-            ),
-          ),
-        )
-            .animate(delay: 200.ms)
-            .fadeIn(duration: 400.ms)
-            .slideY(begin: 0.1, end: 0),
+        // Typing animation for professional roles
+        const TypingText(
+          texts: [
+            "MOBILE EXPERIENCES.",
+            "AI SOLUTIONS.",
+            "FULL-STACK APPLICATIONS.",
+            "SCALABLE ARCHITECTURE.",
+          ],
+        ),
 
         const SizedBox(height: AppSpacing.xl),
 
-        // Thick White Divider
-        Container(
-          height: 6,
-          color: AppColors.onSurface,
-          width: double.infinity,
-        )
-            .animate(delay: 300.ms)
-            .scaleX(alignment: Alignment.centerLeft, duration: 400.ms),
-
-        const SizedBox(height: AppSpacing.lg),
-
-        // Italic Subheading
+        // Professional Summary
         Text(
-          'I AM A FLUTTER DEVELOPER',
+          "I am Muhammad Saad Ahsan, a Flutter Developer specializing in high-performance cross-platform apps and intelligent AI solutions.",
           style: AppTypography.bodyLg.copyWith(
-            color: AppColors.onSurfaceVariant,
+            color: AppColors.onSurface,
           ),
         ).animate(delay: 400.ms).fadeIn(duration: 400.ms),
 
         const SizedBox(height: AppSpacing.xl),
 
-        // Social Links Vertical List
-        _SocialLinks(),
-
-        const SizedBox(height: AppSpacing.xl),
-
         // Action Buttons
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Row(
+            children: [
+              PrimaryButton(
+                label: 'View Projects',
+                icon: Icons.work_outline,
+                onPressed: () {
+                  // Add scroll logic here
+                },
+              ),
+              const SizedBox(width: AppSpacing.md),
+              GhostButton(
+                label: 'Contact Me',
+                icon: Icons.mail_outline,
+                onPressed: () {
+                  // Add scroll logic here
+                },
+              ),
+            ],
+          ),
+        ),
       ],
     );
-  }
-}
-
-class _SocialLinks extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [],
-    ).animate(delay: 500.ms).fadeIn(duration: 400.ms);
   }
 }
 

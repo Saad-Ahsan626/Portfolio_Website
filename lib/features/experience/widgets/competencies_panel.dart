@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:simple_icons/simple_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
@@ -10,7 +11,6 @@ import '../../../providers/portfolio_provider.dart';
 
 class CompetenciesPanel extends StatelessWidget {
   const CompetenciesPanel({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -46,25 +46,10 @@ class _VisualPanel extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Gradient placeholder (replace with Image.network if you have an asset)
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.surfaceContainerHigh,
-                    AppColors.midnightNavy,
-                  ],
-                ),
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.code_rounded,
-                  size: 80,
-                  color: AppColors.primary.withValues(alpha: 0.2),
-                ),
-              ),
+            // Background Image
+            Image.asset(
+              'assets/images/background.png',
+              fit: BoxFit.cover,
             ),
 
             // Gradient overlay from bottom
@@ -110,7 +95,6 @@ class _SkillsPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // ── NEW: Watch the provider ──
     final skillsAsync = ref.watch(skillsProvider);
 
     return Column(
@@ -122,7 +106,6 @@ class _SkillsPanel extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.md),
 
-        // ── NEW: Handle async states ──
         skillsAsync.when(
           loading: () => const Center(
             child: CircularProgressIndicator(color: AppColors.electricCyan),
@@ -138,7 +121,7 @@ class _SkillsPanel extends ConsumerWidget {
                 .asMap()
                 .entries
                 .map(
-                  (e) => _SkillPill(label: e.value.name) // Use .name from SkillModel
+                  (e) => _SkillPill(label: e.value.name)
                       .animate(delay: Duration(milliseconds: 200 + e.key * 60))
                       .fadeIn(duration: 300.ms)
                       .slideY(
@@ -171,6 +154,23 @@ class _SkillPill extends StatefulWidget {
   State<_SkillPill> createState() => _SkillPillState();
 }
 
+IconData _getIconForSkill(String label) {
+  final lower = label.toLowerCase();
+  if (lower.contains('flutter')) return SimpleIcons.flutter;
+  if (lower.contains('dart')) return SimpleIcons.dart;
+  if (lower.contains('python')) return SimpleIcons.python;
+  if (lower.contains('firebase')) return SimpleIcons.firebase;
+  if (lower.contains('mongo')) return SimpleIcons.mongodb;
+  if (lower.contains('sql')) return SimpleIcons.mysql;
+  if (lower.contains('github')) return SimpleIcons.github;
+  if (lower.contains('git')) return SimpleIcons.git;
+  if (lower.contains('ci/cd')) return SimpleIcons.githubactions;
+  if (lower.contains('api') || lower.contains('gemini')) return SimpleIcons.googlegemini;
+  if (lower.contains('mvvm') || lower.contains('architecture')) return Icons.architecture;
+  if (lower.contains('riverpod') || lower.contains('cubit') || lower.contains('provider')) return Icons.layers_outlined;
+  return Icons.check_circle_outline;
+}
+
 class _SkillPillState extends State<_SkillPill> {
   bool _hovered = false;
 
@@ -193,11 +193,22 @@ class _SkillPillState extends State<_SkillPill> {
             width: 1,
           ),
         ),
-        child: Text(
-          widget.label,
-          style: AppTypography.labelCaps.copyWith(
-            color: _hovered ? AppColors.electricCyan : AppColors.onSurface,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              _getIconForSkill(widget.label),
+              size: 14,
+              color: _hovered ? AppColors.electricCyan : AppColors.onSurfaceVariant,
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Text(
+              widget.label,
+              style: AppTypography.labelCaps.copyWith(
+                color: _hovered ? AppColors.electricCyan : AppColors.onSurface,
+              ),
+            ),
+          ],
         ),
       ),
     );

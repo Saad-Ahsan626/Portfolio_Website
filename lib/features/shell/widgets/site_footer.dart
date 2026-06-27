@@ -39,7 +39,8 @@ class SiteFooter extends StatelessWidget {
       decoration: const BoxDecoration(
         color: AppColors.surface, // Stark black
         border: Border(
-          top: BorderSide(color: AppColors.outline, width: 2), // Sharp thick border
+          top: BorderSide(
+              color: AppColors.outline, width: 2), // Sharp thick border
         ),
       ),
       child: ConstrainedBox(
@@ -83,7 +84,7 @@ class _Logo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'SAAD', // Brutalist short name
+      'MUHAMMAD SAAD AHSAN', // Brutalist short name
       style: AppTypography.display.copyWith(
         fontSize: 32, // Slightly smaller display font for footer
         color: AppColors.onSurface,
@@ -97,7 +98,7 @@ class _Links extends StatelessWidget {
   Widget build(BuildContext context) {
     return Wrap(
       alignment: WrapAlignment.center,
-      spacing: 0, 
+      spacing: 0,
       runSpacing: AppSpacing.sm,
       children: SiteFooter._links
           .map(
@@ -152,9 +153,7 @@ class _FooterLinkState extends State<_FooterLink> {
                 Icon(
                   widget.icon,
                   size: 14,
-                  color: _hovered
-                      ? AppColors.tertiary
-                      : AppColors.onSurface,
+                  color: _hovered ? AppColors.tertiary : AppColors.onSurface,
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 Text(widget.label.toUpperCase()), // Ensure uppercase
