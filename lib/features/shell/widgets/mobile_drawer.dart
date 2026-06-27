@@ -36,13 +36,14 @@ class MobileDrawer extends ConsumerWidget {
         final box = ctx.findRenderObject() as RenderBox?;
         if (box == null) return;
 
+        final appBarHeight = 60.0;
         final absoluteOffset =
-            box.localToGlobal(Offset.zero).dy + scrollController.offset;
+            (box.localToGlobal(Offset.zero).dy - appBarHeight) + scrollController.offset;
         final targetOffset =
-            absoluteOffset - 100; // Account for the 80px header
+            (absoluteOffset - 20).clamp(0.0, scrollController.position.maxScrollExtent);
 
         scrollController.animateTo(
-          targetOffset < 0 ? 0 : targetOffset,
+          targetOffset,
           duration: const Duration(milliseconds: 600),
           curve: Curves.easeInOut,
         );

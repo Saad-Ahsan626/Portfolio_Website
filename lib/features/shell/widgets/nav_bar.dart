@@ -27,18 +27,19 @@ class NavBar extends ConsumerWidget {
     final activeSection = ref.watch(activeSectionProvider);
     final scrollController = ref.watch(scrollControllerProvider);
     final sectionKeys = ref.watch(sectionKeysProvider);
+    final isMobile = Responsive.isMobile(context);
 
     void scrollTo(int index) {
       final ctx = sectionKeys[index].currentContext;
       if (ctx == null) return;
       final box = ctx.findRenderObject() as RenderBox?;
       if (box == null) return;
-      // localToGlobal gives position relative to screen; adding the current
-      // scroll offset converts it to the document-absolute position.
+      final isMobile = Responsive.isMobile(context);
+      final appBarHeight = isMobile ? 60.0 : 80.0;
       final absoluteOffset =
-          box.localToGlobal(Offset.zero).dy + scrollController.offset;
-      // Subtract 20px breathing room (nav height handled by Scaffold now).
-      final targetOffset = (absoluteOffset - 20).clamp(0.0, double.infinity);
+          (box.localToGlobal(Offset.zero).dy - appBarHeight) + scrollController.offset;
+      // Subtract 20px breathing room.
+      final targetOffset = (absoluteOffset - 20).clamp(0.0, scrollController.position.maxScrollExtent);
       scrollController.animateTo(
         targetOffset,
         duration: const Duration(milliseconds: 600),
