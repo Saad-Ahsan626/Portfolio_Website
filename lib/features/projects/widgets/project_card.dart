@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
@@ -117,14 +118,20 @@ class _ProjectCardState extends State<ProjectCard> {
                       _ActionButton(
                         icon: Icons.code_rounded,
                         tooltip: 'View Source',
-                        onTap: () {},
+                        onTap: () {
+                          final uri = Uri.tryParse(widget.project.githubUrl);
+                          if (uri != null) launchUrl(uri);
+                        },
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       if (widget.project.liveUrl != null)
                         _ActionButton(
                           icon: Icons.open_in_new_rounded,
                           tooltip: 'Live Demo',
-                          onTap: () {},
+                          onTap: () {
+                            final uri = Uri.tryParse(widget.project.liveUrl!);
+                            if (uri != null) launchUrl(uri);
+                          },
                         ),
                     ],
                   ),
