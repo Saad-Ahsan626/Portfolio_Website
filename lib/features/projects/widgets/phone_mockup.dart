@@ -38,32 +38,12 @@ class PhoneMockup extends StatelessWidget {
               // App content / image
               Positioned.fill(
                 child: imageUrl != null
-                    ? Image.network(
+                    ? Image.asset(
                         imageUrl!,
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => _placeholder(),
                       )
                     : _placeholder(),
-              ),
-
-              // Dynamic island / notch at top
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Container(
-                    width: 80,
-                    height: 20,
-                    decoration: const BoxDecoration(
-                      color: AppColors.surfaceContainer,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(12),
-                        bottomRight: Radius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ],
           ),
