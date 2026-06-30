@@ -8,7 +8,8 @@
       "Machine Learning",
       "Agentic AI"
     ],
-    "githubUrl": "https://github.com/Saad-Ahsan626",
+    "githubUrl": "https://github.com/Saad-Ahsan626/AI_WARDROBE_ASSISTANT",
+    "imageUrl": "assets/projects-images/ai-wardrobe-assistant.png",
     "featured": true
   },
   {
@@ -20,7 +21,8 @@
       "Riverpod",
       "Local Storage"
     ],
-    "githubUrl": "https://github.com/Saad-Ahsan626",
+    "githubUrl": "https://github.com/Saad-Ahsan626/First_Aid_Assistant",
+    "imageUrl": "assets/projects-images/first-aid-assistant.png",
     "featured": true
   },
   {
@@ -33,7 +35,7 @@
       "MVVM"
     ],
     "githubUrl": "https://github.com/Saad-Ahsan626/Note-App",
-    "liveUrl": "https://github.com/Saad-Ahsan626/Note-App",
+    "imageUrl": "assets/projects-images/note-app.png",
     "featured": false
   }
 ]

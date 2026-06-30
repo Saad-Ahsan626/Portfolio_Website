@@ -42,5 +42,6 @@ flutter:
     - assets/images/saad.jpg
     - assets/images/background.png
     - assets/images/workspace.png
+    - assets/projects-images/
 
   fonts: []
