@@ -150,31 +150,30 @@ class _HeroVisualRight extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Top tracking text
-        Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: Text(
-            'FLUTTER DEVELOPER • AVAILABLE FOR HIRE',
-            style: AppTypography.labelCaps.copyWith(
-              color: AppColors.onSurfaceVariant,
-              letterSpacing: 2,
-            ),
-            textAlign: TextAlign.right,
-          ),
+    return Align(
+      alignment: isMobile ? Alignment.center : Alignment.centerRight,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 380,
         ),
-
-        // Portrait Image
-        Align(
-          alignment: isMobile ? Alignment.center : Alignment.centerRight,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 380, // Much smaller professional size
-              maxHeight: 480,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Top tracking text
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              child: Text(
+                'FLUTTER DEVELOPER • AVAILABLE FOR HIRE',
+                style: AppTypography.labelCaps.copyWith(
+                  color: AppColors.onSurfaceVariant,
+                  letterSpacing: 2,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
-            child: AspectRatio(
+
+            // Portrait Image
+            AspectRatio(
               aspectRatio: 4 / 5,
               child: Container(
                 decoration: BoxDecoration(
@@ -191,9 +190,9 @@ class _HeroVisualRight extends StatelessWidget {
                 ),
               ),
             ),
-          ),
+          ],
         ).animate(delay: 400.ms).fadeIn(duration: 800.ms),
-      ],
+      ),
     );
   }
 }
