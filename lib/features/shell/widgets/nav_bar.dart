@@ -111,20 +111,6 @@ class NavBar extends ConsumerWidget {
                                   ),
                                 );
                               }),
-                              const SizedBox(width: AppSpacing.lg),
-                              IconButton(
-                                splashRadius: 24,
-                                icon: Icon(
-                                  ref.watch(isDarkModeProvider)
-                                      ? Icons.light_mode_rounded
-                                      : Icons.dark_mode_rounded,
-                                  color: AppColors.onSurfaceVariant,
-                                  size: 20,
-                                ),
-                                onPressed: () => ref
-                                    .read(isDarkModeProvider.notifier)
-                                    .update((s) => !s),
-                              ),
                             ],
                           ),
                         ),
