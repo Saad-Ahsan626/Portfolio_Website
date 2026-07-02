@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio/features/home/widgets/typing_text.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -7,6 +8,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../shared/widgets/ghost_button.dart';
 import '../../shared/widgets/primary_button.dart';
+import "../../providers/scroll_provider.dart";
 
 class HomeSection extends StatelessWidget {
   const HomeSection({super.key});
@@ -75,12 +77,31 @@ class _HeroRow extends StatelessWidget {
   }
 }
 
-class _HeroContent extends StatelessWidget {
+class _HeroContent extends ConsumerWidget {
   const _HeroContent({this.isMobile = false});
   final bool isMobile;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    void scrollTo(int index) {
+      final sectionKeys = ref.read(sectionKeysProvider);
+      final scrollController = ref.read(scrollControllerProvider);
+      final ctx = sectionKeys[index].currentContext;
+      if (ctx == null) return;
+      final box = ctx.findRenderObject() as RenderBox?;
+      if (box == null) return;
+      
+      final appBarHeight = Responsive.isMobile(context) ? 60.0 : 80.0;
+      final absoluteOffset =
+          (box.localToGlobal(Offset.zero).dy - appBarHeight) + scrollController.offset;
+      final targetOffset = (absoluteOffset - 20).clamp(0.0, scrollController.position.maxScrollExtent);
+      scrollController.animateTo(
+        targetOffset,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -125,7 +146,7 @@ class _HeroContent extends StatelessWidget {
                 label: 'View Projects',
                 icon: Icons.work_outline,
                 onPressed: () {
-                  // Add scroll logic here
+                  scrollTo(SectionIndex.projects);
                 },
               ),
               const SizedBox(width: AppSpacing.md),
@@ -133,7 +154,7 @@ class _HeroContent extends StatelessWidget {
                 label: 'Contact Me',
                 icon: Icons.mail_outline,
                 onPressed: () {
-                  // Add scroll logic here
+                  scrollTo(SectionIndex.contact);
                 },
               ),
             ],
