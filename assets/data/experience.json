@@ -3,13 +3,28 @@
     "id": "exp_1",
     "role": "Computer Science Student & Independent Developer",
     "company": "Self / Academic",
-    "duration": "2024 — Present",
+    "duration": "01-08-2024 — Present",
     "description": "Developing cross-platform mobile and full-stack web applications. Focusing on scalable MVVM architecture, advanced state management, and the integration of agentic AI models (like the Gemini API) to prepare for enterprise-level software engineering.",
     "techStack": [
       "Flutter",
       "Dart",
       "Python",
       "Firebase"
+    ],
+    "isCurrent": true,
+    "icon": "work"
+  },
+  {
+    "id": "exp_2",
+    "role": "Flutter Intern",
+    "company": "Codrax",
+    "duration": "01-07-2026 — Present",
+    "description": "Contributing to the development of cross-platform mobile applications. Collaborating with the engineering team to implement responsive UI designs, integrate RESTful APIs, and manage application state efficiently using Riverpod.",
+    "techStack": [
+      "Flutter",
+      "Dart",
+      "Riverpod",
+      "REST APIs"
     ],
     "isCurrent": true,
     "icon": "work"
