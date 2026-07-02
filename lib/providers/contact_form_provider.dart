@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 
 enum FormStatus { idle, sending, success, error }
 
@@ -101,12 +105,38 @@ class ContactFormNotifier extends Notifier<ContactFormState> {
 
     state = state.copyWith(status: FormStatus.sending);
 
-    // No backend — simulate network delay then show success
-    await Future.delayed(const Duration(milliseconds: 1500));
+    try {
+      final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
 
-    state = state.copyWith(status: FormStatus.success);
+      final response = await http.post(
+        url,
+        headers: {
+          'origin': 'http://localhost',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'service_id': 'service_74naubi',
+          'template_id': 'template_j85ul93',
+          'user_id': 'mV0fgQffNiNd1ZP0K',
+          'template_params': {
+            'user_name': state.name,
+            'user_email': state.email,
+            'user_message': state.message,
+          }
+        }),
+      );
 
-    // Reset after 3 seconds
+      if (response.statusCode == 200) {
+        state = state.copyWith(status: FormStatus.success);
+      } else {
+        state = state.copyWith(status: FormStatus.error);
+        debugPrint('EmailJS Error: ${response.body}');
+      }
+    } catch (e) {
+      state = state.copyWith(status: FormStatus.error);
+      debugPrint('Network Error: $e');
+    }
+
     await Future.delayed(const Duration(seconds: 3));
     state = const ContactFormState();
   }
