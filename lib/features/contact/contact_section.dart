@@ -499,18 +499,23 @@ class _SubmitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSending = formState.status == FormStatus.sending;
     final isSuccess = formState.status == FormStatus.success;
+    final isError = formState.status == FormStatus.error;
 
     return SizedBox(
       width: double.infinity,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
-          color:
-              isSuccess ? AppColors.secondaryContainer : AppColors.electricCyan,
+          color: isSuccess
+              ? AppColors.secondaryContainer
+              : isError
+                  ? AppColors.errorContainer
+                  : AppColors.electricCyan,
           borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
         ),
         child: TextButton(
-          onPressed: isSending || isSuccess ? null : notifier.submit,
+          // Disable button to prevent spamming while sending, or if success/error is showing
+          onPressed: isSending || isSuccess || isError ? null : notifier.submit,
           style: TextButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
             shape: RoundedRectangleBorder(
@@ -531,7 +536,7 @@ class _SubmitButton extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Text(
-                  'PROCESSING...',
+                  'TRANSMITTING...',
                   style: AppTypography.labelCaps.copyWith(
                     color: AppColors.onPrimaryFixed,
                   ),
@@ -544,6 +549,16 @@ class _SubmitButton extends StatelessWidget {
                   'MESSAGE SENT',
                   style: AppTypography.labelCaps.copyWith(
                     color: AppColors.onSurface,
+                  ),
+                ),
+              ] else if (isError) ...[
+                const Icon(Icons.error_outline,
+                    size: 18, color: AppColors.onErrorContainer),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  'TRANSMISSION FAILED',
+                  style: AppTypography.labelCaps.copyWith(
+                    color: AppColors.onErrorContainer,
                   ),
                 ),
               ] else ...[
