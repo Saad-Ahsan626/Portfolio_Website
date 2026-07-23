@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_icons/simple_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../providers/contact_form_provider.dart';
 import '../../shared/widgets/primary_button.dart';
+import '../../shared/widgets/reveal_on_scroll.dart';
 import '../../shared/widgets/section_label.dart';
 import 'widgets/form_field_widget.dart';
 import 'widgets/skill_tile.dart';
@@ -44,7 +46,10 @@ class ContactSection extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // ── About Me split panel ─────────────────────────────
-            _AboutPanel(isMobile: isMobile, isDesktop: isDesktop),
+            RevealOnScroll(
+              id: 'about-panel',
+              child: _AboutPanel(isMobile: isMobile, isDesktop: isDesktop),
+            ),
 
             const SizedBox(height: AppSpacing.xl),
 
@@ -54,7 +59,10 @@ class ContactSection extends ConsumerWidget {
             const SizedBox(height: AppSpacing.xl),
 
             // ── Contact Form ─────────────────────────────────────
-            _ContactForm(),
+            const RevealOnScroll(
+              id: 'contact-form',
+              child: _ContactForm(),
+            ),
           ],
         ),
       ),
@@ -107,9 +115,11 @@ class _AboutPanel extends StatelessWidget {
             begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
         const SizedBox(height: AppSpacing.lg),
         PrimaryButton(
-          label: 'Download CV',
-          icon: Icons.download_rounded,
-          onPressed: () {},
+          label: 'View GitHub',
+          icon: SimpleIcons.github,
+          onPressed: () {
+            launchUrl(Uri.parse('https://github.com/Saad-Ahsan626'));
+          },
         ).animate(delay: 450.ms).fadeIn(duration: 400.ms),
       ],
     );
@@ -273,21 +283,24 @@ class _ToolkitSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section divider header
-        Row(
-          children: [
-            Text(
-              'Technical Toolkit',
-              style:
-                  AppTypography.headlineMd.copyWith(color: AppColors.onSurface),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Container(
-                height: 1,
-                color: AppColors.outlineVariant.withValues(alpha: 0.3),
+        RevealOnScroll(
+          id: 'toolkit-header',
+          child: Row(
+            children: [
+              Text(
+                'Technical Toolkit',
+                style: AppTypography.headlineMd
+                    .copyWith(color: AppColors.onSurface),
               ),
-            ),
-          ],
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Container(
+                  height: 1,
+                  color: AppColors.outlineVariant.withValues(alpha: 0.3),
+                ),
+              ),
+            ],
+          ),
         ),
 
         const SizedBox(height: AppSpacing.lg),
@@ -304,10 +317,10 @@ class _ToolkitSection extends StatelessWidget {
           itemCount: ContactSection._toolkit.length,
           itemBuilder: (context, index) {
             final item = ContactSection._toolkit[index];
-            return SkillTile(
-              label: item.label,
-              icon: item.icon,
+            return RevealOnScroll(
+              id: 'skill-tile-${item.label}',
               delay: Duration(milliseconds: index * 80),
+              child: SkillTile(label: item.label, icon: item.icon),
             );
           },
         ),
@@ -319,15 +332,30 @@ class _ToolkitSection extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // Contact Form
 // ─────────────────────────────────────────────────────────────────────────────
-class _ContactForm extends ConsumerWidget {
+class _ContactForm extends ConsumerStatefulWidget {
+  const _ContactForm();
+
+  @override
+  ConsumerState<_ContactForm> createState() => _ContactFormState();
+}
+
+class _ContactFormState extends ConsumerState<_ContactForm> {
+  // Controllers live in State so rebuilds (e.g. window resize crossing a
+  // breakpoint) never wipe the visitor's typed text.
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
 
-  _ContactForm();
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final formState = ref.watch(contactFormProvider);
     final notifier = ref.read(contactFormProvider.notifier);
 

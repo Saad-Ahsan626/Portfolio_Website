@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/rendering.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -71,7 +71,7 @@ class ContactFormNotifier extends Notifier<ContactFormState> {
   }
 
   void updateEmail(String value) {
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    final emailRegex = RegExp(r'^[\w\-\.]+@([\w\-]+\.)+[A-Za-z]{2,}$');
     state = state.copyWith(
       email: value,
       emailError: value.trim().isEmpty
@@ -111,7 +111,6 @@ class ContactFormNotifier extends Notifier<ContactFormState> {
       final response = await http.post(
         url,
         headers: {
-          'origin': 'http://localhost',
           'Content-Type': 'application/json',
         },
         body: json.encode({
@@ -137,8 +136,14 @@ class ContactFormNotifier extends Notifier<ContactFormState> {
       debugPrint('Network Error: $e');
     }
 
+    final failed = state.status == FormStatus.error;
     await Future.delayed(const Duration(seconds: 3));
-    state = const ContactFormState();
+    if (failed) {
+      // Keep the visitor's text so they can simply retry.
+      state = state.copyWith(status: FormStatus.idle);
+    } else {
+      state = const ContactFormState();
+    }
   }
 }
 
