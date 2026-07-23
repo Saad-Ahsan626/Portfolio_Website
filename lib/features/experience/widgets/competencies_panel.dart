@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:simple_icons/simple_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
@@ -136,9 +137,11 @@ class _SkillsPanel extends ConsumerWidget {
 
         const SizedBox(height: AppSpacing.md),
         PrimaryButton(
-          label: 'Download Full Resume',
-          icon: Icons.download_rounded,
-          onPressed: () {},
+          label: 'View GitHub',
+          icon: SimpleIcons.github,
+          onPressed: () {
+            launchUrl(Uri.parse('https://github.com/Saad-Ahsan626'));
+          },
         ),
       ],
     ).animate().fadeIn(duration: 500.ms).slideX(

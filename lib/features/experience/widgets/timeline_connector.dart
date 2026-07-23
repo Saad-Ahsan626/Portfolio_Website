@@ -37,9 +37,8 @@ class TimelineTrack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // No fixed height — must always be placed inside an Expanded so the
-    // parent (IntrinsicHeight row) can measure it correctly without hitting
-    // double.infinity which causes a 99999px RenderFlex overflow.
+    // No fixed height — always place inside bounded constraints (e.g. a
+    // Positioned overlay) that give it its vertical extent.
     return const DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(

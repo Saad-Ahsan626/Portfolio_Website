@@ -45,6 +45,10 @@ class TimelineNodeRow extends StatelessWidget {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Desktop: centre-split alternating layout
+//
+// The track is a Positioned overlay spanning the row's natural height, so the
+// row needs no IntrinsicHeight. (IntrinsicHeight's text-measurement estimate
+// could disagree with actual layout and clip the card with a bottom overflow.)
 // ─────────────────────────────────────────────────────────────────────────────
 class _DesktopRow extends StatelessWidget {
   const _DesktopRow({
@@ -61,94 +65,117 @@ class _DesktopRow extends StatelessWidget {
   final bool cardOnRight;
   final Duration animDelay;
 
+  static const double _nodeSize = 14;
+
+  double get _nodeTop => index > 0 ? AppSpacing.md : 0.0;
+  double get _nodeCenterY => _nodeTop + _nodeSize / 2;
+
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // LEFT half
-          Expanded(
-            child: cardOnRight
-                // Date label on left when card is on right
-                ? Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
+    final dateLabel = FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Text(
+        experience.duration,
+        style: AppTypography.labelCaps.copyWith(
+          color: experience.isCurrent
+              ? AppColors.electricCyan
+              : AppColors.onSurfaceVariant,
+        ),
+      ),
+    );
+
+    final card = _ExperienceCard(experience: experience)
+        .animate(delay: animDelay)
+        .fadeIn(duration: 500.ms)
+        .slideX(
+            begin: cardOnRight ? 0.1 : -0.1,
+            end: 0,
+            duration: 500.ms,
+            curve: Curves.easeOut);
+
+    return Stack(
+      children: [
+        // ── Centre track: full row height, drawn behind the node ──
+        if (!isLast)
+          Positioned.fill(
+            top: index == 0 ? _nodeCenterY : 0,
+            child: const _CenteredTrack(),
+          )
+        else if (index > 0)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: _nodeCenterY,
+            child: const _CenteredTrack(),
+          ),
+
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // LEFT half
+            Expanded(
+              child: cardOnRight
+                  // Date label on left when card is on right
+                  ? Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            right: AppSpacing.lg, top: AppSpacing.md),
+                        child: dateLabel,
+                      ),
+                    )
+                  // Card on left
+                  : Padding(
                       padding: const EdgeInsets.only(
-                          right: AppSpacing.lg, top: AppSpacing.md),
-                      child: Text(
-                        experience.duration,
-                        style: AppTypography.labelCaps.copyWith(
-                          color: experience.isCurrent
-                              ? AppColors.electricCyan
-                              : AppColors.onSurfaceVariant,
-                        ),
+                          right: AppSpacing.lg, bottom: AppSpacing.xl),
+                      child: card,
+                    ),
+            ),
+
+            // Centre node
+            Padding(
+              padding: EdgeInsets.only(top: _nodeTop),
+              child: TimelineNode(isActive: experience.isCurrent),
+            ),
+
+            // RIGHT half
+            Expanded(
+              child: cardOnRight
+                  // Card on right
+                  ? Padding(
+                      padding: const EdgeInsets.only(
+                          left: AppSpacing.lg, bottom: AppSpacing.xl),
+                      child: card,
+                    )
+                  // Date label on right when card is on left
+                  : Padding(
+                      padding: const EdgeInsets.only(
+                          left: AppSpacing.lg, top: AppSpacing.md),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: dateLabel,
                       ),
                     ),
-                  )
-                // Card on left
-                : Padding(
-                    padding: const EdgeInsets.only(
-                        right: AppSpacing.lg, bottom: AppSpacing.xl),
-                    child: _ExperienceCard(experience: experience)
-                        .animate(delay: animDelay)
-                        .fadeIn(duration: 500.ms)
-                        .slideX(
-                            begin: -0.1,
-                            end: 0,
-                            duration: 500.ms,
-                            curve: Curves.easeOut),
-                  ),
-          ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
 
-          // Centre column: track + node
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Track above node (not for first item) — fixed height segment
-              if (index > 0)
-                const SizedBox(
-                  width: 2,
-                  height: AppSpacing.md,
-                  child: TimelineTrack(),
-                ),
-              TimelineNode(isActive: experience.isCurrent),
-              // Track below node fills remaining IntrinsicHeight space
-              if (!isLast) const Expanded(child: TimelineTrack()),
-            ],
-          ),
+/// Vertical 2px track horizontally centred inside a tight-sized parent.
+class _CenteredTrack extends StatelessWidget {
+  const _CenteredTrack();
 
-          // RIGHT half
-          Expanded(
-            child: cardOnRight
-                // Card on right
-                ? Padding(
-                    padding: const EdgeInsets.only(
-                        left: AppSpacing.lg, bottom: AppSpacing.xl),
-                    child: _ExperienceCard(experience: experience)
-                        .animate(delay: animDelay)
-                        .fadeIn(duration: 500.ms)
-                        .slideX(
-                            begin: 0.1,
-                            end: 0,
-                            duration: 500.ms,
-                            curve: Curves.easeOut),
-                  )
-                // Date label on right when card is on left
-                : Padding(
-                    padding: const EdgeInsets.only(
-                        left: AppSpacing.lg, top: AppSpacing.md),
-                    child: Text(
-                      experience.duration,
-                      style: AppTypography.labelCaps.copyWith(
-                        color: experience.isCurrent
-                            ? AppColors.electricCyan
-                            : AppColors.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-          ),
-        ],
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: SizedBox(
+        width: 2,
+        height: double.maxFinite, // clamped to the Positioned bounds
+        child: TimelineTrack(),
       ),
     );
   }
@@ -168,39 +195,46 @@ class _MobileRow extends StatelessWidget {
   final bool isLast;
   final Duration animDelay;
 
+  static const double _nodeSize = 14;
+
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Left rail: node + track
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TimelineNode(isActive: experience.isCurrent),
-              if (!isLast) const Expanded(child: TimelineTrack()),
-            ],
+    return Stack(
+      children: [
+        // Left rail track: node centre → row bottom
+        if (!isLast)
+          const Positioned(
+            left: (_nodeSize - 2) / 2,
+            top: _nodeSize / 2,
+            bottom: 0,
+            width: 2,
+            child: TimelineTrack(),
           ),
 
-          const SizedBox(width: AppSpacing.md),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TimelineNode(isActive: experience.isCurrent),
 
-          // Card takes remaining width
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-              child: _ExperienceCard(experience: experience)
-                  .animate(delay: animDelay)
-                  .fadeIn(duration: 500.ms)
-                  .slideX(
-                      begin: 0.1,
-                      end: 0,
-                      duration: 500.ms,
-                      curve: Curves.easeOut),
+            const SizedBox(width: AppSpacing.md),
+
+            // Card takes remaining width
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                child: _ExperienceCard(experience: experience)
+                    .animate(delay: animDelay)
+                    .fadeIn(duration: 500.ms)
+                    .slideX(
+                        begin: 0.1,
+                        end: 0,
+                        duration: 500.ms,
+                        curve: Curves.easeOut),
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -251,12 +285,13 @@ class _ExperienceCardState extends State<_ExperienceCard> {
                 borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                 border: Border.all(
                   color: _hovered
-                      ? Colors.white.withValues(alpha: 0.2)
+                      ? AppColors.tertiary.withValues(alpha: 0.45)
                       : Colors.white.withValues(alpha: 0.05),
                   width: 1,
                 ),
               ),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Icon + role row
@@ -300,7 +335,6 @@ class _ExperienceCardState extends State<_ExperienceCard> {
                     ),
                   ),
 
-                  // Tech tags (mobile only — desktop has more space)
                   if (widget.experience.techStack.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.sm),
                     Wrap(
