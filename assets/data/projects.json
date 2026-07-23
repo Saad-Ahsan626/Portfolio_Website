@@ -1,15 +1,15 @@
 [
   {
     "id": "proj_1",
-    "title": "The Ai Wardrobe Assistant",
-    "description": "An intelligent application utilizing KNN and Naive Bayes for precise color classification, paired with A* search algorithms to seamlessly coordinate and optimize outfits.",
+    "title": "Room Temp — Weather App",
+    "description": "A Flutter weather app pairing live forecasts, AQI and UV data with a physics-based thermal model that estimates indoor room temperature from outdoor conditions, sunlight exposure, and HVAC status.",
     "techStack": [
-      "Python",
-      "Machine Learning",
-      "Agentic AI"
+      "Flutter",
+      "Riverpod",
+      "REST APIs"
     ],
-    "githubUrl": "https://github.com/Saad-Ahsan626/AI_WARDROBE_ASSISTANT",
-    "imageUrl": "assets/projects-images/ai-wardrobe-assistant.png",
+    "githubUrl": "https://github.com/Saad-Ahsan626/Weather_App",
+    "imageUrl": "assets/projects-images/room-temperature-app.png",
     "featured": true
   },
   {

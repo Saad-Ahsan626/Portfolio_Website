@@ -2,7 +2,7 @@
   {
     "id": "exp_1",
     "role": "Computer Science Student & Independent Developer",
-    "company": "Self / Academic",
+    "company": "University of Engineering and Technology Lahore",
     "duration": "01-08-2024 — Present",
     "description": "Developing cross-platform mobile and full-stack web applications. Focusing on scalable MVVM architecture, advanced state management, and the integration of agentic AI models (like the Gemini API) to prepare for enterprise-level software engineering.",
     "techStack": [
