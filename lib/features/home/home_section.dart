@@ -90,11 +90,13 @@ class _HeroContent extends ConsumerWidget {
       if (ctx == null) return;
       final box = ctx.findRenderObject() as RenderBox?;
       if (box == null) return;
-      
+
       final appBarHeight = Responsive.isMobile(context) ? 60.0 : 80.0;
       final absoluteOffset =
-          (box.localToGlobal(Offset.zero).dy - appBarHeight) + scrollController.offset;
-      final targetOffset = (absoluteOffset - 20).clamp(0.0, scrollController.position.maxScrollExtent);
+          (box.localToGlobal(Offset.zero).dy - appBarHeight) +
+              scrollController.offset;
+      final targetOffset = (absoluteOffset - 20)
+          .clamp(0.0, scrollController.position.maxScrollExtent);
       scrollController.animateTo(
         targetOffset,
         duration: const Duration(milliseconds: 600),
@@ -112,7 +114,8 @@ class _HeroContent extends ConsumerWidget {
           "I BUILD",
           style: AppTypography.display
               .copyWith(color: AppColors.onSurfaceVariant, fontSize: 48),
-        ),
+        ).animate().fadeIn(duration: 400.ms).slideY(
+            begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
 
         // Typing animation for professional roles
         const TypingText(
@@ -159,15 +162,25 @@ class _HeroContent extends ConsumerWidget {
               ),
             ],
           ),
-        ),
+        ).animate(delay: 600.ms).fadeIn(duration: 400.ms).slideY(
+            begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
       ],
     );
   }
 }
 
-class _HeroVisualRight extends StatelessWidget {
+class _HeroVisualRight extends StatefulWidget {
   const _HeroVisualRight({required this.isMobile});
   final bool isMobile;
+
+  @override
+  State<_HeroVisualRight> createState() => _HeroVisualRightState();
+}
+
+class _HeroVisualRightState extends State<_HeroVisualRight> {
+  bool _hovered = false;
+
+  bool get isMobile => widget.isMobile;
 
   @override
   Widget build(BuildContext context) {
@@ -193,21 +206,40 @@ class _HeroVisualRight extends StatelessWidget {
               ),
             ),
 
-            // Portrait Image
-            AspectRatio(
-              aspectRatio: 4 / 5,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceContainerHigh,
-                  border: Border.all(
-                      color: AppColors.outlineVariant,
-                      width: 1), // Subtle sharp border
-                ),
-                child: Image.asset(
-                  'assets/images/saad.jpg',
-                  fit: BoxFit.cover,
-                  alignment:
-                      Alignment.topCenter, // Usually better for portraits
+            // Portrait Image — gold frame + soft glow on hover
+            MouseRegion(
+              onEnter: (_) => setState(() => _hovered = true),
+              onExit: (_) => setState(() => _hovered = false),
+              child: AspectRatio(
+                aspectRatio: 4 / 5,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOut,
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceContainerHigh,
+                    border: Border.all(
+                      color: _hovered
+                          ? AppColors.tertiary
+                          : AppColors.outlineVariant,
+                      width: 1,
+                    ),
+                    boxShadow: _hovered
+                        ? [
+                            BoxShadow(
+                              color:
+                                  AppColors.tertiary.withValues(alpha: 0.18),
+                              blurRadius: 32,
+                              offset: const Offset(0, 8),
+                            ),
+                          ]
+                        : const [],
+                  ),
+                  child: Image.asset(
+                    'assets/images/saad.jpg',
+                    fit: BoxFit.cover,
+                    alignment:
+                        Alignment.topCenter, // Usually better for portraits
+                  ),
                 ),
               ),
             ),

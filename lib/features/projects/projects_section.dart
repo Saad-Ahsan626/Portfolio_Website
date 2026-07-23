@@ -7,6 +7,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../providers/portfolio_provider.dart';
+import '../../shared/widgets/reveal_on_scroll.dart';
 import '../../shared/widgets/section_label.dart';
 import 'widgets/project_card.dart';
 import '../../data/models/project_model.dart';
@@ -34,7 +35,7 @@ class ProjectsSection extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Section header ───────────────────────────────────
-            _SectionHeader(),
+            RevealOnScroll(id: 'projects-header', child: _SectionHeader()),
 
             const SizedBox(height: AppSpacing.lg),
 
@@ -139,9 +140,10 @@ class _ProjectsGrid extends StatelessWidget {
 
             return SizedBox(
               width: itemWidth,
-              child: ProjectCard(
-                project: project,
-                animationDelay: Duration(milliseconds: index * 100),
+              child: RevealOnScroll(
+                id: 'project-card-${project.id}',
+                delay: Duration(milliseconds: index * 120),
+                child: ProjectCard(project: project),
               ),
             );
           }).toList(),

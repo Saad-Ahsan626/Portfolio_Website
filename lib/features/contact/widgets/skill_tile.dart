@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
@@ -10,12 +9,10 @@ class SkillTile extends StatefulWidget {
     super.key,
     required this.label,
     required this.icon,
-    this.delay = Duration.zero,
   });
 
   final String label;
   final IconData icon;
-  final Duration delay;
 
   @override
   State<SkillTile> createState() => _SkillTileState();
@@ -46,7 +43,7 @@ class _SkillTileState extends State<SkillTile> {
                 borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                 border: Border.all(
                   color: _hovered
-                      ? Colors.white.withValues(alpha: 0.2)
+                      ? AppColors.tertiary.withValues(alpha: 0.45)
                       : Colors.white.withValues(alpha: 0.05),
                   width: 1,
                 ),
@@ -57,10 +54,12 @@ class _SkillTileState extends State<SkillTile> {
                   AnimatedScale(
                     scale: _hovered ? 1.15 : 1.0,
                     duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
                     child: Icon(
                       widget.icon,
                       size: 28,
-                      color: AppColors.primary,
+                      color:
+                          _hovered ? AppColors.tertiary : AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -76,10 +75,7 @@ class _SkillTileState extends State<SkillTile> {
             ),
           ),
         ),
-      )
-          .animate(delay: widget.delay)
-          .fadeIn(duration: 400.ms)
-          .slideY(begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
+      ),
     );
   }
 }

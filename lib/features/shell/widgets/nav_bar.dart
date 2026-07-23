@@ -5,7 +5,6 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../providers/scroll_provider.dart';
-import '../../../providers/theme_provider.dart';
 
 /// NavBar implements PreferredSizeWidget so it can be used directly in
 /// Scaffold.appBar via PreferredSize — giving it a guaranteed fixed height
@@ -14,6 +13,7 @@ class NavBar extends ConsumerWidget {
   const NavBar({super.key});
 
   static const double navHeight = 80;
+  static const double navHeightMobile = 60;
 
   static const _navItems = [
     (label: 'About', index: SectionIndex.home),
@@ -34,12 +34,13 @@ class NavBar extends ConsumerWidget {
       if (ctx == null) return;
       final box = ctx.findRenderObject() as RenderBox?;
       if (box == null) return;
-      final isMobile = Responsive.isMobile(context);
-      final appBarHeight = isMobile ? 60.0 : 80.0;
+      final appBarHeight = isMobile ? navHeightMobile : navHeight;
       final absoluteOffset =
-          (box.localToGlobal(Offset.zero).dy - appBarHeight) + scrollController.offset;
+          (box.localToGlobal(Offset.zero).dy - appBarHeight) +
+              scrollController.offset;
       // Subtract 20px breathing room.
-      final targetOffset = (absoluteOffset - 20).clamp(0.0, scrollController.position.maxScrollExtent);
+      final targetOffset = (absoluteOffset - 20)
+          .clamp(0.0, scrollController.position.maxScrollExtent);
       scrollController.animateTo(
         targetOffset,
         duration: const Duration(milliseconds: 600),
@@ -51,7 +52,7 @@ class NavBar extends ConsumerWidget {
       color: Colors.transparent,
       elevation: 0,
       child: Container(
-        height: navHeight,
+        height: isMobile ? navHeightMobile : navHeight,
         decoration: BoxDecoration(
           color: AppColors.navBackground,
           border: Border(
@@ -67,21 +68,13 @@ class NavBar extends ConsumerWidget {
             Positioned.fill(
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: Responsive.isMobile(context)
-                      ? AppSpacing.md
-                      : AppSpacing.xl,
+                  horizontal: isMobile ? AppSpacing.md : AppSpacing.xl,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Logo
-                    Text(
-                      '',
-                      style: AppTypography.display.copyWith(
-                        fontSize: 28, // Scaled down for nav
-                        color: AppColors.onSurface,
-                      ),
-                    ),
+                    // Logo — scrolls back to top
+                    _NavLogo(onTap: () => scrollTo(SectionIndex.home)),
 
                     if (Responsive.isDesktop(context))
                       Flexible(
@@ -91,23 +84,13 @@ class NavBar extends ConsumerWidget {
                           child: Row(
                             children: [
                               ..._navItems.map((item) {
-                                final isActive = activeSection == item.index;
                                 return Padding(
                                   padding: const EdgeInsets.only(
                                       left: AppSpacing.lg),
-                                  child: InkWell(
+                                  child: _NavItem(
+                                    label: item.label,
+                                    isActive: activeSection == item.index,
                                     onTap: () => scrollTo(item.index),
-                                    borderRadius: BorderRadius.circular(4),
-                                    child: AnimatedDefaultTextStyle(
-                                      duration:
-                                          const Duration(milliseconds: 200),
-                                      style: AppTypography.labelCaps.copyWith(
-                                        color: isActive
-                                            ? AppColors.tertiary
-                                            : AppColors.onSurfaceVariant,
-                                      ),
-                                      child: Text(item.label.toUpperCase()),
-                                    ),
                                   ),
                                 );
                               }),
@@ -122,6 +105,7 @@ class NavBar extends ConsumerWidget {
                         builder: (ctx) => IconButton(
                           icon: const Icon(Icons.menu,
                               color: AppColors.onSurface),
+                          tooltip: 'Open navigation menu',
                           onPressed: () => Scaffold.of(ctx).openDrawer(),
                         ),
                       ),
@@ -139,6 +123,126 @@ class NavBar extends ConsumerWidget {
               child: _ScrollProgressBar(),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Logo — name with gold accent dot, clickable back-to-top
+// ─────────────────────────────────────────────────────────────────────────────
+class _NavLogo extends StatefulWidget {
+  const _NavLogo({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  State<_NavLogo> createState() => _NavLogoState();
+}
+
+class _NavLogoState extends State<_NavLogo> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Semantics(
+          button: true,
+          label: 'Back to top',
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            style: AppTypography.display.copyWith(
+              fontSize: 22,
+              letterSpacing: 1.5,
+              color: _hovered ? AppColors.tertiary : AppColors.onSurface,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('SAAD'),
+                Text(
+                  '.AHSAN',
+                  style: AppTypography.display.copyWith(
+                    fontSize: 22,
+                    letterSpacing: 1.5,
+                    color: AppColors.tertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Nav item — label with animated gold indicator bar (hover + active)
+// ─────────────────────────────────────────────────────────────────────────────
+class _NavItem extends StatefulWidget {
+  const _NavItem({
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  @override
+  State<_NavItem> createState() => _NavItemState();
+}
+
+class _NavItemState extends State<_NavItem> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final highlighted = widget.isActive || _hovered;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: InkWell(
+        onTap: widget.onTap,
+        borderRadius: BorderRadius.circular(4),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xs,
+            vertical: AppSpacing.sm,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 200),
+                style: AppTypography.labelCaps.copyWith(
+                  color: highlighted
+                      ? AppColors.tertiary
+                      : AppColors.onSurfaceVariant,
+                ),
+                child: Text(widget.label.toUpperCase()),
+              ),
+              const SizedBox(height: 4),
+              // Indicator bar grows from the left on hover/active.
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutCubic,
+                height: 2,
+                width: highlighted ? 20 : 0,
+                color: AppColors.tertiary,
+              ),
+            ],
+          ),
         ),
       ),
     );

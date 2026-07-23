@@ -129,38 +129,42 @@ class _FooterLinkState extends State<_FooterLink> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () async {
-          final uri = Uri.parse(widget.url);
-          if (await canLaunchUrl(uri)) {
-            await launchUrl(uri);
-          }
-        },
-        child: MouseRegion(
-          onEnter: (_) => setState(() => _hovered = true),
-          onExit: (_) => setState(() => _hovered = false),
-          cursor: SystemMouseCursors.click,
-          child: AnimatedDefaultTextStyle(
-            duration: const Duration(milliseconds: 100), // snappy
-            style: AppTypography.labelCaps.copyWith(
-              color: _hovered
-                  ? AppColors.tertiary // Gold
-                  : AppColors.onSurface,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  widget.icon,
-                  size: 14,
-                  color: _hovered ? AppColors.tertiary : AppColors.onSurface,
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                Text(widget.label.toUpperCase()), // Ensure uppercase
-              ],
-            ),
+    // InkWell (vs GestureDetector) adds keyboard focus/activation and the
+    // click cursor for free — links stay reachable without a mouse.
+    return InkWell(
+      onTap: () => launchUrl(Uri.parse(widget.url)),
+      onHover: (h) => setState(() => _hovered = h),
+      borderRadius: BorderRadius.circular(4),
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.xs,
+        ),
+        child: AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 100), // snappy
+          style: AppTypography.labelCaps.copyWith(
+            color: _hovered
+                ? AppColors.tertiary // Gold
+                : AppColors.onSurface,
           ),
-        ));
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                widget.icon,
+                size: 14,
+                color: _hovered ? AppColors.tertiary : AppColors.onSurface,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Text(widget.label.toUpperCase()), // Ensure uppercase
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

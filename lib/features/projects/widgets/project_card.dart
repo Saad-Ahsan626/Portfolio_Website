@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -13,11 +12,9 @@ class ProjectCard extends StatefulWidget {
   const ProjectCard({
     super.key,
     required this.project,
-    this.animationDelay = Duration.zero,
   });
 
   final ProjectModel project;
-  final Duration animationDelay;
 
   @override
   State<ProjectCard> createState() => _ProjectCardState();
@@ -51,7 +48,7 @@ class _ProjectCardState extends State<ProjectCard> {
                 borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                 border: Border.all(
                   color: _hovered
-                      ? Colors.white.withValues(alpha: 0.2)
+                      ? AppColors.tertiary.withValues(alpha: 0.45)
                       : Colors.white.withValues(alpha: 0.05),
                   width: 1,
                 ),
@@ -69,11 +66,16 @@ class _ProjectCardState extends State<ProjectCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Phone mockup visual
+                  // Phone mockup visual — gentle zoom on hover
                   Center(
-                    child: SizedBox(
-                      width: 140,
-                      child: PhoneMockup(imageUrl: widget.project.imageUrl),
+                    child: AnimatedScale(
+                      scale: _hovered ? 1.04 : 1.0,
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOut,
+                      child: SizedBox(
+                        width: 140,
+                        child: PhoneMockup(imageUrl: widget.project.imageUrl),
+                      ),
                     ),
                   ),
 
@@ -140,10 +142,7 @@ class _ProjectCardState extends State<ProjectCard> {
             ),
           ),
         ),
-      )
-          .animate(delay: widget.animationDelay)
-          .fadeIn(duration: 500.ms)
-          .slideY(begin: 0.2, end: 0, duration: 500.ms, curve: Curves.easeOut),
+      ),
     );
   }
 }

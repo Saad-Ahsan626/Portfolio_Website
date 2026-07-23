@@ -6,6 +6,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../providers/portfolio_provider.dart';
+import '../../shared/widgets/reveal_on_scroll.dart';
 import '../../shared/widgets/section_label.dart';
 import 'widgets/competencies_panel.dart';
 import 'widgets/timeline_node.dart';
@@ -33,7 +34,10 @@ class ExperienceSection extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Section header ───────────────────────────────────
-            _SectionHeader(isMobile: isMobile),
+            RevealOnScroll(
+              id: 'experience-header',
+              child: _SectionHeader(isMobile: isMobile),
+            ),
 
             const SizedBox(height: AppSpacing.xl),
 
@@ -46,10 +50,17 @@ class ExperienceSection extends ConsumerWidget {
                     .asMap()
                     .entries
                     .map(
-                      (e) => TimelineNodeRow(
-                        experience: e.value,
-                        index: e.key,
-                        isLast: e.key == items.length - 1,
+                      (e) => RevealOnScroll(
+                        id: 'timeline-${e.value.id}',
+                        delay: Duration(milliseconds: e.key * 120),
+                        slideDirection: e.key.isEven
+                            ? AxisDirection.left
+                            : AxisDirection.right,
+                        child: TimelineNodeRow(
+                          experience: e.value,
+                          index: e.key,
+                          isLast: e.key == items.length - 1,
+                        ),
                       ),
                     )
                     .toList(),
@@ -59,7 +70,10 @@ class ExperienceSection extends ConsumerWidget {
             const SizedBox(height: AppSpacing.xl),
 
             // ── Core competencies ─────────────────────────────────
-            const CompetenciesPanel(),
+            const RevealOnScroll(
+              id: 'competencies-panel',
+              child: CompetenciesPanel(),
+            ),
           ],
         ),
       ),

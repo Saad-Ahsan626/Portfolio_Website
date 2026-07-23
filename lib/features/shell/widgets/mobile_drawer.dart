@@ -36,7 +36,7 @@ class MobileDrawer extends ConsumerWidget {
         final box = ctx.findRenderObject() as RenderBox?;
         if (box == null) return;
 
-        final appBarHeight = 60.0;
+        const appBarHeight = 60.0;
         final absoluteOffset =
             (box.localToGlobal(Offset.zero).dy - appBarHeight) + scrollController.offset;
         final targetOffset =
@@ -110,7 +110,7 @@ class MobileDrawer extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.md),
 
                   Text(
-                    '© 2024 Built with Flutter',
+                    '© 2026 Built with Flutter',
                     style: AppTypography.labelCaps.copyWith(
                       color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
                     ),

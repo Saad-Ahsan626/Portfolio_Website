@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio/providers/scroll_provider.dart';
 import 'package:portfolio/providers/scroll_visibility_provider.dart';
 
+/// Reveals [child] with a fade + slide the first time it scrolls into the
+/// viewport. Reveal state lives in [scrollVisibilityProvider] so a widget
+/// never re-hides once shown (e.g. after a rebuild or resize).
 class RevealOnScroll extends ConsumerStatefulWidget {
   const RevealOnScroll({
     super.key,
@@ -21,31 +26,41 @@ class RevealOnScroll extends ConsumerStatefulWidget {
 }
 
 class _RevealOnScrollState extends ConsumerState<RevealOnScroll> {
-  final _key = GlobalKey();
+  ScrollController? _controller;
 
   @override
   void initState() {
     super.initState();
+    // Scroll notifications bubble UP from the scrollable, so a listener down
+    // here never sees them — observe the shared ScrollController instead.
+    _controller = ref.read(scrollControllerProvider);
+    _controller!.addListener(_checkVisibility);
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkVisibility());
+  }
+
+  @override
+  void dispose() {
+    _controller?.removeListener(_checkVisibility);
+    super.dispose();
   }
 
   void _checkVisibility() {
     if (!mounted) return;
+    if (ref.read(scrollVisibilityProvider)[widget.id] == true) {
+      _controller?.removeListener(_checkVisibility);
+      return;
+    }
 
-    final ctx = _key.currentContext;
-    if (ctx == null) return;
+    final box = context.findRenderObject() as RenderBox?;
+    if (box == null || !box.attached) return;
 
-    final box = ctx.findRenderObject() as RenderBox?;
-    if (box == null) return;
-
-    final position = box.localToGlobal(Offset.zero);
+    final top = box.localToGlobal(Offset.zero).dy;
     final screenHeight = MediaQuery.sizeOf(context).height;
 
-    // Check if the element is currently visible in the viewport
-    if (position.dy < screenHeight * 0.92) {
-      // Defer the state update to the end of the frame
+    // Reveal once the top of the widget crosses 90% of the viewport height.
+    if (top < screenHeight * 0.9) {
+      _controller?.removeListener(_checkVisibility);
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Ensure the widget is still mounted before updating
         if (mounted) {
           ref.read(scrollVisibilityProvider.notifier).markVisible(widget.id);
         }
@@ -53,38 +68,41 @@ class _RevealOnScrollState extends ConsumerState<RevealOnScroll> {
     }
   }
 
-  Offset get _slideOffset {
+  Offset get _slideBegin {
     return switch (widget.slideDirection) {
-      AxisDirection.up => const Offset(0, 30),
-      AxisDirection.down => const Offset(0, -30),
-      AxisDirection.left => const Offset(30, 0),
-      AxisDirection.right => const Offset(-30, 0),
+      AxisDirection.up => const Offset(0, 0.12),
+      AxisDirection.down => const Offset(0, -0.12),
+      AxisDirection.left => const Offset(0.08, 0),
+      AxisDirection.right => const Offset(-0.08, 0),
     };
   }
 
   @override
   Widget build(BuildContext context) {
-    final isVisible = ref.watch(scrollVisibilityProvider)[widget.id] ?? false;
+    final isVisible = ref.watch(
+      scrollVisibilityProvider.select((m) => m[widget.id] ?? false),
+    );
 
-    return NotificationListener<ScrollNotification>(
-      onNotification: (_) {
-        _checkVisibility();
-        return false;
-      },
-      child: KeyedSubtree(
-        key: _key,
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 600),
+    // target-driven Animate: plays forward when isVisible flips to 1,
+    // honoring the stagger delay. autoPlay off so it waits for the trigger.
+    return Animate(
+      target: isVisible ? 1 : 0,
+      autoPlay: false,
+      effects: [
+        FadeEffect(
+          delay: widget.delay,
+          duration: 500.ms,
           curve: Curves.easeOut,
-          opacity: isVisible ? 1.0 : 0.0,
-          child: AnimatedSlide(
-            duration: const Duration(milliseconds: 600),
-            curve: Curves.easeOut,
-            offset: isVisible ? Offset.zero : _slideOffset / 100,
-            child: widget.child,
-          ),
         ),
-      ),
+        SlideEffect(
+          delay: widget.delay,
+          begin: _slideBegin,
+          end: Offset.zero,
+          duration: 500.ms,
+          curve: Curves.easeOutCubic,
+        ),
+      ],
+      child: widget.child,
     );
   }
 }
