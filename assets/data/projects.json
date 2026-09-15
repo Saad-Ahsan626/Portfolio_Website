@@ -1,21 +1,218 @@
 [
   {
-    "id": "room-temp",
-    "title": "Room Temp — Weather App",
-    "shortTitle": "Room Temp",
+    "id": "campus-pulse",
+    "title": "Campus Pulse",
+    "shortTitle": "Campus Pulse",
+    "kind": "Full-stack App",
+    "year": "2026",
+    "description": "One feed for every event on campus. Students follow societies, save events and get reminders without signing up, societies publish from their own portal, and admins moderate, all on an offline-first Flutter app backed by Supabase.",
+    "techStack": [
+      "Flutter",
+      "Supabase",
+      "Drift",
+      "FCM"
+    ],
+    "githubUrl": null,
+    "imageUrl": "assets/projects-images/campus-pulse-home.webp",
+    "headline": "Every event on campus, one feed.",
+    "overview": "University societies announce events on WhatsApp, where they get buried and missed. Campus Pulse gives students one structured feed with follows, saves, “Going” and reminders, with no account needed, and gives societies a portal that is faster than writing a WhatsApp message. Platform admins approve societies and moderate content from the same app, on Android and the web.",
+    "facts": [
+      {
+        "label": "Role",
+        "value": "Sole developer"
+      },
+      {
+        "label": "Platform",
+        "value": "Android · Web"
+      },
+      {
+        "label": "Data",
+        "value": "Drift · Supabase"
+      },
+      {
+        "label": "Push",
+        "value": "FCM topics"
+      }
+    ],
+    "architecture": [
+      "Feature-based Clean Architecture: domain, data and presentation layers per feature, with a pure-Dart domain",
+      "Offline-first: screens read only the local Drift database, filled by transactional delta sync from four Postgres functions",
+      "The server decides: row-level security plus audited portal and admin functions, with version checks so two members can't overwrite each other's edits"
+    ],
+    "features": [
+      {
+        "title": "Offline-first feed",
+        "body": "A local database kept fresh by cursor-based delta sync, so the feed works without a signal."
+      },
+      {
+        "title": "No sign-up needed",
+        "body": "Follows, saves and reminders work anonymously, and push topics never reveal who follows what."
+      },
+      {
+        "title": "Society portal",
+        "body": "Invite-only members draft, schedule, publish and cancel events, with autosave and conflict detection."
+      },
+      {
+        "title": "Admin & moderation",
+        "body": "Approve societies, hide events, review reports and push app-wide settings like maintenance banners."
+      }
+    ],
+    "screens": [
+      {
+        "label": "Home feed",
+        "image": "assets/projects-images/campus-pulse-home.webp"
+      },
+      {
+        "label": "Event detail",
+        "image": "assets/projects-images/campus-pulse-event.webp"
+      },
+      {
+        "label": "Society profile",
+        "image": "assets/projects-images/campus-pulse-society.webp"
+      },
+      {
+        "label": "Portal · create event",
+        "image": "assets/projects-images/campus-pulse-create-event.webp"
+      },
+      {
+        "label": "Student web",
+        "image": "assets/projects-images/campus-pulse-web-feed.webp",
+        "device": "browser",
+        "aspectRatio": 1.6822,
+        "url": "/discover"
+      },
+      {
+        "label": "Society portal",
+        "image": "assets/projects-images/campus-pulse-portal.webp",
+        "device": "browser",
+        "aspectRatio": 1.7647,
+        "url": "/portal"
+      },
+      {
+        "label": "Admin overview",
+        "image": "assets/projects-images/campus-pulse-admin.webp",
+        "device": "browser",
+        "aspectRatio": 1.7647,
+        "url": "/admin"
+      }
+    ],
+    "challenge": "Events live in scattered WhatsApp groups, and a student app that demands sign-up or a constant connection won't get used. At the same time, many societies need to publish safely without the server trusting the client.",
+    "approach": "Students stay anonymous and read from a local database synced in deltas, while every write goes through server-side functions that check the member's role, validate the change and record an audit log in one transaction."
+  },
+  {
+    "id": "ai-tuition",
+    "title": "AI Tuition",
+    "shortTitle": "AI Tuition",
+    "kind": "Full-stack App",
+    "year": "2026",
+    "description": "A tutoring platform that turns a photographed school diary into lessons and practice. Teachers review and publish the AI's draft, students practise with AI feedback, and every result flows back to the teacher.",
+    "techStack": [
+      "Flutter",
+      "Node.js",
+      "Prisma",
+      "MySQL",
+      "Gemini"
+    ],
+    "githubUrl": null,
+    "imageUrl": "assets/projects-images/ai-tuition-home.webp",
+    "headline": "The school diary, turned into practice.",
+    "overview": "Homework in many schools still lives in a paper diary. AI Tuition lets a teacher photograph the class diary, and the backend reads it with AI to prepare lessons and tasks that the teacher reviews, corrects and publishes. Students work through the tasks with hints and AI feedback, then take a quiz, and the teacher sees every result and can change any score.",
+    "facts": [
+      {
+        "label": "Role",
+        "value": "Flutter & backend developer"
+      },
+      {
+        "label": "Platform",
+        "value": "Android · iOS"
+      },
+      {
+        "label": "Backend",
+        "value": "Node.js · Prisma · MySQL"
+      },
+      {
+        "label": "AI",
+        "value": "Gemini · DeepSeek"
+      }
+    ],
+    "architecture": [
+      "Clean Architecture in Flutter, with separate teacher, student and parent portals behind role-based routes",
+      "Frontend is strictly UI: business logic and AI processing live in the Node.js API, reached through Dio with JWT interceptors",
+      "Typed failures with fpdart's Either, secure token storage and a Swagger-documented REST contract between app and API"
+    ],
+    "features": [
+      {
+        "title": "Diary to draft",
+        "body": "Teachers photograph the class diary and get AI-prepared lessons and tasks to review."
+      },
+      {
+        "title": "Teacher in control",
+        "body": "Every AI draft is checked before students see it, and teachers can change any score."
+      },
+      {
+        "title": "Practice with feedback",
+        "body": "Students answer tasks one at a time with hints and AI-written feedback, then take a quiz."
+      },
+      {
+        "title": "Class insights",
+        "body": "Score spreads, answers waiting to be checked and students who need help, on one screen."
+      }
+    ],
+    "screens": [
+      {
+        "label": "Home",
+        "image": "assets/projects-images/ai-tuition-home.webp"
+      },
+      {
+        "label": "Class detail",
+        "image": "assets/projects-images/ai-tuition-class.webp"
+      },
+      {
+        "label": "Check answer",
+        "image": "assets/projects-images/ai-tuition-check-answer.webp"
+      },
+      {
+        "label": "Upload diary",
+        "image": "assets/projects-images/ai-tuition-upload-diary.webp"
+      }
+    ],
+    "challenge": "AI that reads handwritten diaries isn't always right, and a tutoring app can't put unchecked AI output in front of children.",
+    "approach": "The AI only prepares drafts and feedback. Teachers review everything before it's published and keep the final say on every score, and all AI calls stay on the server behind authenticated, rate-limited endpoints."
+  },
+  {
+    "id": "room-temperature-app",
+    "title": "Room Temperature App",
+    "shortTitle": "Room Temperature",
     "kind": "Mobile App",
     "year": "2026",
     "description": "A Flutter weather app that goes beyond the forecast: live conditions, hourly and 3-day forecasts and air quality, paired with a physics-based thermal model that estimates the temperature inside your room.",
-    "techStack": ["Flutter", "Riverpod", "REST APIs", "Maps"],
+    "techStack": [
+      "Flutter",
+      "Riverpod",
+      "REST APIs",
+      "Maps"
+    ],
     "githubUrl": null,
     "imageUrl": "assets/projects-images/room-temperature-app.webp",
     "headline": "Outdoor weather data, turned into an indoor answer.",
-    "overview": "Most weather apps stop at the forecast. Room Temp pulls live conditions, forecasts, air quality and UV data, then runs them through a lumped-capacitance thermal model that accounts for room size, sunlight exposure and whether an AC or heater is running, so the number you see is the one that matters inside your room.",
+    "overview": "Most weather apps stop at the forecast. Room Temperature App pulls live conditions, forecasts, air quality and UV data, then runs them through a lumped-capacitance thermal model that accounts for room size, sunlight exposure and whether an AC or heater is running, so the number you see is the one that matters inside your room.",
     "facts": [
-      { "label": "Role", "value": "Sole developer" },
-      { "label": "Platform", "value": "Android · iOS" },
-      { "label": "State", "value": "Riverpod" },
-      { "label": "Data", "value": "WeatherAPI · Mapbox" }
+      {
+        "label": "Role",
+        "value": "Sole developer"
+      },
+      {
+        "label": "Platform",
+        "value": "Android · iOS"
+      },
+      {
+        "label": "State",
+        "value": "Riverpod"
+      },
+      {
+        "label": "Data",
+        "value": "WeatherAPI · Mapbox"
+      }
     ],
     "architecture": [
       "Core, data and presentation layers with Riverpod view-models between the UI and the repository",
@@ -23,85 +220,30 @@
       "Pure-Dart thermal model, unit-tested and guarded against NaN and Infinity"
     ],
     "features": [
-      { "title": "Indoor estimate", "body": "A three-stage thermal model covering thermal lag, solar gain and capacity-limited AC or heating." },
-      { "title": "Weather-reactive scenes", "body": "Clear, night, rain, snow, fog and haze scenes, each with legibility-matched text colours." },
-      { "title": "Cities & map picker", "body": "GPS home anchoring, accent-tolerant city search and a pin-drop map picker." },
-      { "title": "Rich details", "body": "AQI, UV index, a sun-path arc, wind compass and pressure gauge." }
+      {
+        "title": "Indoor estimate",
+        "body": "A three-stage thermal model covering thermal lag, solar gain and capacity-limited AC or heating."
+      },
+      {
+        "title": "Weather-reactive scenes",
+        "body": "Clear, night, rain, snow, fog and haze scenes, each with legibility-matched text colours."
+      },
+      {
+        "title": "Cities & map picker",
+        "body": "GPS home anchoring, accent-tolerant city search and a pin-drop map picker."
+      },
+      {
+        "title": "Rich details",
+        "body": "AQI, UV index, a sun-path arc, wind compass and pressure gauge."
+      }
     ],
     "screens": [
-      { "label": "Home", "image": "assets/projects-images/room-temperature-app.webp" }
+      {
+        "label": "Home",
+        "image": "assets/projects-images/room-temperature-app.webp"
+      }
     ],
     "challenge": "Outdoor temperature is a poor proxy for how a room actually feels. Sunlight, room size and an AC or heater can move the indoor reading by several degrees.",
     "approach": "A pure-Dart thermal model sits between the data layer and the UI. It takes outdoor conditions, sun exposure, room size and HVAC runtime as inputs, and Riverpod recomputes the estimate whenever any of them change."
-  },
-  {
-    "id": "first-aid-assistant",
-    "title": "First Aid Assistant",
-    "shortTitle": "First Aid",
-    "kind": "Mobile App",
-    "year": "2026",
-    "description": "An offline-first, bilingual (English and Urdu) emergency guide with Urdu text-to-speech and a nearest-hospital locator, designed to stay clear and usable under stress.",
-    "techStack": ["Flutter", "Riverpod", "Offline-first", "TTS"],
-    "githubUrl": "https://github.com/Saad-Ahsan626/First_Aid_Assistant",
-    "imageUrl": "assets/projects-images/first-aid-assistant.webp",
-    "headline": "Emergency guidance that works with no signal.",
-    "overview": "An emergency reference is useless if it needs a network. First Aid Assistant ships every protocol on-device, reads steps aloud in Urdu so hands stay free, and finds the nearest hospital from your location, all behind a high-contrast interface built to reduce cognitive load in a crisis.",
-    "facts": [
-      { "label": "Role", "value": "Solo developer" },
-      { "label": "Platform", "value": "Android · iOS" },
-      { "label": "State", "value": "Riverpod" },
-      { "label": "Data", "value": "Bundled JSON, offline" }
-    ],
-    "architecture": [
-      "Emergency protocols bundled as local JSON, so life-saving content never waits on a network",
-      "Riverpod providers expose language, theme and protocol state to the UI",
-      "Location services and an in-app browser view power the hospital locator"
-    ],
-    "features": [
-      { "title": "Offline-first", "body": "Every emergency protocol is stored and served on-device." },
-      { "title": "English & Urdu", "body": "Switch languages instantly, with Urdu rendered alongside English titles." },
-      { "title": "Urdu text-to-speech", "body": "Steps are read aloud so users can follow them hands-free." },
-      { "title": "Nearest hospital", "body": "Detects your location and maps nearby hospitals without leaving the app." }
-    ],
-    "screens": [
-      { "label": "Home", "image": "assets/projects-images/first-aid-assistant.webp" }
-    ],
-    "challenge": "The app has to be dependable in exactly the moments when connectivity and attention are least reliable, while serving content in two languages and two scripts.",
-    "approach": "All protocols ship with the app as local data, Urdu guidance is spoken through on-device text-to-speech, and a restrained clinical design system reserves emergency red for the actions that matter."
-  },
-  {
-    "id": "note-app",
-    "title": "Note App",
-    "shortTitle": "Note App",
-    "kind": "Full-stack App",
-    "year": "2026",
-    "description": "A cross-platform notes app with Firebase authentication and Cloud Firestore sync, built on a clean MVVM structure that keeps business logic out of the UI.",
-    "techStack": ["Flutter", "Firebase", "Provider", "MVVM"],
-    "githubUrl": "https://github.com/Saad-Ahsan626/Note-App",
-    "imageUrl": "assets/projects-images/note-app.webp",
-    "headline": "A notes app built as an architecture exercise.",
-    "overview": "Note App is a full-stack notes client with sign-up, login and password reset through Firebase Authentication, and notes stored in Cloud Firestore so they follow the user across devices. It was written to a strict MVVM structure, with ChangeNotifier view-models between the widgets and the backend.",
-    "facts": [
-      { "label": "Role", "value": "Solo developer" },
-      { "label": "Platform", "value": "Cross-platform" },
-      { "label": "Pattern", "value": "MVVM" },
-      { "label": "Backend", "value": "Firebase" }
-    ],
-    "architecture": [
-      "View, ViewModel and Model layers kept strictly separate",
-      "Provider ChangeNotifiers own authentication and notes state",
-      "Firebase Authentication and Cloud Firestore as the backend"
-    ],
-    "features": [
-      { "title": "Authentication", "body": "Sign up, log in, log out and reset a forgotten password by email." },
-      { "title": "Notes CRUD", "body": "Create, edit and delete notes with a title and description." },
-      { "title": "Cloud sync", "body": "Notes live in Cloud Firestore and are available on any device." },
-      { "title": "Clean MVVM", "body": "Logic and UI stay in separate layers, so features are easy to extend." }
-    ],
-    "screens": [
-      { "label": "Notes", "image": "assets/projects-images/note-app.webp" }
-    ],
-    "challenge": "Cloud backends make it easy to leak Firebase calls into widgets, which is what makes apps like this hard to extend later.",
-    "approach": "ChangeNotifier view-models sit between Firebase and the screens, so widgets only talk to view-models and the data source can change without touching the UI."
   }
 ]

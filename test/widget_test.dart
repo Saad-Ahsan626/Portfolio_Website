@@ -24,6 +24,10 @@ void main() {
         expect(project.architecture, isNotEmpty);
         expect(project.features, isNotEmpty);
         expect(project.screens, isNotEmpty);
+        for (final screen in project.screens.where((s) => s.isBrowser)) {
+          expect(screen.aspectRatio, isNotNull,
+              reason: 'browser screens need an aspectRatio to size their frame');
+        }
         expect(project.headline.trim(), isNotEmpty);
         expect(project.challenge.trim(), isNotEmpty);
         expect(project.approach.trim(), isNotEmpty);

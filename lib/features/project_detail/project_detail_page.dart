@@ -18,6 +18,7 @@ import '../../shared/widgets/hover_link.dart';
 import '../../shared/widgets/primary_button.dart';
 import '../../shared/widgets/section_container.dart';
 import '../../shared/widgets/section_header.dart';
+import '../projects/widgets/browser_mockup.dart';
 import '../projects/widgets/phone_mockup.dart';
 import '../shell/widgets/mobile_drawer.dart';
 import '../shell/widgets/nav_bar.dart';
@@ -378,9 +379,17 @@ class _Screens extends StatelessWidget {
 
   static const double _gap = 24;
 
+  static Widget _caption(String label) => Text(
+        label.toUpperCase(),
+        style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
+      );
+
   @override
   Widget build(BuildContext context) {
     final count = project.screens.length;
+    final phones = project.screens.where((s) => !s.isBrowser).toList();
+    final browsers = project.screens.where((s) => s.isBrowser).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -391,41 +400,91 @@ class _Screens extends StatelessWidget {
               '${count.toString().padLeft(2, '0')} ${count == 1 ? 'VIEW' : 'VIEWS'}',
         ),
         const SizedBox(height: 40),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            // Always size for four tracks so one or two phones don't balloon.
-            final columns = Responsive.autoFitColumns(
-              width: constraints.maxWidth,
-              minItemWidth: 200,
-              gap: _gap,
-              itemCount: 4,
-            );
-            final itemWidth =
-                (constraints.maxWidth - _gap * (columns - 1)) / columns;
-            return Wrap(
-              spacing: _gap,
-              runSpacing: _gap,
-              children: [
-                for (final screen in project.screens)
-                  SizedBox(
-                    width: itemWidth.clamp(0, 260),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        PhoneMockup(imageUrl: screen.image),
-                        const SizedBox(height: 14),
-                        Text(
-                          screen.label.toUpperCase(),
-                          style: AppTypography.labelSm
-                              .copyWith(color: AppColors.onSurfaceVariant),
-                        ),
-                      ],
+
+        // ── Phone screens ──
+        if (phones.isNotEmpty)
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // Always size for four tracks so one or two phones don't balloon.
+              final columns = Responsive.autoFitColumns(
+                width: constraints.maxWidth,
+                minItemWidth: 200,
+                gap: _gap,
+                itemCount: 4,
+              );
+              final itemWidth =
+                  (constraints.maxWidth - _gap * (columns - 1)) / columns;
+              return Wrap(
+                spacing: _gap,
+                runSpacing: _gap,
+                children: [
+                  for (final screen in phones)
+                    SizedBox(
+                      width: itemWidth.clamp(0, 260),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          PhoneMockup(imageUrl: screen.image),
+                          const SizedBox(height: 14),
+                          _caption(screen.label),
+                        ],
+                      ),
                     ),
-                  ),
-              ],
-            );
-          },
-        ),
+                ],
+              );
+            },
+          ),
+
+        // ── Web and dashboard screens ──
+        if (browsers.isNotEmpty) ...[
+          if (phones.isNotEmpty) const SizedBox(height: 56),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final columns = Responsive.autoFitColumns(
+                width: constraints.maxWidth,
+                minItemWidth: 460,
+                gap: _gap,
+                itemCount: browsers.length,
+                avoidOrphans: true,
+              );
+              final itemWidth =
+                  (constraints.maxWidth - _gap * (columns - 1)) / columns;
+              // An odd one out becomes a full-width lead shot instead of
+              // sitting alone at half width.
+              final leadFullWidth =
+                  columns > 1 && browsers.length % columns == 1;
+              // One shared ratio (the widest) keeps frames in a row the same
+              // height; screenshots are top-aligned, so only the bottom trims.
+              final ratio = browsers
+                  .map((s) => s.aspectRatio ?? 16 / 10)
+                  .reduce((a, b) => a > b ? a : b);
+              return Wrap(
+                spacing: _gap,
+                runSpacing: 40,
+                children: [
+                  for (final (i, screen) in browsers.indexed)
+                    SizedBox(
+                      width: i == 0 && leadFullWidth
+                          ? constraints.maxWidth
+                          : itemWidth,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          BrowserMockup(
+                            imageUrl: screen.image,
+                            aspectRatio: ratio,
+                            url: screen.url,
+                          ),
+                          const SizedBox(height: 14),
+                          _caption(screen.label),
+                        ],
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+        ],
       ],
     );
   }

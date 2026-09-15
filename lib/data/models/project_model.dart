@@ -20,7 +20,7 @@ class ProjectModel {
     required this.approach,
   });
 
-  /// URL slug, e.g. `/projects/room-temp`.
+  /// URL slug, e.g. `/projects/campus-pulse`.
   final String id;
   final String title;
 
@@ -99,14 +99,39 @@ class ProjectFeature {
       );
 }
 
+enum ScreenDevice { phone, browser }
+
 class ProjectScreen {
-  const ProjectScreen({required this.label, required this.image});
+  const ProjectScreen({
+    required this.label,
+    required this.image,
+    this.device = ScreenDevice.phone,
+    this.aspectRatio,
+    this.url,
+  });
 
   final String label;
   final String image;
 
+  /// Which frame the screenshot is shown in on the case-study page.
+  final ScreenDevice device;
+
+  /// Width ÷ height of a browser screenshot, so its frame is sized before the
+  /// image loads.
+  final double? aspectRatio;
+
+  /// Text in the browser frame's address bar, e.g. "/portal".
+  final String? url;
+
+  bool get isBrowser => device == ScreenDevice.browser;
+
   factory ProjectScreen.fromJson(Map<String, dynamic> json) => ProjectScreen(
         label: json['label'] as String,
         image: json['image'] as String,
+        device: json['device'] == 'browser'
+            ? ScreenDevice.browser
+            : ScreenDevice.phone,
+        aspectRatio: (json['aspectRatio'] as num?)?.toDouble(),
+        url: json['url'] as String?,
       );
 }
