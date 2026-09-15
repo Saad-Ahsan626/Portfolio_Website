@@ -6,18 +6,16 @@ class ExperienceModel {
     required this.duration,
     required this.description,
     required this.techStack,
-    this.isCurrent = false,
-    this.icon = 'work',        
   });
 
   final String id;
   final String role;
   final String company;
+
+  /// Display string, e.g. "Sep 2026 — Present".
   final String duration;
   final String description;
   final List<String> techStack;
-  final bool isCurrent;
-  final String icon;           
 
   factory ExperienceModel.fromJson(Map<String, dynamic> json) => ExperienceModel(
         id: json['id'] as String,
@@ -26,7 +24,5 @@ class ExperienceModel {
         duration: json['duration'] as String,
         description: json['description'] as String,
         techStack: List<String>.from(json['techStack'] as List),
-        isCurrent: json['isCurrent'] as bool? ?? false,
-        icon: json['icon'] as String? ?? 'work',   
       );
 }

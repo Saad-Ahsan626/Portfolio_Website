@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_typography.dart';
-import '../../../core/utils/responsive.dart';
 
+/// Types and deletes each phrase in turn with a blinking gold cursor.
 class TypingText extends StatefulWidget {
   const TypingText({
     super.key,
     required this.texts,
+    required this.style,
     this.typingSpeed = const Duration(milliseconds: 60),
     this.deletingSpeed = const Duration(milliseconds: 30),
     this.pauseDuration = const Duration(milliseconds: 1800),
@@ -15,6 +15,7 @@ class TypingText extends StatefulWidget {
 
   /// List of strings to cycle through
   final List<String> texts;
+  final TextStyle style;
   final Duration typingSpeed;
   final Duration deletingSpeed;
   final Duration pauseDuration;
@@ -25,8 +26,7 @@ class TypingText extends StatefulWidget {
 
 class _TypingTextState extends State<TypingText>
     with SingleTickerProviderStateMixin {
-  late AnimationController _cursorController;
-  late Animation<double> _cursorOpacity;
+  late final AnimationController _cursorController;
 
   String _displayText = '';
   int _textIndex = 0;
@@ -37,18 +37,12 @@ class _TypingTextState extends State<TypingText>
   void initState() {
     super.initState();
 
-    // Blinking cursor animation
+    // Hard on/off blink, like the design's `steps(1)` keyframes.
     _cursorController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 750),
-    )..repeat(reverse: true);
+      duration: const Duration(milliseconds: 1000),
+    )..repeat();
 
-    _cursorOpacity = Tween<double>(begin: 1, end: 0).animate(_cursorController);
-
-    _startTyping();
-  }
-
-  void _startTyping() {
     _scheduleNext(widget.typingSpeed);
   }
 
@@ -63,7 +57,6 @@ class _TypingTextState extends State<TypingText>
 
     setState(() {
       if (_isDeleting) {
-        // Remove one character
         if (_displayText.isNotEmpty) {
           _displayText = fullText.substring(0, _displayText.length - 1);
         }
@@ -76,7 +69,6 @@ class _TypingTextState extends State<TypingText>
         }
         _scheduleNext(widget.deletingSpeed);
       } else {
-        // Add one character
         if (_displayText.length < fullText.length) {
           _displayText = fullText.substring(0, _displayText.length + 1);
         }
@@ -101,43 +93,47 @@ class _TypingTextState extends State<TypingText>
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = Responsive.isMobile(context);
-    final style =
-        isMobile ? AppTypography.headlineLgMobile : AppTypography.headlineLg;
+    final fontSize = widget.style.fontSize ?? 48;
+    final longest = widget.texts.reduce((a, b) => a.length >= b.length ? a : b);
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Flexible(
-          child: Text(
-            _displayText,
-            style: style.copyWith(
-              color: AppColors.onSurface,
-              shadows: [
-                Shadow(
-                  color: AppColors.primary.withValues(alpha: 0.25),
-                  blurRadius: 20,
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        // Blinking cursor
-        FadeTransition(
-          opacity: _cursorOpacity,
+    final cursor = WidgetSpan(
+      alignment: PlaceholderAlignment.baseline,
+      baseline: TextBaseline.alphabetic,
+      child: AnimatedBuilder(
+        animation: _cursorController,
+        builder: (context, _) => Opacity(
+          opacity: _cursorController.value < 0.5 ? 1 : 0,
           child: Container(
-            width: 2.5,
-            height: isMobile ? 32 : 42,
-            margin: const EdgeInsets.only(left: 3),
-            decoration: BoxDecoration(
-              color: AppColors.electricCyan,
-              borderRadius: BorderRadius.circular(2),
-            ),
+            width: 3,
+            height: fontSize * 0.8,
+            margin: const EdgeInsets.only(left: 6),
+            color: AppColors.accent,
           ),
         ),
-      ],
+      ),
+    );
+
+    return Semantics(
+      label: widget.texts.join(' '),
+      child: ExcludeSemantics(
+        child: Stack(
+          children: [
+            // Invisible longest phrase reserves the final height, so the hero
+            // doesn't jump when a phrase wraps onto a second line.
+            Opacity(
+              opacity: 0,
+              child: Text.rich(
+                TextSpan(text: longest, children: [cursor]),
+                style: widget.style,
+              ),
+            ),
+            Text.rich(
+              TextSpan(text: _displayText, children: [cursor]),
+              style: widget.style,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,339 +1,253 @@
-import 'dart:ui';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:simple_icons/simple_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../core/constants/links.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
 import '../../providers/contact_form_provider.dart';
-import '../../shared/widgets/primary_button.dart';
+import '../../shared/widgets/hover_link.dart';
+import '../../shared/widgets/pulsing_dot.dart';
 import '../../shared/widgets/reveal_on_scroll.dart';
-import '../../shared/widgets/section_label.dart';
-import 'widgets/form_field_widget.dart';
-import 'widgets/skill_tile.dart';
+import '../../shared/widgets/section_container.dart';
+import 'widgets/contact_field.dart';
 
-class ContactSection extends ConsumerWidget {
+class ContactSection extends StatelessWidget {
   const ContactSection({super.key});
 
-  static const _toolkit = [
-    (label: 'Flutter', icon: SimpleIcons.flutter),
-    (label: 'Dart', icon: SimpleIcons.dart),
-    (label: 'Python', icon: SimpleIcons.python),
-    (label: 'Riverpod', icon: Icons.layers_outlined),
-    (label: 'Firebase', icon: SimpleIcons.firebase),
-    (label: 'Gemini API', icon: SimpleIcons.googlegemini),
-  ];
+  @override
+  Widget build(BuildContext context) {
+    return const SectionContainer(
+      child: RevealOnScroll(id: 'contact', child: _ContactFrame()),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Bordered two-panel frame: statement + channels | form
+// ─────────────────────────────────────────────────────────────────────────────
+class _ContactFrame extends StatelessWidget {
+  const _ContactFrame();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isDesktop = Responsive.isDesktop(context);
-    final isMobile = Responsive.isMobile(context);
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      // Foreground, so the form panel's fill can't cover the frame.
+      position: DecorationPosition.foreground,
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.outlineVariant),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Design grid: auto-fit minmax(340px, 1fr).
+          final twoColumns = constraints.maxWidth >= 340 * 2;
+          final panelWidth =
+              twoColumns ? (constraints.maxWidth - 1) / 2 : constraints.maxWidth;
+          // Name/email sit side by side when the form's inner width fits two
+          // minmax(200px) tracks. Decided here because LayoutBuilder can't be
+          // used inside IntrinsicHeight.
+          final innerWidth =
+              panelWidth - _panelPadding(context).horizontal - 2;
+          final sideBySide = innerWidth >= 200 * 2 + 26;
 
-    final horizontalPadding = isDesktop
-        ? AppSpacing.xl
-        : isMobile
-            ? AppSpacing.md
-            : AppSpacing.lg;
-
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: AppSpacing.containerMax),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // ── About Me split panel ─────────────────────────────
-            RevealOnScroll(
-              id: 'about-panel',
-              child: _AboutPanel(isMobile: isMobile, isDesktop: isDesktop),
+          if (!twoColumns) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _Statement(stretch: false, innerWidth: innerWidth),
+                const Divider(height: 1, thickness: 1, color: AppColors.outlineVariant),
+                _ContactForm(stretch: false, sideBySide: sideBySide),
+              ],
+            );
+          }
+          // Both panels share the taller one's height, so the channel list
+          // and the submit row can sit on the bottom edge. IntrinsicHeight's
+          // estimate can land a few pixels short of real layout, so each panel
+          // takes up that slack in a flexible gap instead of overflowing.
+          return IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: _Statement(stretch: true, innerWidth: innerWidth),
+                ),
+                const VerticalDivider(width: 1, thickness: 1, color: AppColors.outlineVariant),
+                Expanded(child: _ContactForm(stretch: true, sideBySide: sideBySide)),
+              ],
             ),
-
-            const SizedBox(height: AppSpacing.xl),
-
-            // ── Technical Toolkit ────────────────────────────────
-            _ToolkitSection(isMobile: isMobile),
-
-            const SizedBox(height: AppSpacing.xl),
-
-            // ── Contact Form ─────────────────────────────────────
-            const RevealOnScroll(
-              id: 'contact-form',
-              child: _ContactForm(),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// About Me Panel
-// ─────────────────────────────────────────────────────────────────────────────
-class _AboutPanel extends StatelessWidget {
-  const _AboutPanel({required this.isMobile, required this.isDesktop});
+EdgeInsets _panelPadding(BuildContext context) =>
+    EdgeInsets.all(Responsive.fluid(context, min: 28, vw: 4, max: 56));
 
-  final bool isMobile;
-  final bool isDesktop;
+class _Statement extends StatelessWidget {
+  const _Statement({required this.stretch, required this.innerWidth});
+
+  final bool stretch;
+
+  /// Content width inside the panel padding.
+  final double innerWidth;
+
+  static const double _paragraphMaxWidth = 420;
 
   @override
   Widget build(BuildContext context) {
-    final textContent = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SectionLabel('About Me')
-            .animate()
-            .fadeIn(duration: 400.ms)
-            .slideY(begin: 0.3, end: 0, duration: 400.ms),
-        const SizedBox(height: AppSpacing.md),
-        RichText(
-          text: TextSpan(
-            style: (isMobile
-                    ? AppTypography.headlineLgMobile
-                    : AppTypography.headlineLg)
-                .copyWith(color: AppColors.onSurface),
-            children: const [
-              TextSpan(text: 'Architecting seamless mobile experiences with '),
-              TextSpan(
-                text: 'Flutter & AI',
-                style: TextStyle(color: AppColors.electricCyan),
-              ),
-              TextSpan(text: '.'),
-            ],
-          ),
-        ).animate(delay: 150.ms).fadeIn(duration: 400.ms).slideY(
-            begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
-        const SizedBox(height: AppSpacing.md),
-        Text(
-          'I am a dedicated Flutter Developer and Computer Science student specializing in building high-performance, cross-platform applications. With a strong foundation in modern state management and an active interest in developing \'Agentic Apps\' powered by AI, I bridge the gap between complex backend logic and fluid user interactions. I am currently preparing for software engineering internships and am always open to discussing mobile product visions.',
-          style:
-              AppTypography.bodyLg.copyWith(color: AppColors.onSurfaceVariant),
-        ).animate(delay: 300.ms).fadeIn(duration: 400.ms).slideY(
-            begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
-        const SizedBox(height: AppSpacing.lg),
-        PrimaryButton(
-          label: 'View GitHub',
-          icon: SimpleIcons.github,
-          onPressed: () {
-            launchUrl(Uri.parse('https://github.com/Saad-Ahsan626'));
-          },
-        ).animate(delay: 450.ms).fadeIn(duration: 400.ms),
-      ],
+    final gap = Responsive.fluid(context, min: 28, vw: 4, max: 48);
+    final headlineStyle = AppTypography.headlineLg.copyWith(
+      fontSize: Responsive.fluid(context, min: 56, vw: 7.5, max: 112),
+      height: 0.92,
+      letterSpacing: -0.02 * 112,
+      color: AppColors.onSurface,
     );
 
-    final visualPanel = _WorkspaceVisual();
-
-    if (isMobile) {
-      return Column(
+    return Padding(
+      padding: _panelPadding(context),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          textContent,
-          const SizedBox(height: AppSpacing.lg),
-          // Extra bottom + left padding to make room for the badge that
-          // hangs -24px outside the Stack (clipBehavior: Clip.none).
+          Row(
+            children: [
+              const PulsingDot(color: AppColors.accent),
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  'OPEN TO FREELANCE & COLLABORATION',
+                  style: AppTypography.labelCaps.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: gap),
+          Text.rich(
+            TextSpan(
+              style: headlineStyle,
+              children: const [
+                TextSpan(text: 'LET\'S\n'),
+                TextSpan(
+                  text: 'CONNECT',
+                  style: TextStyle(color: AppColors.accent),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: gap),
+          // Width capped with padding rather than ConstrainedBox: a max-width
+          // constraint is ignored when IntrinsicHeight measures the text, which
+          // would under-count its lines.
           Padding(
-            padding: const EdgeInsets.only(
-              bottom: AppSpacing.md,
-              left: AppSpacing.md,
+            padding: EdgeInsets.only(
+              right: math.max(0, innerWidth - _paragraphMaxWidth),
             ),
-            child: visualPanel,
+            child: Text(
+              'Have a product in mind, whether it\'s a mobile app, a backend or '
+              'both? Reach out and let\'s discuss how we can build something '
+              'exceptional together.',
+              style: AppTypography.bodyLg.copyWith(
+                fontSize: Responsive.fluid(context, min: 17, vw: 1.4, max: 20),
+                color: AppColors.onSurfaceVariant,
+              ),
+            ),
           ),
+          // Tight flexible gap: at least `gap` when measured, it grows to pin
+          // the channels to the bottom and can shrink if the estimate is short.
+          if (stretch)
+            Expanded(child: SizedBox(height: gap))
+          else
+            SizedBox(height: gap),
+          const _Channels(),
         ],
-      );
-    }
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(flex: 7, child: textContent),
-        const SizedBox(width: AppSpacing.xl),
-        // Same padding on desktop so the badge doesn't clip against the
-        // containing Row's bounds.
-        Expanded(
-          flex: 5,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              bottom: AppSpacing.md,
-              left: AppSpacing.md,
-            ),
-            child: visualPanel,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Workspace visual (right panel with floating badge)
-// ─────────────────────────────────────────────────────────────────────────────
-class _WorkspaceVisual extends StatelessWidget {
+class _Channels extends StatelessWidget {
+  const _Channels();
+
+  static const _channels = [
+    (label: 'Email', value: Links.email, url: Links.emailUrl),
+    (label: 'GitHub', value: Links.githubHandle, url: Links.github),
+    (label: 'LinkedIn', value: Links.linkedinHandle, url: Links.linkedin),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        // Main image placeholder (glass tinted)
-        ClipRRect(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-              child: Container(
-                padding: const EdgeInsets.all(AppSpacing.sm),
-                decoration: BoxDecoration(
-                  color: const Color(0x661E293B),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    width: 1,
-                  ),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                  child: Image.asset(
-                    'assets/images/workspace.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ).animate().fadeIn(duration: 500.ms).slideX(
-            begin: 0.1, end: 0, duration: 500.ms, curve: Curves.easeOut),
-
-        // Floating "Available" badge
-        Positioned(
-          bottom: -AppSpacing.md,
-          left: -AppSpacing.md,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm,
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(top: BorderSide(color: AppColors.outlineVariant)),
+      ),
+      child: Column(
+        children: [
+          for (final (index, channel) in _channels.indexed)
+            HoverLink(
+              onTap: () => launchUrl(Uri.parse(channel.url)),
+              semanticLabel: '${channel.label}: ${channel.value}',
+              builder: (context, color, hovered) => AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: EdgeInsets.only(
+                  top: 18,
+                  bottom: 18,
+                  left: hovered ? 8 : 0,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0x661E293B),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.08),
-                    width: 1,
-                  ),
+                  border: index < _channels.length - 1
+                      ? const Border(
+                          bottom: BorderSide(color: AppColors.outlineVariant),
+                        )
+                      : null,
                 ),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Pulsing dot
-                    _PulsingDot(),
-                    const SizedBox(width: AppSpacing.sm),
                     Text(
-                      'AVAIL FOR PROJECTS',
-                      style: AppTypography.labelCaps.copyWith(
-                        color: AppColors.onSurface,
+                      channel.label.toUpperCase(),
+                      style: AppTypography.labelSm.copyWith(
+                        color: AppColors.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(text: channel.value),
+                            TextSpan(
+                              text: '  ↗',
+                              style: AppTypography.codeSm.copyWith(color: color),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.right,
+                        style: AppTypography.bodyMd.copyWith(color: color, height: 1.3),
                       ),
                     ),
                   ],
                 ),
               ),
-            ).animate(delay: 600.ms).fadeIn(duration: 400.ms).slideY(
-                begin: 0.3, end: 0, duration: 400.ms, curve: Curves.easeOut),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PulsingDot extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 10,
-      height: 10,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppColors.primary,
+            ),
+        ],
       ),
-    )
-        .animate(onPlay: (c) => c.repeat(reverse: true))
-        .scaleXY(
-            begin: 0.8, end: 1.2, duration: 800.ms, curve: Curves.easeInOut)
-        .then()
-        .fadeIn(begin: 0.5, duration: 800.ms);
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Technical Toolkit
-// ─────────────────────────────────────────────────────────────────────────────
-class _ToolkitSection extends StatelessWidget {
-  const _ToolkitSection({required this.isMobile});
-  final bool isMobile;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Section divider header
-        RevealOnScroll(
-          id: 'toolkit-header',
-          child: Row(
-            children: [
-              Text(
-                'Technical Toolkit',
-                style: AppTypography.headlineMd
-                    .copyWith(color: AppColors.onSurface),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Container(
-                  height: 1,
-                  color: AppColors.outlineVariant.withValues(alpha: 0.3),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: AppSpacing.lg),
-
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: isMobile ? 2 : 6,
-            mainAxisSpacing: AppSpacing.md,
-            crossAxisSpacing: AppSpacing.md,
-            childAspectRatio: 1.0,
-          ),
-          itemCount: ContactSection._toolkit.length,
-          itemBuilder: (context, index) {
-            final item = ContactSection._toolkit[index];
-            return RevealOnScroll(
-              id: 'skill-tile-${item.label}',
-              delay: Duration(milliseconds: index * 80),
-              child: SkillTile(label: item.label, icon: item.icon),
-            );
-          },
-        ),
-      ],
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Contact Form
+// Form panel
 // ─────────────────────────────────────────────────────────────────────────────
 class _ContactForm extends ConsumerStatefulWidget {
-  const _ContactForm();
+  const _ContactForm({required this.stretch, required this.sideBySide});
+
+  final bool stretch;
+  final bool sideBySide;
 
   @override
   ConsumerState<_ContactForm> createState() => _ContactFormState();
@@ -359,7 +273,7 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
     final formState = ref.watch(contactFormProvider);
     final notifier = ref.read(contactFormProvider.notifier);
 
-    // Reset controllers when form resets after success
+    // Clear the inputs once a sent message resets the form.
     ref.listen(contactFormProvider, (prev, next) {
       if (prev?.status == FormStatus.success &&
           next.status == FormStatus.idle) {
@@ -369,240 +283,178 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
       }
     });
 
-    final isMobile = Responsive.isMobile(context);
+    final nameField = ContactField(
+      label: 'Name',
+      placeholder: 'Your name',
+      controller: _nameController,
+      onChanged: notifier.updateName,
+      errorText: formState.nameError,
+      maxLength: ContactFormNotifier.maxNameLength,
+      autofillHints: const [AutofillHints.name],
+      textInputAction: TextInputAction.next,
+    );
+    final emailField = ContactField(
+      label: 'Email',
+      placeholder: 'you@company.com',
+      controller: _emailController,
+      onChanged: notifier.updateEmail,
+      errorText: formState.emailError,
+      maxLength: ContactFormNotifier.maxEmailLength,
+      keyboardType: TextInputType.emailAddress,
+      autofillHints: const [AutofillHints.email],
+      textInputAction: TextInputAction.next,
+    );
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 920),
-      child: Center(
+    return Container(
+      color: AppColors.panel,
+      padding: _panelPadding(context),
+      child: AutofillGroup(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Heading
-            Text(
-              "Let's Connect",
-              style:
-                  AppTypography.headlineLg.copyWith(color: AppColors.onSurface),
-              textAlign: TextAlign.center,
-            )
-                .animate()
-                .fadeIn(duration: 400.ms)
-                .slideY(begin: 0.2, end: 0, duration: 400.ms),
-
-            const SizedBox(height: AppSpacing.sm),
-
-            Text(
-              'Have a vision for a mobile product? Reach out and let\'s discuss '
-              'how we can build something exceptional together.',
-              style: AppTypography.bodyMd
-                  .copyWith(color: AppColors.onSurfaceVariant),
-              textAlign: TextAlign.center,
-            ).animate(delay: 150.ms).fadeIn(duration: 400.ms),
-
-            const SizedBox(height: AppSpacing.lg),
-
-            // Responsive layout: two-column on desktop, stacked on mobile
-            isMobile
-                ? Column(
-                    children: [
-                      // Name
-                      FloatingLabelField(
-                        label: 'NAME',
-                        controller: _nameController,
-                        onChanged: notifier.updateName,
-                        errorText: formState.nameError,
-                      ),
-
-                      const SizedBox(height: AppSpacing.lg),
-
-                      // Email
-                      FloatingLabelField(
-                        label: 'EMAIL',
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        onChanged: notifier.updateEmail,
-                        errorText: formState.emailError,
-                      ),
-
-                      const SizedBox(height: AppSpacing.lg),
-
-                      // Message
-                      FloatingLabelField(
-                        label: 'MESSAGE',
-                        controller: _messageController,
-                        maxLines: 4,
-                        onChanged: notifier.updateMessage,
-                        errorText: formState.messageError,
-                      ),
-
-                      const SizedBox(height: AppSpacing.lg),
-
-                      _SubmitButton(formState: formState, notifier: notifier),
-                    ],
-                  )
-                : Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Column(
-                          children: [
-                            // Name
-                            FloatingLabelField(
-                              label: 'NAME',
-                              controller: _nameController,
-                              onChanged: notifier.updateName,
-                              errorText: formState.nameError,
-                            ),
-
-                            const SizedBox(height: AppSpacing.lg),
-
-                            // Email
-                            FloatingLabelField(
-                              label: 'EMAIL',
-                              controller: _emailController,
-                              keyboardType: TextInputType.emailAddress,
-                              onChanged: notifier.updateEmail,
-                              errorText: formState.emailError,
-                            ),
-
-                            const SizedBox(height: AppSpacing.lg),
-
-                            _SubmitButton(
-                                formState: formState, notifier: notifier),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.lg),
-                      Expanded(
-                        flex: 3,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // Message
-                            FloatingLabelField(
-                              label: 'MESSAGE',
-                              controller: _messageController,
-                              maxLines: 8,
-                              onChanged: notifier.updateMessage,
-                              errorText: formState.messageError,
-                            ),
-
-                            const SizedBox(height: AppSpacing.lg),
-
-                            // Contact metadata / social links
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Email',
-                                  style: AppTypography.labelCaps.copyWith(
-                                    color: AppColors.onSurfaceVariant,
-                                  ),
-                                ),
-                                Text(
-                                  'saadahsan039@gmail.com',
-                                  style: AppTypography.bodyMd
-                                      .copyWith(color: AppColors.onSurface),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'SEND A MESSAGE',
+                  style: AppTypography.labelSm
+                      .copyWith(color: AppColors.onSurfaceVariant),
+                ),
+                Text(
+                  '${formState.filledCount}/3 FIELDS',
+                  style: AppTypography.labelSm
+                      .copyWith(color: AppColors.onSurfaceVariant),
+                ),
+              ],
+            ),
+            const SizedBox(height: 26),
+            if (widget.sideBySide)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: nameField),
+                  const SizedBox(width: 26),
+                  Expanded(child: emailField),
+                ],
+              )
+            else ...[
+              nameField,
+              const SizedBox(height: 26),
+              emailField,
+            ],
+            const SizedBox(height: 26),
+            ContactField(
+              label: 'Message',
+              placeholder: 'Tell me about the product you have in mind',
+              controller: _messageController,
+              onChanged: notifier.updateMessage,
+              errorText: formState.messageError,
+              maxLength: ContactFormNotifier.maxMessageLength,
+              lines: 6,
+            ),
+            if (widget.stretch)
+              const Expanded(child: SizedBox(height: 26))
+            else
+              const SizedBox(height: 26),
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 16,
+              runSpacing: 16,
+              children: [
+                Text(
+                  _hint(formState.status),
+                  style: AppTypography.labelSm.copyWith(
+                    color: formState.status == FormStatus.error
+                        ? AppColors.error
+                        : AppColors.onSurfaceVariant,
+                    letterSpacing: 0.14 * 11,
+                    fontWeight: FontWeight.w500,
                   ),
+                ),
+                _SubmitButton(
+                  status: formState.status,
+                  onPressed: notifier.submit,
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
+
+  String _hint(FormStatus status) => switch (status) {
+        FormStatus.success => 'I usually reply within 24 hours.',
+        FormStatus.error => 'Couldn\'t send. Check your connection and try again.',
+        FormStatus.throttled => 'Message already sent. Please wait a minute.',
+        FormStatus.sending || FormStatus.idle => 'All fields required.',
+      };
 }
 
 class _SubmitButton extends StatelessWidget {
-  const _SubmitButton({required this.formState, required this.notifier});
+  const _SubmitButton({required this.status, required this.onPressed});
 
-  final ContactFormState formState;
-  final ContactFormNotifier notifier;
+  final FormStatus status;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final isSending = formState.status == FormStatus.sending;
-    final isSuccess = formState.status == FormStatus.success;
-    final isError = formState.status == FormStatus.error;
+    final label = switch (status) {
+      FormStatus.sending => 'Transmitting...',
+      FormStatus.success => 'Message sent',
+      FormStatus.error => 'Transmission failed',
+      FormStatus.throttled => 'Please wait',
+      FormStatus.idle => 'Initiate transmission',
+    };
+    final isIdle = status == FormStatus.idle;
+    final isSuccess = status == FormStatus.success;
 
-    return SizedBox(
-      width: double.infinity,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        decoration: BoxDecoration(
-          color: isSuccess
-              ? AppColors.secondaryContainer
-              : isError
-                  ? AppColors.errorContainer
-                  : AppColors.electricCyan,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+    return ElevatedButton(
+      // Disabled while a send is in flight or a result is showing.
+      onPressed: isIdle ? onPressed : () {},
+      style: ButtonStyle(
+        elevation: const WidgetStatePropertyAll(0),
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 28, vertical: 18),
         ),
-        child: TextButton(
-          // Disable button to prevent spamming while sending, or if success/error is showing
-          onPressed: isSending || isSuccess || isError ? null : notifier.submit,
-          style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        shape: const WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        ),
+        foregroundColor: const WidgetStatePropertyAll(AppColors.onAccent),
+        backgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (isSuccess) return AppColors.onSurface;
+          if (status == FormStatus.error) return AppColors.error;
+          if (isIdle &&
+              (states.contains(WidgetState.hovered) ||
+                  states.contains(WidgetState.focused))) {
+            return AppColors.onSurface;
+          }
+          return AppColors.accent;
+        }),
+        overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+        mouseCursor: WidgetStatePropertyAll(
+          isIdle ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (status == FormStatus.sending) ...[
+            const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.onAccent,
+              ),
             ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (isSending) ...[
-                const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.onPrimaryFixed,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Text(
-                  'TRANSMITTING...',
-                  style: AppTypography.labelCaps.copyWith(
-                    color: AppColors.onPrimaryFixed,
-                  ),
-                ),
-              ] else if (isSuccess) ...[
-                const Icon(Icons.check_circle_outline,
-                    size: 18, color: AppColors.onSurface),
-                const SizedBox(width: AppSpacing.sm),
-                Text(
-                  'MESSAGE SENT',
-                  style: AppTypography.labelCaps.copyWith(
-                    color: AppColors.onSurface,
-                  ),
-                ),
-              ] else if (isError) ...[
-                const Icon(Icons.error_outline,
-                    size: 18, color: AppColors.onErrorContainer),
-                const SizedBox(width: AppSpacing.sm),
-                Text(
-                  'TRANSMISSION FAILED',
-                  style: AppTypography.labelCaps.copyWith(
-                    color: AppColors.onErrorContainer,
-                  ),
-                ),
-              ] else ...[
-                Text(
-                  'INITIATE TRANSMISSION',
-                  style: AppTypography.labelCaps.copyWith(
-                    color: AppColors.onPrimaryFixed,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                const Icon(Icons.send_rounded,
-                    size: 16, color: AppColors.onPrimaryFixed),
-              ],
-            ],
-          ),
-        ),
+            const SizedBox(width: 12),
+          ],
+          Text(label.toUpperCase(), style: AppTypography.labelCaps),
+          const SizedBox(width: 14),
+          Text('→', style: AppTypography.labelCaps.copyWith(fontSize: 14)),
+        ],
       ),
     );
   }

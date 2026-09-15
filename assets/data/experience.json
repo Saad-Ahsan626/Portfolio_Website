@@ -1,32 +1,43 @@
 [
   {
-    "id": "exp_1",
-    "role": "Computer Science Student & Independent Developer",
-    "company": "University of Engineering and Technology Lahore",
-    "duration": "01-08-2024 — Present",
-    "description": "Developing cross-platform mobile and full-stack web applications. Focusing on scalable MVVM architecture, advanced state management, and the integration of agentic AI models (like the Gemini API) to prepare for enterprise-level software engineering.",
+    "id": "exp_codrax_engineer",
+    "role": "Full-Stack Mobile Engineer",
+    "company": "Codrax",
+    "duration": "Sep 2026 — Present",
+    "description": "Building mobile products end to end, from Flutter apps to the backend services behind them. Designing secure REST APIs with Node.js, Prisma and MySQL, including authentication, role-based admin modules and API documentation, and contributing to architecture decisions for scalability and reliability.",
     "techStack": [
       "Flutter",
-      "Dart",
-      "Python",
-      "Firebase"
-    ],
-    "isCurrent": true,
-    "icon": "work"
+      "Node.js",
+      "Prisma",
+      "MySQL",
+      "REST APIs"
+    ]
   },
   {
-    "id": "exp_2",
-    "role": "Flutter Intern",
+    "id": "exp_codrax_intern",
+    "role": "Flutter Developer Intern",
     "company": "Codrax",
-    "duration": "01-07-2026 — Present",
-    "description": "Contributing to the development of cross-platform mobile applications. Collaborating with the engineering team to implement responsive UI designs, integrate RESTful APIs, and manage application state efficiently using Riverpod.",
+    "duration": "Jul 2026 — Aug 2026",
+    "description": "Contributed to production Flutter applications: built feature screens and reusable UI components, managed state with Riverpod and declarative routing, and integrated REST APIs with secure token storage and OTP-based authentication flows.",
     "techStack": [
       "Flutter",
       "Dart",
       "Riverpod",
       "REST APIs"
-    ],
-    "isCurrent": true,
-    "icon": "work"
+    ]
+  },
+  {
+    "id": "exp_uet",
+    "role": "Computer Science Student & Independent Developer",
+    "company": "University of Engineering and Technology, Lahore",
+    "duration": "Aug 2024 — Present",
+    "description": "Building full-stack projects alongside my degree: Flutter apps with clean architecture, TypeScript backends with NestJS and Prisma, and coursework in data structures, algorithms and AI search that shaped how I design systems.",
+    "techStack": [
+      "Flutter",
+      "TypeScript",
+      "NestJS",
+      "C++",
+      "Python"
+    ]
   }
 ]

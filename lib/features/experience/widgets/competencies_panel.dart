@@ -1,93 +1,89 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:simple_icons/simple_icons.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/constants/links.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../core/utils/responsive.dart';
-import '../../../shared/widgets/primary_button.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/theme/brand_icons.dart';
 import '../../../providers/portfolio_provider.dart';
+import '../../../shared/widgets/primary_button.dart';
 
 class CompetenciesPanel extends StatelessWidget {
   const CompetenciesPanel({super.key});
 
+  static const double _gap = 48;
+
   @override
   Widget build(BuildContext context) {
-    final isMobile = Responsive.isMobile(context);
-
-    return isMobile
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Design grid: auto-fit minmax(320px, 1fr) with a 48px gap.
+        final twoColumns = constraints.maxWidth >= 320 * 2 + _gap;
+        if (!twoColumns) {
+          return const Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _VisualPanel(),
-              const SizedBox(height: AppSpacing.lg),
-              const _SkillsPanel(),
-            ],
-          )
-        : Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(child: _VisualPanel()),
-              const SizedBox(width: AppSpacing.lg),
-              const Expanded(child: _SkillsPanel()),
+              _VisualPanel(height: 280),
+              SizedBox(height: _gap),
+              _SkillsPanel(),
             ],
           );
+        }
+        return const Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: _VisualPanel(height: 340)),
+            SizedBox(width: _gap),
+            Expanded(child: _SkillsPanel()),
+          ],
+        );
+      },
+    );
   }
 }
 
 class _VisualPanel extends StatelessWidget {
+  const _VisualPanel({required this.height});
+  final double height;
+
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-      child: SizedBox(
-        height: Responsive.isMobile(context) ? 220 : 340,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // Background Image
-            Image.asset(
-              'assets/images/background.png',
-              fit: BoxFit.cover,
-            ),
-
-            // Gradient overlay from bottom
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      AppColors.background.withValues(alpha: 0.85),
-                    ],
-                    stops: const [0.4, 1.0],
-                  ),
-                ),
-              ),
-            ),
-
-            // "Always building." label
-            Positioned(
-              bottom: AppSpacing.md,
-              left: AppSpacing.md,
-              child: Text(
-                'Always building.',
-                style: AppTypography.headlineMd.copyWith(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
+    return Container(
+      height: height,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+        border: Border.all(color: AppColors.outlineVariant),
       ),
-    )
-        .animate()
-        .fadeIn(duration: 500.ms)
-        .slideX(begin: -0.1, end: 0, duration: 500.ms, curve: Curves.easeOut);
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/images/background.webp',
+            fit: BoxFit.cover,
+          ),
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Color(0xD909090B)],
+                stops: [0.4, 1.0],
+              ),
+            ),
+          ),
+          Positioned(
+            left: AppSpacing.md,
+            bottom: AppSpacing.md,
+            child: Text(
+              'Always building.',
+              style: AppTypography.headlineMd.copyWith(color: AppColors.onSurface),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -106,46 +102,28 @@ class _SkillsPanel extends ConsumerWidget {
           style: AppTypography.headlineMd.copyWith(color: AppColors.onSurface),
         ),
         const SizedBox(height: AppSpacing.md),
-
         skillsAsync.when(
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.electricCyan),
-          ),
-          error: (e, _) => Text(
-            'Failed to load skills.',
+          loading: () => const SizedBox(height: 120),
+          error: (_, __) => Text(
+            'Skills couldn\'t be loaded.',
             style: AppTypography.bodyMd.copyWith(color: AppColors.error),
           ),
           data: (skills) => Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: skills
-                .asMap()
-                .entries
-                .map(
-                  (e) => _SkillPill(label: e.value.name)
-                      .animate(delay: Duration(milliseconds: 200 + e.key * 60))
-                      .fadeIn(duration: 300.ms)
-                      .slideY(
-                          begin: 0.2,
-                          end: 0,
-                          duration: 300.ms,
-                          curve: Curves.easeOut),
-                )
-                .toList(),
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              for (final skill in skills) _SkillPill(label: skill.name),
+            ],
           ),
         ),
-
         const SizedBox(height: AppSpacing.md),
         PrimaryButton(
           label: 'View GitHub',
-          icon: SimpleIcons.github,
-          onPressed: () {
-            launchUrl(Uri.parse('https://github.com/Saad-Ahsan626'));
-          },
+          icon: BrandIcons.github,
+          onPressed: () => launchUrl(Uri.parse(Links.github)),
         ),
       ],
-    ).animate().fadeIn(duration: 500.ms).slideX(
-        begin: 0.1, end: 0, duration: 500.ms, curve: Curves.easeOut);
+    );
   }
 }
 
@@ -157,61 +135,28 @@ class _SkillPill extends StatefulWidget {
   State<_SkillPill> createState() => _SkillPillState();
 }
 
-IconData _getIconForSkill(String label) {
-  final lower = label.toLowerCase();
-  if (lower.contains('flutter')) return SimpleIcons.flutter;
-  if (lower.contains('dart')) return SimpleIcons.dart;
-  if (lower.contains('python')) return SimpleIcons.python;
-  if (lower.contains('firebase')) return SimpleIcons.firebase;
-  if (lower.contains('mongo')) return SimpleIcons.mongodb;
-  if (lower.contains('sql')) return SimpleIcons.mysql;
-  if (lower.contains('github')) return SimpleIcons.github;
-  if (lower.contains('git')) return SimpleIcons.git;
-  if (lower.contains('ci/cd')) return SimpleIcons.githubactions;
-  if (lower.contains('api') || lower.contains('gemini')) return SimpleIcons.googlegemini;
-  if (lower.contains('mvvm') || lower.contains('architecture')) return Icons.architecture;
-  if (lower.contains('riverpod') || lower.contains('cubit') || lower.contains('provider')) return Icons.layers_outlined;
-  return Icons.check_circle_outline;
-}
-
 class _SkillPillState extends State<_SkillPill> {
   bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
+    final color = _hovered ? AppColors.accent : AppColors.onSurface;
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.xs,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         decoration: BoxDecoration(
           color: AppColors.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
           border: Border.all(
-            color: _hovered ? AppColors.electricCyan : AppColors.outlineVariant,
-            width: 1,
+            color: _hovered ? AppColors.accent : AppColors.outlineVariant,
           ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              _getIconForSkill(widget.label),
-              size: 14,
-              color: _hovered ? AppColors.electricCyan : AppColors.onSurfaceVariant,
-            ),
-            const SizedBox(width: AppSpacing.xs),
-            Text(
-              widget.label,
-              style: AppTypography.labelCaps.copyWith(
-                color: _hovered ? AppColors.electricCyan : AppColors.onSurface,
-              ),
-            ),
-          ],
+        child: Text(
+          widget.label.toUpperCase(),
+          style: AppTypography.labelCaps.copyWith(color: color, height: 1.4),
         ),
       ),
     );

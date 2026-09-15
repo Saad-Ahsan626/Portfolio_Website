@@ -1,182 +1,99 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../core/constants/links.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/responsive.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../shared/widgets/hover_link.dart';
+import '../../../shared/widgets/section_container.dart';
 
+/// Full-width footer. [compact] is the slimmer case-study variant.
 class SiteFooter extends StatelessWidget {
-  const SiteFooter({super.key});
+  const SiteFooter({super.key, this.compact = false});
 
-  static const _links = [
-    (
-      label: 'GitHub',
-      icon: Icons.terminal,
-      url: 'https://github.com/Saad-Ahsan626'
-    ),
-    (
-      label: 'LinkedIn',
-      icon: Icons.link_rounded,
-      url: 'https://www.linkedin.com/in/saad-ahsan-55201336a/'
-    ),
-    (
-      label: 'Email',
-      icon: Icons.mail_outline_rounded,
-      url: 'mailto:saadahsan039@gmail.com'
-    ),
-  ];
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final isMobile = Responsive.isMobile(context);
 
+    final name = Text(
+      'MUHAMMAD SAAD AHSAN',
+      textAlign: TextAlign.center,
+      style: compact
+          ? AppTypography.labelCaps.copyWith(color: AppColors.onSurface)
+          : AppTypography.headlineMd.copyWith(
+              fontSize: 32,
+              letterSpacing: -0.02 * 32,
+              color: AppColors.onSurface,
+            ),
+    );
+
+    final links = Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 24,
+      runSpacing: 12,
+      children: [
+        for (final link in Links.social)
+          HoverLink(
+            onTap: () => launchUrl(Uri.parse(link.url)),
+            builder: (context, color, _) => Text(
+              link.label.toUpperCase(),
+              style: AppTypography.labelCaps.copyWith(color: color),
+            ),
+          ),
+      ],
+    );
+
+    final copyright = Text(
+      '© 2026. ALL RIGHTS RESERVED.',
+      textAlign: TextAlign.center,
+      style: AppTypography.labelCaps.copyWith(color: AppColors.onSurfaceVariant),
+    );
+
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        vertical: AppSpacing.xl,
-        horizontal: isMobile ? AppSpacing.md : AppSpacing.xl,
-      ),
-      decoration: const BoxDecoration(
-        color: AppColors.surface, // Stark black
+      padding: EdgeInsets.symmetric(vertical: compact ? 48 : 80),
+      decoration: BoxDecoration(
+        color: AppColors.background,
         border: Border(
-          top: BorderSide(
-              color: AppColors.outline, width: 2), // Sharp thick border
+          top: compact
+              ? const BorderSide(color: AppColors.divider)
+              : const BorderSide(color: AppColors.outline, width: 2),
         ),
       ),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: AppSpacing.containerMax),
-        child: isMobile ? _MobileFooter() : _DesktopFooter(),
-      ),
-    );
-  }
-}
-
-class _DesktopFooter extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _Logo(),
-        Flexible(child: _Links()),
-        _Copyright(),
-      ],
-    );
-  }
-}
-
-class _MobileFooter extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _Logo(),
-        const SizedBox(height: AppSpacing.lg),
-        _Links(),
-        const SizedBox(height: AppSpacing.lg),
-        _Copyright(),
-      ],
-    );
-  }
-}
-
-class _Logo extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'MUHAMMAD SAAD AHSAN', // Brutalist short name
-      style: AppTypography.display.copyWith(
-        fontSize: 32, // Slightly smaller display font for footer
-        color: AppColors.onSurface,
-      ),
-    );
-  }
-}
-
-class _Links extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      alignment: WrapAlignment.center,
-      spacing: 0,
-      runSpacing: AppSpacing.sm,
-      children: SiteFooter._links
-          .map(
-            (link) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-              child: _FooterLink(
-                  label: link.label, icon: link.icon, url: link.url),
+      // Same 1200px column + side padding as the sections, so the footer
+      // lines up with the content above it.
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: SectionContainer.horizontalPadding(context),
             ),
-          )
-          .toList(),
-    );
-  }
-}
-
-class _FooterLink extends StatefulWidget {
-  const _FooterLink(
-      {required this.label, required this.icon, required this.url});
-  final String label;
-  final IconData icon;
-  final String url;
-
-  @override
-  State<_FooterLink> createState() => _FooterLinkState();
-}
-
-class _FooterLinkState extends State<_FooterLink> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    // InkWell (vs GestureDetector) adds keyboard focus/activation and the
-    // click cursor for free — links stay reachable without a mouse.
-    return InkWell(
-      onTap: () => launchUrl(Uri.parse(widget.url)),
-      onHover: (h) => setState(() => _hovered = h),
-      borderRadius: BorderRadius.circular(4),
-      hoverColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xs,
-          vertical: AppSpacing.xs,
-        ),
-        child: AnimatedDefaultTextStyle(
-          duration: const Duration(milliseconds: 100), // snappy
-          style: AppTypography.labelCaps.copyWith(
-            color: _hovered
-                ? AppColors.tertiary // Gold
-                : AppColors.onSurface,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                widget.icon,
-                size: 14,
-                color: _hovered ? AppColors.tertiary : AppColors.onSurface,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Text(widget.label.toUpperCase()), // Ensure uppercase
-            ],
+            child: isMobile
+              ? Column(
+                  children: [
+                    name,
+                    const SizedBox(height: 32),
+                    links,
+                    const SizedBox(height: 32),
+                    copyright,
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    name,
+                    const SizedBox(width: 48),
+                    Flexible(child: links),
+                    const SizedBox(width: 48),
+                    copyright,
+                  ],
+                ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class _Copyright extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      '© 2026. ALL RIGHTS RESERVED.',
-      style: AppTypography.labelCaps.copyWith(
-        color: AppColors.onSurfaceVariant,
-      ),
-      textAlign: TextAlign.center,
     );
   }
 }

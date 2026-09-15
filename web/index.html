@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <base href="$FLUTTER_BASE_HREF">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- ── Primary SEO ── -->
-  <title>Muhammad Saad Ahsan — Flutter Developer</title>
+  <title>Muhammad Saad Ahsan — Full-Stack Mobile Engineer</title>
   <meta name="description"
-    content="Flutter developer specialising in high-performance cross-platform mobile applications. Available for freelance projects.">
+    content="Full-Stack Mobile Engineer building scalable mobile products, from Flutter apps to secure TypeScript and NestJS backends. Available for freelance projects and collaboration.">
   <meta name="keywords"
-    content="Flutter developer, Dart, mobile app development, cross-platform, Firebase, Riverpod">
+    content="Full-stack mobile engineer, Flutter developer, Dart, NestJS, TypeScript, Node.js, Prisma, backend development, system design, mobile app development">
   <meta name="author" content="Muhammad Saad Ahsan">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://saadahsan.com/">
@@ -18,17 +18,19 @@
   <!-- ── Open Graph (WhatsApp, Facebook, LinkedIn previews) ── -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://saadahsan.com/">
-  <meta property="og:title" content="Muhammad Saad Ahsan — Flutter Developer">
+  <meta property="og:title" content="Muhammad Saad Ahsan — Full-Stack Mobile Engineer">
   <meta property="og:description"
-    content="Flutter developer specialising in high-performance cross-platform mobile applications.">
+    content="Building scalable mobile products, from intuitive Flutter interfaces to resilient backend systems.">
   <meta property="og:image" content="https://saadahsan.com/icons/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
 
   <!-- ── Twitter Card ── -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://saadahsan.com/">
-  <meta name="twitter:title" content="Muhammad Saad Ahsan — Flutter Developer">
+  <meta name="twitter:title" content="Muhammad Saad Ahsan — Full-Stack Mobile Engineer">
   <meta name="twitter:description"
-    content="Flutter developer specialising in high-performance cross-platform mobile apps.">
+    content="Building scalable mobile products, from intuitive Flutter interfaces to resilient backend systems.">
   <meta name="twitter:image" content="https://saadahsan.com/icons/og-image.png">
 
   <!-- ── Icons ── -->
@@ -37,94 +39,335 @@
   <link rel="manifest" href="manifest.json">
 
   <!-- ── Theme colour (browser chrome on mobile) ── -->
-  <meta name="theme-color" content="#101415">
-  <meta name="msapplication-navbutton-color" content="#101415">
+  <meta name="theme-color" content="#09090B">
+  <meta name="msapplication-navbutton-color" content="#09090B">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <!-- ── Font preconnect (reduces FOUT) ── -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- ── Warm up the hosts Flutter needs before it asks for them ── -->
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="image" href="assets/assets/images/saad.jpg" fetchpriority="high">
+
+  <!-- Web fonts for the HTML preview. Loaded without blocking render; the
+       fallback stacks below keep the layout close until they arrive. -->
+  <link rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"
+    href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Playfair+Display:ital@1&family=JetBrains+Mono:wght@700&display=swap">
 
   <!-- ── Flutter bootstrap ── -->
   <script src="flutter_bootstrap.js" async></script>
 
   <style>
-    /* Hide scrollbar during Flutter load */
-    body {
-      background-color: #101415;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
+    /*
+     * Static preview of the nav and hero, shown while Flutter downloads and
+     * starts. Sizes mirror the Flutter layout (see home_section.dart and
+     * nav_bar.dart) so the hand-over is a crossfade, not a jump.
+     */
+    :root {
+      --ground: #09090B;
+      --card: #1E1E1E;
+      --rule: #3F3F46;
+      --divider: rgba(63, 63, 70, 0.4);
+      --muted: #A1A1AA;
+      --text: #FFFFFF;
+      --gold: #C6A87C;
+      --display: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+      --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+      --gutter: clamp(20px, 4vw, 48px);
+      --nav-h: 72px;
     }
 
-    /* Loading screen */
-    #loading {
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--ground);
+    }
+
+    /* Hide scrollbar until Flutter takes over */
+    body { overflow: hidden; }
+
+    #preview {
       position: fixed;
       inset: 0;
-      background: #101415;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 24px;
       z-index: 9999;
+      overflow: hidden;
+      background: var(--ground);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
       transition: opacity 0.5s ease;
     }
 
-    #loading.hidden {
+    #preview.hidden {
       opacity: 0;
       pointer-events: none;
     }
 
-    .loader-ring {
-      width: 48px;
-      height: 48px;
-      border: 2px solid rgba(0, 180, 255, 0.15);
-      border-top-color: #00b4ff;
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
+    /* ── Nav ── */
+    .pv-nav {
+      position: relative;
+      height: var(--nav-h);
+      border-bottom: 1px solid var(--divider);
+      box-sizing: border-box;
     }
 
-    .loader-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      letter-spacing: 0.15em;
-      color: rgba(189, 200, 210, 0.6);
+    .pv-nav-inner {
+      max-width: 1200px;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .pv-logo {
+      font: 700 22px/1 var(--display);
+      letter-spacing: 0.07em;
+    }
+
+    .pv-logo span { color: var(--gold); }
+
+    .pv-links {
+      display: flex;
+      gap: clamp(16px, 3vw, 40px);
+      font: 700 12px/1 var(--mono);
+      letter-spacing: 0.2em;
+      color: var(--muted);
+    }
+
+    .pv-links .active {
+      color: var(--gold);
+      padding: 6px 0 4px;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .pv-links span:not(.active) { padding: 6px 0; }
+
+    .pv-menu {
+      display: none;
+      width: 18px;
+      margin-right: 15px;
+    }
+
+    .pv-menu i {
+      display: block;
+      height: 2px;
+      margin: 3px 0;
+      background: var(--text);
+    }
+
+    /* Loading indicator where the scroll-progress bar sits */
+    .pv-progress {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      overflow: hidden;
+    }
+
+    .pv-progress::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 30%;
+      background: var(--gold);
+      animation: pv-slide 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pv-slide {
+      from { left: -30%; }
+      to { left: 100%; }
+    }
+
+    /* ── Hero ── */
+    .pv-hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: clamp(56px, 7vw, 100px) var(--gutter);
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+      gap: clamp(40px, 5vw, 80px);
+      align-items: start;
+    }
+
+    .pv-copy {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(32px, 4vw, 56px);
+      min-width: 0;
+    }
+
+    .pv-build {
+      margin: 0 0 8px;
+      font: 700 clamp(40px, 4.4vw, 56px)/1 var(--display);
+      letter-spacing: -1.12px; /* fixed, as in home_section.dart */
+      color: var(--muted);
+    }
+
+    .pv-role {
+      margin: 0;
+      display: grid;
+      font: 700 clamp(40px, 5.2vw, 68px)/1 var(--display);
+      letter-spacing: -1.36px; /* fixed, as in home_section.dart */
+      color: var(--gold);
+    }
+
+    /* The longest phrase reserves the same height the Flutter hero does. */
+    .pv-role > span { grid-area: 1 / 1; }
+    .pv-role .sizer { visibility: hidden; }
+
+    .pv-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.8em;
+      margin-left: 6px;
+      vertical-align: -0.08em;
+      background: var(--gold);
+      animation: pv-blink 1s steps(1) infinite;
+    }
+
+    @keyframes pv-blink {
+      50% { opacity: 0; }
+    }
+
+    .pv-lead {
+      margin: 0;
+      max-width: 440px;
+      font: italic 400 20px/1.5 var(--serif);
+    }
+
+    .pv-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .pv-btn {
+      padding: 20px 36px;
+      font: 700 12px/1 var(--mono);
+      letter-spacing: 0.2em;
+      border: 1px solid var(--text);
+    }
+
+    .pv-btn.solid {
+      background: var(--text);
+      color: #000;
+    }
+
+    .pv-visual {
+      justify-self: end;
+      width: min(100%, 380px);
+    }
+
+    .pv-caption {
+      margin: 0 0 24px;
+      font: 700 12px/1.5 var(--mono);
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .pv-portrait {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      object-position: top;
+      background: var(--card);
+      border: 1px solid var(--rule);
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 1023px) {
+      .pv-links { display: none; }
+      .pv-menu { display: block; }
+    }
+
+    @media (max-width: 767px) {
+      :root { --nav-h: 64px; }
+    }
+
+    /* Single column below ~782px, matching the grid above and the Flutter
+       hero's 340px × 2 + gap threshold; the portrait then centres. */
+    @media (max-width: 782px) {
+      .pv-visual { justify-self: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pv-progress::after { animation-duration: 4s; }
+      .pv-cursor { animation: none; }
+      #preview { transition: none; }
     }
 
     ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #101415; }
-::-webkit-scrollbar-thumb {
-  background: #3e4851;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover { background: #00b4ff; }
+    ::-webkit-scrollbar-track { background: var(--ground); }
+    ::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
-/* Text selection */
-::selection {
-  background: rgba(0, 180, 255, 0.25);
-  color: #e0e3e5;
-}
+    ::selection {
+      background: rgba(198, 168, 124, 0.35);
+      color: var(--text);
+    }
   </style>
 </head>
 
 <body>
-  <!-- Loading screen — hidden once Flutter renders -->
-  <div id="loading">
-    <div class="loader-ring"></div>
-    <div class="loader-name">INITIALISING...</div>
+  <!-- Preview of the page, replaced once Flutter draws its first frame -->
+  <div id="preview" aria-busy="true">
+    <header class="pv-nav">
+      <div class="pv-nav-inner">
+        <div class="pv-logo">SAAD<span>.AHSAN</span></div>
+        <nav class="pv-links" aria-label="Sections">
+          <span class="active">ABOUT</span>
+          <span>PROJECTS</span>
+          <span>EXPERIENCE</span>
+          <span>CONTACT</span>
+        </nav>
+        <div class="pv-menu" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+      <div class="pv-progress" role="progressbar" aria-label="Loading portfolio"></div>
+    </header>
+
+    <main class="pv-hero">
+      <div class="pv-copy">
+        <div>
+          <p class="pv-build">I BUILD</p>
+          <h1 class="pv-role">
+            <span class="sizer" aria-hidden="true">FULL-STACK PRODUCTS.<i class="pv-cursor"></i></span>
+            <span>MOBILE EXPERIENCES.<i class="pv-cursor" aria-hidden="true"></i></span>
+          </h1>
+        </div>
+        <p class="pv-lead">I am Muhammad Saad Ahsan, a Full-Stack Mobile Engineer building scalable products, from intuitive Flutter interfaces to resilient backend systems.</p>
+        <div class="pv-actions" aria-hidden="true">
+          <span class="pv-btn solid">VIEW PROJECTS</span>
+          <span class="pv-btn">CONTACT ME</span>
+        </div>
+      </div>
+
+      <div class="pv-visual">
+        <p class="pv-caption">MOBILE + BACKEND • OPEN TO FREELANCE</p>
+        <img class="pv-portrait" src="assets/assets/images/saad.jpg" alt="Portrait of Muhammad Saad Ahsan" width="380" height="475">
+      </div>
+    </main>
   </div>
 
+  <noscript>
+    <p style="color:#fff;font-family:Georgia,serif;padding:24px">
+      This portfolio needs JavaScript. You can reach Muhammad Saad Ahsan at
+      <a style="color:#C6A87C" href="mailto:saadahsan039@gmail.com">saadahsan039@gmail.com</a>.
+    </p>
+  </noscript>
+
   <script>
-    // Hide loading screen once Flutter first frame is drawn
+    // Crossfade to Flutter once its first frame is on screen.
     window.addEventListener('flutter-first-frame', () => {
-      const loader = document.getElementById('loading');
-      loader.classList.add('hidden');
-      setTimeout(() => loader.remove(), 600);
+      const preview = document.getElementById('preview');
+      preview.classList.add('hidden');
+      setTimeout(() => preview.remove(), 600);
       document.body.style.overflow = '';
     });
   </script>

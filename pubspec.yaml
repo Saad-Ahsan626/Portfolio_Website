@@ -1,5 +1,5 @@
 name: portfolio
-description: Personal developer portfolio
+description: Personal portfolio of Muhammad Saad Ahsan, Full-Stack Mobile Engineer.
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -12,9 +12,9 @@ dependencies:
 
   # State Management
   flutter_riverpod: ^2.5.1
-  hooks_riverpod: ^2.5.1
-  flutter_hooks: ^0.20.5
 
+  # Routing (shareable case-study URLs)
+  go_router: ^17.5.0
 
   # Animations
   flutter_animate: ^4.5.0
@@ -22,11 +22,6 @@ dependencies:
   # Fonts
   google_fonts: ^6.2.1
 
-  # Icons
-  simple_icons: ^16.23.0
-
-  # Scroll to section
-  scrollable_positioned_list: ^0.3.8
   url_launcher: ^6.3.2
   http: ^1.6.0
 
@@ -41,8 +36,12 @@ flutter:
   assets:
     - assets/data/
     - assets/images/saad.jpg
-    - assets/images/background.png
-    - assets/images/workspace.png
+    - assets/images/background.webp
+    - assets/images/workspace.webp
     - assets/projects-images/
 
-  fonts: []
+  fonts:
+    # Subset of Simple Icons (CC0) — see lib/core/theme/brand_icons.dart
+    - family: BrandIcons
+      fonts:
+        - asset: assets/fonts/BrandIcons.ttf

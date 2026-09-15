@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
-import '../../core/theme/app_spacing.dart';
 
+/// Solid white button that sweeps to gold on hover/focus — design `.btn`.
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
@@ -19,23 +19,19 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.onSurface, // Stark white
-        foregroundColor: AppColors.surface, // Pure black text
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xl,
-          vertical: AppSpacing.lg,
+      style: ButtonStyle(
+        elevation: const WidgetStatePropertyAll(0),
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 36, vertical: 20),
         ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.zero, // Sharp corners
+        shape: const WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         ),
-        elevation: 0,
-      ).copyWith(
-        // Gold sweep on hover/focus, subtle press feedback — 200ms built-in.
+        foregroundColor: const WidgetStatePropertyAll(AppColors.onAccent),
         backgroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.hovered) ||
               states.contains(WidgetState.focused)) {
-            return AppColors.tertiary;
+            return AppColors.accent;
           }
           return AppColors.onSurface;
         }),
@@ -46,9 +42,8 @@ class PrimaryButton extends StatelessWidget {
           return Colors.transparent;
         }),
       ),
-      // FittedBox lets the label scale down instead of striping with a
-      // RenderFlex overflow when the button is squeezed below its
-      // intrinsic width (e.g. half-width panels on tablet).
+      // FittedBox lets the label scale down instead of overflowing when the
+      // button is squeezed below its intrinsic width.
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Row(
@@ -56,7 +51,7 @@ class PrimaryButton extends StatelessWidget {
           children: [
             if (icon != null) ...[
               Icon(icon, size: 16),
-              const SizedBox(width: AppSpacing.xs),
+              const SizedBox(width: 8),
             ],
             Text(label.toUpperCase(), style: AppTypography.labelCaps),
           ],

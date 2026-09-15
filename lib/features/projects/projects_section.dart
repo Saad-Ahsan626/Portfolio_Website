@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:math' as math;
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/utils/responsive.dart';
+import '../../data/models/project_model.dart';
 import '../../providers/portfolio_provider.dart';
 import '../../shared/widgets/reveal_on_scroll.dart';
-import '../../shared/widgets/section_label.dart';
+import '../../shared/widgets/section_container.dart';
+import '../../shared/widgets/section_header.dart';
 import 'widgets/project_card.dart';
-import '../../data/models/project_model.dart';
 
 class ProjectsSection extends ConsumerWidget {
   const ProjectsSection({super.key});
@@ -18,135 +18,100 @@ class ProjectsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final projectsAsync = ref.watch(projectsProvider);
-    final isDesktop = Responsive.isDesktop(context);
-    final isMobile = Responsive.isMobile(context);
 
-    final horizontalPadding = isDesktop
-        ? AppSpacing.xl
-        : isMobile
-            ? AppSpacing.md
-            : AppSpacing.lg;
-
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: AppSpacing.containerMax),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Section header ───────────────────────────────────
-            RevealOnScroll(id: 'projects-header', child: _SectionHeader()),
-
-            const SizedBox(height: AppSpacing.lg),
-
-            // ── Projects grid ────────────────────────────────────
-            projectsAsync.when(
-              loading: () =>
-                  _LoadingGrid(isMobile: isMobile, isDesktop: isDesktop),
-              error: (e, _) => _ErrorState(error: e.toString()),
-              data: (projects) => _ProjectsGrid(
-                projects: projects,
-                isMobile: isMobile,
-                isDesktop: isDesktop,
-              ),
+    return SectionContainer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const RevealOnScroll(
+            id: 'projects-header',
+            child: SectionHeader(
+              label: 'Selected Works',
+              title: 'Engineering mobile products, from interface to infrastructure.',
+              titleMaxWidth: 640,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          projectsAsync.when(
+            loading: () => const _LoadingGrid(),
+            error: (_, __) => const _ErrorState(),
+            data: (projects) => _ProjectsGrid(projects: projects),
+          ),
+        ],
       ),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Section header
-// ─────────────────────────────────────────────────────────────────────────────
-class _SectionHeader extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SectionLabel('Selected Works')
-            .animate()
-            .fadeIn(duration: 400.ms)
-            .slideY(begin: 0.3, end: 0, duration: 400.ms),
-        const SizedBox(height: AppSpacing.base),
-        Text(
-          'Crafting seamless digital\nexperiences with Flutter.',
-          style: (Responsive.isMobile(context)
-                  ? AppTypography.headlineLgMobile
-                  : AppTypography.headlineLg)
-              .copyWith(color: AppColors.onSurface),
-        ).animate(delay: 150.ms).fadeIn(duration: 400.ms).slideY(
-            begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
-      ],
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Responsive grid
-// ─────────────────────────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────────────────────────
-// Responsive grid (Fix for Bug #2 and Bug #4)
+// Responsive grid — auto-fit, minmax(300px, 1fr), 48px gap
 // ─────────────────────────────────────────────────────────────────────────────
 class _ProjectsGrid extends StatelessWidget {
-  const _ProjectsGrid({
-    required this.projects,
-    required this.isMobile,
-    required this.isDesktop,
-  });
+  const _ProjectsGrid({required this.projects});
 
-  // Bug #4 Fix: Replaced 'final List projects;' with strict typing
   final List<ProjectModel> projects;
-  final bool isMobile;
-  final bool isDesktop;
+
+  static const double gap = AppSpacing.lg;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Define columns based on breakpoint
-        final crossAxisCount = isMobile
-            ? 1
-            : isDesktop
-                ? 3
-                : 2;
-        const spacing = AppSpacing.lg;
+        final columns = Responsive.autoFitColumns(
+          width: constraints.maxWidth,
+          minItemWidth: 300,
+          gap: gap,
+          itemCount: projects.length,
+        );
+        final itemWidth =
+            (constraints.maxWidth - gap * (columns - 1)) / columns;
 
-        // Calculate the exact width each card should take
-        final totalSpacing = spacing * (crossAxisCount - 1);
-        double itemWidth =
-            (constraints.maxWidth - totalSpacing) / crossAxisCount;
-
-        // Prevent cards from becoming too narrow on small screens — if computed
-        // item width falls below a sensible minimum, fall back to single column.
-        const double minCardWidth = 260; // sensible minimum for card content
-        if (itemWidth < minCardWidth) {
-          // switch to a single column layout for readability
-          const fallbackCrossAxisCount = 1;
-          const fallbackTotalSpacing = spacing * (fallbackCrossAxisCount - 1);
-          itemWidth = (constraints.maxWidth - fallbackTotalSpacing) /
-              fallbackCrossAxisCount;
+        Widget card(int index, {required bool fillHeight}) {
+          final project = projects[index];
+          return SizedBox(
+            width: itemWidth,
+            child: RevealOnScroll(
+              id: 'project-card-${project.id}',
+              delay: Duration(milliseconds: index * 120),
+              child: ProjectCard(project: project, fillHeight: fillHeight),
+            ),
+          );
         }
 
-        // Bug #2 Fix: Wrap allows dynamic intrinsic heights based on content
-        return Wrap(
-          spacing: spacing,
-          runSpacing: spacing,
-          children: projects.asMap().entries.map((entry) {
-            final index = entry.key;
-            final project = entry.value;
+        if (columns == 1) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var i = 0; i < projects.length; i++) ...[
+                if (i > 0) const SizedBox(height: gap),
+                card(i, fillHeight: false),
+              ],
+            ],
+          );
+        }
 
-            return SizedBox(
-              width: itemWidth,
-              child: RevealOnScroll(
-                id: 'project-card-${project.id}',
-                delay: Duration(milliseconds: index * 120),
-                child: ProjectCard(project: project),
+        // CSS grid rows stretch their items; IntrinsicHeight gives each row
+        // the tallest card's height.
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (var start = 0; start < projects.length; start += columns) ...[
+              if (start > 0) const SizedBox(height: gap),
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = start;
+                        i < start + columns && i < projects.length;
+                        i++) ...[
+                      if (i > start) const SizedBox(width: gap),
+                      card(i, fillHeight: true),
+                    ],
+                  ],
+                ),
               ),
-            );
-          }).toList(),
+            ],
+          ],
         );
       },
     );
@@ -154,52 +119,44 @@ class _ProjectsGrid extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Loading skeleton (responsive)
+// Loading skeleton
 // ─────────────────────────────────────────────────────────────────────────────
 class _LoadingGrid extends StatelessWidget {
-  const _LoadingGrid({this.isMobile = false, this.isDesktop = false});
-
-  final bool isMobile;
-  final bool isDesktop;
+  const _LoadingGrid();
 
   @override
   Widget build(BuildContext context) {
-    final crossAxisCount = isMobile
-        ? 1
-        : isDesktop
-            ? 3
-            : 2;
-    const spacing = AppSpacing.lg;
-    final childAspectRatio = isMobile ? 3.5 : 0.62;
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        mainAxisSpacing: spacing,
-        crossAxisSpacing: spacing,
-        childAspectRatio: childAspectRatio,
-      ),
-      itemCount: math.max(3, crossAxisCount),
-      itemBuilder: (_, __) => _SkeletonCard(),
-    );
-  }
-}
-
-class _SkeletonCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-        border: Border.all(color: AppColors.glassBorder),
-      ),
-    ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(
-          duration: 1200.ms,
-          color: AppColors.primary.withValues(alpha: 0.04),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columns = Responsive.autoFitColumns(
+          width: constraints.maxWidth,
+          minItemWidth: 300,
+          gap: _ProjectsGrid.gap,
+          itemCount: 3,
         );
+        final itemWidth =
+            (constraints.maxWidth - _ProjectsGrid.gap * (columns - 1)) / columns;
+        return Wrap(
+          spacing: _ProjectsGrid.gap,
+          runSpacing: _ProjectsGrid.gap,
+          children: List.generate(
+            3,
+            (_) => Container(
+              width: itemWidth,
+              height: 520,
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+                border: Border.all(color: AppColors.hairline),
+              ),
+            ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(
+                  duration: 1200.ms,
+                  color: AppColors.onSurface.withValues(alpha: 0.04),
+                ),
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -207,22 +164,13 @@ class _SkeletonCard extends StatelessWidget {
 // Error state
 // ─────────────────────────────────────────────────────────────────────────────
 class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.error});
-  final String error;
+  const _ErrorState();
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          const Icon(Icons.error_outline, color: AppColors.error, size: 48),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            'Failed to load projects',
-            style: AppTypography.bodyMd.copyWith(color: AppColors.error),
-          ),
-        ],
-      ),
+    return Text(
+      'Projects couldn\'t be loaded. Refresh the page to try again.',
+      style: AppTypography.bodyMd.copyWith(color: AppColors.error),
     );
   }
 }

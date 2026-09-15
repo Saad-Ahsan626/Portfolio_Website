@@ -1,83 +1,50 @@
 import 'package:flutter/material.dart';
 
+/// Colour tokens taken from the design files in `plan/`.
 class AppColors {
   AppColors._();
 
   // --- Surfaces ---
-  static const Color surface = Color(0xFF09090B); // Deep brutalist black
-  static const Color surfaceDim = Color(0xFF000000); // Pure black
-  static const Color surfaceBright = Color(0xFF1E1E1E); 
-  static const Color surfaceContainerLowest = Color(0xFF000000);
-  static const Color surfaceContainerLow = Color(0xFF09090B);
+  static const Color background = Color(0xFF09090B); // page ground
+  static const Color surface = background;
+  static const Color panel = Color(0xFF0E0E11); // contact form, approach panel
   static const Color surfaceContainer = Color(0xFF121212);
-  static const Color surfaceContainerHigh = Color(0xFF1E1E1E);
-  static const Color surfaceContainerHighest = Color(0xFF2C2C2C);
+  static const Color surfaceContainerHigh = Color(0xFF1E1E1E); // pills, portrait
+  static const Color card = Color(0xB31E1E1E); // rgba(30,30,30,.7) project/experience cards
+  static const Color tile = Color(0x661E293B); // rgba(30,41,59,.4) toolkit, features, workspace frame
+  static const Color badge = Color(0xE61E1E1E); // rgba(30,30,30,.9)
+  static const Color tag = Color(0x8027272A); // rgba(39,39,42,.5)
+  static const Color tagSubtle = Color(0x4D27272A); // rgba(39,39,42,.3)
 
-  // --- On Surface ---
-  static const Color onSurface = Color(0xFFFFFFFF); // Stark white
-  static const Color onSurfaceVariant = Color(0xFFA1A1AA); // Light gray
-  static const Color inverseSurface = Color(0xFFFFFFFF);
-  static const Color inverseOnSurface = Color(0xFF000000);
+  // --- Text ---
+  static const Color onSurface = Color(0xFFFFFFFF);
+  static const Color onSurfaceVariant = Color(0xFFA1A1AA);
+  static const Color placeholder = Color(0xFF52525B);
+  static const Color onAccent = Color(0xFF000000);
 
-  // --- Outline ---
-  static const Color outline = Color(0xFFFFFFFF); // High contrast outline
-  static const Color outlineVariant = Color(0xFF3F3F46); // Darker border
+  // --- Lines ---
+  static const Color outline = Color(0xFFFFFFFF); // footer rule, ghost buttons
+  static const Color outlineVariant = Color(0xFF3F3F46); // borders, rails
+  static const Color divider = Color(0x663F3F46); // rgba(63,63,70,.4)
+  static const Color hairline = Color(0x0DFFFFFF); // 5% white card border
+  static const Color hairlineStrong = Color(0x14FFFFFF); // 8% white badge border
 
-  // --- Primary ---
-  // Using stark white as primary for brutalist feel
-  static const Color primary = Color(0xFFFFFFFF);
-  static const Color onPrimary = Color(0xFF000000);
-  static const Color primaryContainer = Color(0xFFFFFFFF);
-  static const Color onPrimaryContainer = Color(0xFF000000);
-  static const Color inversePrimary = Color(0xFF000000);
-  static const Color primaryFixed = Color(0xFFFFFFFF);
-  static const Color primaryFixedDim = Color(0xFFE4E4E7);
-  static const Color onPrimaryFixed = Color(0xFF000000);
-  static const Color onPrimaryFixedVariant = Color(0xFF18181B);
-  static const Color surfaceTint = Color(0xFFFFFFFF);
+  // --- Accent (gold) ---
+  static const Color accent = Color(0xFFC6A87C);
+  static const Color accentBorder = Color(0x73C6A87C); // .45 hover border
+  static const Color accentGlow = Color(0x2EC6A87C); // .18 portrait glow
+  static const Color accentRing = Color(0x26C6A87C); // .15 timeline node ring
+  static const Color accentWash = Color(0x1AC6A87C); // .10 icon button hover
 
-  // --- Secondary ---
-  // Using gray shades for secondary elements
-  static const Color secondary = Color(0xFFA1A1AA);
-  static const Color onSecondary = Color(0xFF000000);
+  // --- Material roles ---
+  static const Color primary = onSurface;
+  static const Color onPrimary = onAccent;
+  static const Color secondary = onSurfaceVariant;
   static const Color secondaryContainer = Color(0xFF27272A);
-  static const Color onSecondaryContainer = Color(0xFFFFFFFF);
-  static const Color secondaryFixed = Color(0xFFE4E4E7);
-  static const Color secondaryFixedDim = Color(0xFFA1A1AA);
-  static const Color onSecondaryFixed = Color(0xFF000000);
-  static const Color onSecondaryFixedVariant = Color(0xFF18181B);
-
-  // --- Tertiary (Accent) ---
-  // Brutalist Gold/Yellow accent
-  static const Color tertiary = Color(0xFFC6A87C);
-  static const Color onTertiary = Color(0xFF000000);
-  static const Color tertiaryContainer = Color(0xFFD4AF37);
-  static const Color onTertiaryContainer = Color(0xFF000000);
-  static const Color tertiaryFixed = Color(0xFFFDE68A);
-  static const Color tertiaryFixedDim = Color(0xFFC6A87C);
-  static const Color onTertiaryFixed = Color(0xFF000000);
-  static const Color onTertiaryFixedVariant = Color(0xFF45350A);
 
   // --- Error ---
   static const Color error = Color(0xFFFF453A);
   static const Color onError = Color(0xFF000000);
   static const Color errorContainer = Color(0xFF3B0703);
   static const Color onErrorContainer = Color(0xFFFFDAD6);
-
-  // --- Background ---
-  static const Color background = Color(0xFF09090B);
-  static const Color onBackground = Color(0xFFFFFFFF);
-  static const Color surfaceVariant = Color(0xFF18181B);
-
-  // --- Semantic Aliases (use these in UI code) ---
-  static const Color electricCyan = tertiary;           // Replaced with Gold
-  static const Color slateBlue = secondary;             // Gray secondary
-  static const Color midnightNavy = Color(0xFF000000);  // Deepest background
-  static const Color iceWhite = Color(0xFFFFFFFF);      // Stark white
-
-  // --- Glass & Overlay Utilities ---
-  static const Color glassBackground = Color(0x33000000);   // Darker glass
-  static const Color glassBorder = Color(0x1AFFFFFF);       
-  static const Color glassBorderHover = Color(0x4DFFFFFF);   
-  static const Color navBackground = Color(0xFF09090B);     // Solid dark for brutalism
 }

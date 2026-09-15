@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
-import '../../core/utils/responsive.dart';
 import '../../providers/portfolio_provider.dart';
 import '../../shared/widgets/reveal_on_scroll.dart';
-import '../../shared/widgets/section_label.dart';
+import '../../shared/widgets/section_container.dart';
+import '../../shared/widgets/section_header.dart';
 import 'widgets/competencies_panel.dart';
 import 'widgets/timeline_node.dart';
 
@@ -17,187 +15,47 @@ class ExperienceSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final experienceAsync = ref.watch(experienceProvider);
-    final isDesktop = Responsive.isDesktop(context);
-    final isMobile = Responsive.isMobile(context);
 
-    final horizontalPadding = isDesktop
-        ? AppSpacing.xl
-        : isMobile
-            ? AppSpacing.md
-            : AppSpacing.lg;
-
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: AppSpacing.containerMax),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Section header ───────────────────────────────────
-            RevealOnScroll(
-              id: 'experience-header',
-              child: _SectionHeader(isMobile: isMobile),
-            ),
-
-            const SizedBox(height: AppSpacing.xl),
-
-            // ── Timeline ─────────────────────────────────────────
-            experienceAsync.when(
-              loading: () => const _LoadingSkeleton(),
-              error: (e, _) => _ErrorState(error: e.toString()),
-              data: (items) => Column(
-                children: items
-                    .asMap()
-                    .entries
-                    .map(
-                      (e) => RevealOnScroll(
-                        id: 'timeline-${e.value.id}',
-                        delay: Duration(milliseconds: e.key * 120),
-                        slideDirection: e.key.isEven
-                            ? AxisDirection.left
-                            : AxisDirection.right,
-                        child: TimelineNodeRow(
-                          experience: e.value,
-                          index: e.key,
-                          isLast: e.key == items.length - 1,
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-
-            const SizedBox(height: AppSpacing.xl),
-
-            // ── Core competencies ─────────────────────────────────
-            const RevealOnScroll(
-              id: 'competencies-panel',
-              child: CompetenciesPanel(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Section header
-// ─────────────────────────────────────────────────────────────────────────────
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.isMobile});
-  final bool isMobile;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment:
-          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-      children: [
-        const SectionLabel('Journey & Expertise')
-            .animate()
-            .fadeIn(duration: 400.ms)
-            .slideY(begin: 0.3, end: 0, duration: 400.ms),
-        const SizedBox(height: AppSpacing.base),
-        Text(
-          'Experience & Milestones',
-          style: (isMobile
-                  ? AppTypography.headlineLgMobile
-                  : AppTypography.display.copyWith(fontSize: 48))
-              .copyWith(color: AppColors.onSurface),
-          textAlign: isMobile ? TextAlign.center : TextAlign.left,
-        ).animate(delay: 150.ms).fadeIn(duration: 400.ms).slideY(
-            begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
-        const SizedBox(height: AppSpacing.md),
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 560),
-          child: Text(
-            'A technical chronicle of my evolution as a Flutter developer — '
-            'from academic foundations to professional cross-platform engineering.',
-            style: AppTypography.bodyLg
-                .copyWith(color: AppColors.onSurfaceVariant),
-            textAlign: isMobile ? TextAlign.center : TextAlign.left,
-          ),
-        ).animate(delay: 300.ms).fadeIn(duration: 400.ms).slideY(
-            begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
-      ],
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Loading skeleton
-// ─────────────────────────────────────────────────────────────────────────────
-class _LoadingSkeleton extends StatelessWidget {
-  const _LoadingSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(
-        3,
-        (i) => Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-          child: Row(
-            children: [
-              Expanded(
-                child: i.isOdd
-                    ? Container(
-                        height: 120,
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerLow,
-                          borderRadius:
-                              BorderRadius.circular(AppSpacing.radiusXl),
-                        ),
-                      ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(
-                          duration: 1200.ms,
-                          color: AppColors.primary.withValues(alpha: 0.04),
-                        )
-                    : const SizedBox.shrink(),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              const SizedBox(width: 14),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: i.isEven
-                    ? Container(
-                        height: 120,
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerLow,
-                          borderRadius:
-                              BorderRadius.circular(AppSpacing.radiusXl),
-                        ),
-                      ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(
-                          duration: 1200.ms,
-                          color: AppColors.primary.withValues(alpha: 0.04),
-                        )
-                    : const SizedBox.shrink(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Error state
-// ─────────────────────────────────────────────────────────────────────────────
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.error});
-  final String error;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
+    return SectionContainer(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Icon(Icons.error_outline, color: AppColors.error, size: 48),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            'Failed to load experience',
-            style: AppTypography.bodyMd.copyWith(color: AppColors.error),
+          const RevealOnScroll(
+            id: 'experience-header',
+            child: SectionHeader(
+              label: 'Journey & Expertise',
+              title: 'Experience & Milestones',
+              subtitle:
+                  'From academic foundations to shipping full-stack mobile '
+                  'products professionally, one layer of the stack at a time.',
+            ),
+          ),
+
+          const SizedBox(height: 64),
+
+          experienceAsync.when(
+            loading: () => const SizedBox(height: 240),
+            error: (_, __) => Text(
+              'Experience couldn\'t be loaded. Refresh the page to try again.',
+              style: AppTypography.bodyMd.copyWith(color: AppColors.error),
+            ),
+            data: (items) => ExperienceTimeline(
+              children: [
+                for (final (index, item) in items.indexed)
+                  RevealOnScroll(
+                    id: 'timeline-${item.id}',
+                    delay: Duration(milliseconds: index * 120),
+                    child: TimelineEntry(experience: item),
+                  ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 80),
+
+          const RevealOnScroll(
+            id: 'competencies-panel',
+            child: CompetenciesPanel(),
           ),
         ],
       ),

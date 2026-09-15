@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
-import '../../core/theme/app_spacing.dart';
 
-class GhostButton extends StatefulWidget {
+/// Outlined white button whose border and label turn gold on hover/focus.
+class GhostButton extends StatelessWidget {
   const GhostButton({
     super.key,
     required this.label,
@@ -16,50 +16,41 @@ class GhostButton extends StatefulWidget {
   final IconData? icon;
 
   @override
-  State<GhostButton> createState() => _GhostButtonState();
-}
-
-class _GhostButtonState extends State<GhostButton> {
-  bool _hovered = false;
-
-  @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        decoration: BoxDecoration(
-          color: _hovered
-              ? AppColors.onSurface // Stark white on hover
-              : Colors.transparent,
-          borderRadius: BorderRadius.zero, // Sharp corners
-          border: Border.all(
-              color: _hovered ? AppColors.onSurface : AppColors.outline, 
-              width: 1), // 1px border
+    bool highlighted(Set<WidgetState> states) =>
+        states.contains(WidgetState.hovered) ||
+        states.contains(WidgetState.focused);
+
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: ButtonStyle(
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 36, vertical: 20),
         ),
-        child: TextButton(
-          onPressed: widget.onPressed,
-          style: TextButton.styleFrom(
-            foregroundColor: _hovered ? AppColors.surface : AppColors.onSurface,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xl,
-              vertical: AppSpacing.lg,
-            ),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero, // Sharp corners
-            ),
+        shape: const WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        ),
+        foregroundColor: WidgetStateProperty.resolveWith(
+          (states) => highlighted(states) ? AppColors.accent : AppColors.onSurface,
+        ),
+        side: WidgetStateProperty.resolveWith(
+          (states) => BorderSide(
+            color: highlighted(states) ? AppColors.accent : AppColors.outline,
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (widget.icon != null) ...[
-                Icon(widget.icon, size: 16),
-                const SizedBox(width: AppSpacing.xs),
-              ],
-              Text(widget.label.toUpperCase(), style: AppTypography.labelCaps),
+        ),
+        overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+      ),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 16),
+              const SizedBox(width: 8),
             ],
-          ),
+            Text(label.toUpperCase(), style: AppTypography.labelCaps),
+          ],
         ),
       ),
     );

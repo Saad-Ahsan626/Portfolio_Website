@@ -1,9 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
-import 'features/shell/shell_page.dart';
-import 'providers/theme_provider.dart'; // <-- Add this import
 
 class _WebScrollBehavior extends MaterialScrollBehavior {
   @override
@@ -19,17 +18,12 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // ── NEW: Watch the theme state ──
-    final isDarkMode = ref.watch(isDarkModeProvider);
-
-    return MaterialApp(
-      title:
-          'Muhammad Saad Ahsan — Flutter Developer', // Added your name for polish!
+    return MaterialApp.router(
+      title: 'Muhammad Saad Ahsan — Full-Stack Mobile Engineer',
       debugShowCheckedModeBanner: false,
-      // ── NEW: Apply the dynamic theme ──
-      theme: isDarkMode ? AppTheme.dark : ThemeData.light(),
+      theme: AppTheme.dark,
       scrollBehavior: _WebScrollBehavior(),
-      home: const ShellPage(),
+      routerConfig: ref.watch(routerProvider),
     );
   }
 }

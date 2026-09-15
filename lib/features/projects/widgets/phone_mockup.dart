@@ -105,7 +105,7 @@ class PhoneMockup extends StatelessWidget {
 
   Widget _placeholder() {
     return Container(
-      color: AppColors.surfaceContainerLow,
+      color: AppColors.surfaceContainer,
       child: Center(
         child: Icon(
           placeholderIcon,

@@ -1,18 +1,23 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../core/constants/links.dart';
+import '../../../core/router/section_navigation.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../providers/scroll_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MobileDrawer extends ConsumerWidget {
-  const MobileDrawer({super.key});
+  const MobileDrawer({super.key, this.activeOverride});
+
+  /// Forces the highlighted item (case-study pages highlight "Projects").
+  final int? activeOverride;
 
   static const _navItems = [
-    (label: 'About', index: SectionIndex.home, icon: Icons.person_outline),
+    (label: 'About', index: SectionIndex.about, icon: Icons.person_outline),
     (label: 'Projects', index: SectionIndex.projects, icon: Icons.work_outline),
     (label: 'Experience', index: SectionIndex.experience, icon: Icons.timeline),
     (label: 'Contact', index: SectionIndex.contact, icon: Icons.mail_outline),
@@ -20,104 +25,93 @@ class MobileDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activeSection = ref.watch(activeSectionProvider);
-    final sectionKeys = ref.watch(sectionKeysProvider);
+    final activeSection = activeOverride ?? ref.watch(activeSectionProvider);
 
-    void scrollTo(int index) {
-      // Capture the scroll controller before the drawer unmounts
-      final scrollController = ref.read(scrollControllerProvider);
+    void navigate(int index) {
+      // Capture everything before the drawer closes and this context unmounts.
+      final container = ProviderScope.containerOf(context, listen: false);
+      final router = GoRouter.of(context);
 
-      Navigator.of(context).pop(); // close drawer first
+      Navigator.of(context).pop();
 
       Future.delayed(const Duration(milliseconds: 300), () {
-        final ctx = sectionKeys[index].currentContext;
-        if (ctx == null || !ctx.mounted) return;
-
-        final box = ctx.findRenderObject() as RenderBox?;
-        if (box == null) return;
-
-        const appBarHeight = 60.0;
-        final absoluteOffset =
-            (box.localToGlobal(Offset.zero).dy - appBarHeight) + scrollController.offset;
-        final targetOffset =
-            (absoluteOffset - 20).clamp(0.0, scrollController.position.maxScrollExtent);
-
-        scrollController.animateTo(
-          targetOffset,
-          duration: const Duration(milliseconds: 600),
-          curve: Curves.easeInOut,
-        );
+        goToSection(container: container, router: router, index: index);
       });
     }
 
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Drawer(
-          backgroundColor: AppColors.navBackground,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Drawer(
+      backgroundColor: AppColors.background,
+      shape: const RoundedRectangleBorder(),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Muhammad Saad Ahsan',
-                        style: AppTypography.headlineMd.copyWith(
-                          color: AppColors.onSurface,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close,
-                            color: AppColors.onSurfaceVariant),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: AppSpacing.xl),
-
-                  // Nav items
-                  ..._navItems.asMap().entries.map((e) {
-                    final item = e.value;
-                    final isActive = activeSection == item.index;
-                    return _DrawerNavItem(
-                      label: item.label,
-                      icon: item.icon,
-                      isActive: isActive,
-                      onTap: () => scrollTo(item.index),
-                      delay: Duration(milliseconds: e.key * 80),
-                    );
-                  }),
-
-                  const Spacer(),
-
-                  // Footer social links
-                  const Wrap(
-                    spacing: AppSpacing.md,
-                    children: [
-                      _SocialLink(label: 'GitHub', icon: Icons.terminal, url: 'https://github.com/Saad-Ahsan626'),
-                      _SocialLink(label: 'LinkedIn', icon: Icons.link_rounded, url: 'https://www.linkedin.com/in/saad-ahsan-55201336a/'),
-                      _SocialLink(label: 'Email', icon: Icons.mail_outline, url: 'mailto:saadahsan039@gmail.com'),
-                    ],
-                  ),
-
-                  const SizedBox(height: AppSpacing.md),
-
-                  Text(
-                    '© 2026 Built with Flutter',
-                    style: AppTypography.labelCaps.copyWith(
-                      color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
+                  Flexible(
+                    child: Text(
+                      'Muhammad Saad Ahsan',
+                      style: AppTypography.headlineMd
+                          .copyWith(color: AppColors.onSurface),
                     ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close,
+                        color: AppColors.onSurfaceVariant),
+                    tooltip: 'Close menu',
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 4),
+              Text(
+                'FULL-STACK MOBILE ENGINEER',
+                style: AppTypography.labelSm
+                    .copyWith(color: AppColors.onSurfaceVariant),
+              ),
+
+              const SizedBox(height: AppSpacing.xl),
+
+              // Nav items
+              ..._navItems.asMap().entries.map((e) {
+                final item = e.value;
+                final isActive = activeSection == item.index ||
+                    (item.index == SectionIndex.about &&
+                        activeSection == SectionIndex.home);
+                return _DrawerNavItem(
+                  label: item.label,
+                  icon: item.icon,
+                  isActive: isActive,
+                  onTap: () => navigate(item.index),
+                  delay: Duration(milliseconds: e.key * 80),
+                );
+              }),
+
+              const Spacer(),
+
+              // Footer social links
+              Wrap(
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.sm,
+                children: [
+                  for (final link in Links.social)
+                    _SocialLink(label: link.label, icon: link.icon, url: link.url),
+                ],
+              ),
+
+              const SizedBox(height: AppSpacing.md),
+
+              Text(
+                '© 2026 Built with Flutter',
+                style: AppTypography.labelCaps.copyWith(
+                  color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -146,34 +140,28 @@ class _DrawerNavItem extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       decoration: BoxDecoration(
-        color: isActive
-            ? AppColors.electricCyan.withValues(alpha: 0.1)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        border: Border.all(
-          color: isActive
-              ? AppColors.electricCyan.withValues(alpha: 0.3)
-              : Colors.transparent,
-          width: 1,
+        color: isActive ? AppColors.accentWash : Colors.transparent,
+        border: Border(
+          left: BorderSide(
+            color: isActive ? AppColors.accent : Colors.transparent,
+            width: 2,
+          ),
         ),
       ),
       child: ListTile(
         leading: Icon(
           icon,
-          color: isActive ? AppColors.electricCyan : AppColors.onSurfaceVariant,
+          color: isActive ? AppColors.accent : AppColors.onSurfaceVariant,
           size: 20,
         ),
         title: Text(
           label.toUpperCase(),
           style: AppTypography.labelCaps.copyWith(
-            color: isActive ? AppColors.electricCyan : AppColors.onSurface,
+            color: isActive ? AppColors.accent : AppColors.onSurface,
             fontSize: 13,
           ),
         ),
         onTap: onTap,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        ),
       ),
     )
         .animate(delay: delay)
@@ -190,25 +178,23 @@ class _SocialLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        final uri = Uri.parse(url);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      },
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: AppColors.onSurfaceVariant),
-          const SizedBox(width: AppSpacing.xs),
-          Text(
-            label,
-            style: AppTypography.labelCaps.copyWith(
-              color: AppColors.onSurfaceVariant,
+    return InkWell(
+      onTap: () => launchUrl(Uri.parse(url)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: AppColors.onSurfaceVariant),
+            const SizedBox(width: AppSpacing.xs),
+            Text(
+              label.toUpperCase(),
+              style: AppTypography.labelCaps.copyWith(
+                color: AppColors.onSurfaceVariant,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

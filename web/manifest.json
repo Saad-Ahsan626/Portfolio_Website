@@ -1,11 +1,11 @@
 {
-  "name": "Muhammad Saad Ahsan — Flutter Developer",
+  "name": "Muhammad Saad Ahsan — Full-Stack Mobile Engineer",
   "short_name": "Saad Ahsan",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#101415",
-  "theme_color": "#101415",
-  "description": "Flutter developer portfolio.",
+  "background_color": "#09090B",
+  "theme_color": "#09090B",
+  "description": "Portfolio of Muhammad Saad Ahsan, Full-Stack Mobile Engineer building Flutter apps and the backends behind them.",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "icons": [
