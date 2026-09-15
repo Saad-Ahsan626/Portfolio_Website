@@ -25,19 +25,5 @@
       "Riverpod",
       "REST APIs"
     ]
-  },
-  {
-    "id": "exp_uet",
-    "role": "Computer Science Student & Independent Developer",
-    "company": "University of Engineering and Technology, Lahore",
-    "duration": "Aug 2024 — Present",
-    "description": "Building full-stack projects alongside my degree: Flutter apps with clean architecture, TypeScript backends with NestJS and Prisma, and coursework in data structures, algorithms and AI search that shaped how I design systems.",
-    "techStack": [
-      "Flutter",
-      "TypeScript",
-      "NestJS",
-      "C++",
-      "Python"
-    ]
   }
 ]

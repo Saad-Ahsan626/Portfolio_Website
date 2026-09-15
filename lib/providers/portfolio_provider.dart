@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../data/models/education_model.dart';
 import '../data/models/experience_model.dart';
 import '../data/models/project_model.dart';
 import '../data/models/skill_model.dart';
@@ -14,6 +15,10 @@ final projectsProvider = FutureProvider<List<ProjectModel>>((ref) {
 
 final experienceProvider = FutureProvider<List<ExperienceModel>>((ref) {
   return ref.watch(portfolioRepositoryProvider).fetchExperience();
+});
+
+final educationProvider = FutureProvider<List<EducationModel>>((ref) {
+  return ref.watch(portfolioRepositoryProvider).fetchEducation();
 });
 
 final skillsProvider = FutureProvider<List<SkillModel>>((ref) {

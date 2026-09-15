@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import '../models/project_model.dart';
+import '../models/education_model.dart';
 import '../models/experience_model.dart';
+import '../models/project_model.dart';
 import '../models/skill_model.dart';
 
 class PortfolioRepository {
@@ -18,6 +19,14 @@ class PortfolioRepository {
     final list = json.decode(raw) as List;
     return list
         .map((e) => ExperienceModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<EducationModel>> fetchEducation() async {
+    final raw = await rootBundle.loadString('assets/data/education.json');
+    final list = json.decode(raw) as List;
+    return list
+        .map((e) => EducationModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 

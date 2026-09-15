@@ -14,10 +14,13 @@ class PhoneMockup extends StatelessWidget {
   final String? imageUrl;
   final IconData placeholderIcon;
 
+  /// Width ÷ height of the device body.
+  static const double aspectRatio = 9 / 19.5;
+
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 9 / 19.5,
+      aspectRatio: aspectRatio,
       child: Stack(
         clipBehavior: Clip.none,
         children: [

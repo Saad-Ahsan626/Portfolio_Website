@@ -23,6 +23,9 @@ class ProjectCard extends StatelessWidget {
   /// cards side by side line up. Only valid under a bounded height.
   final bool fillHeight;
 
+  /// Phone mockup width; its height follows the 9:19.5 screen ratio.
+  static const double phoneWidth = 104;
+
   @override
   Widget build(BuildContext context) {
     void openCaseStudy() => context.go(AppRoutes.project(project.id));
@@ -30,27 +33,42 @@ class ProjectCard extends StatelessWidget {
     return HoverCard(
       onTap: openCaseStudy,
       semanticLabel: '${project.title} — view case study',
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: fillHeight ? MainAxisSize.max : MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 12),
+            padding: const EdgeInsets.only(top: 4, bottom: 16),
             child: Center(
+              // Explicit height as well as width: when IntrinsicHeight
+              // measures the card, a width-only SizedBox passes the card's
+              // full width down and AspectRatio reports a ~1000px-tall phone.
               child: SizedBox(
-                width: 140,
+                width: phoneWidth,
+                height: phoneWidth / PhoneMockup.aspectRatio,
                 child: PhoneMockup(imageUrl: project.imageUrl),
               ),
             ),
           ),
           Text(
             project.title,
-            style: AppTypography.headlineMd.copyWith(color: AppColors.onSurface),
+            style: AppTypography.headlineMd.copyWith(
+              fontSize: 22,
+              color: AppColors.onSurface,
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
+          // The full description lives on the case-study page.
           Text(
             project.description,
-            style: AppTypography.bodyMd.copyWith(color: AppColors.onSurfaceVariant),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: AppTypography.bodyMd.copyWith(
+              fontSize: 15,
+              height: 1.55,
+              color: AppColors.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -61,9 +79,9 @@ class ProjectCard extends StatelessWidget {
           // Tight flexible gap: pins the actions to the bottom, and absorbs a
           // few pixels if IntrinsicHeight's estimate runs short.
           if (fillHeight)
-            const Expanded(child: SizedBox(height: 24))
+            const Expanded(child: SizedBox(height: 16))
           else
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
           Row(
             children: [
               CaseStudyLink(onTap: openCaseStudy),

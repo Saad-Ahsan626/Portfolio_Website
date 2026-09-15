@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../data/models/experience_model.dart';
 import '../../../shared/widgets/hover_card.dart';
 import '../../projects/widgets/tech_tag.dart';
 
@@ -41,17 +40,33 @@ class ExperienceTimeline extends StatelessWidget {
   }
 }
 
+/// One node on the timeline: date on the left, card on the right. Used for
+/// both work experience and education.
 class TimelineEntry extends StatelessWidget {
-  const TimelineEntry({super.key, required this.experience});
+  const TimelineEntry({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.duration,
+    required this.description,
+    this.tags = const [],
+  });
 
-  final ExperienceModel experience;
+  /// Role or degree.
+  final String title;
+
+  /// Company or institution.
+  final String subtitle;
+  final String duration;
+  final String description;
+  final List<String> tags;
 
   @override
   Widget build(BuildContext context) {
     final date = Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Text(
-        experience.duration.toUpperCase(),
+        duration.toUpperCase(),
         style: AppTypography.labelCaps.copyWith(
           color: AppColors.accent,
           height: 1.5,
@@ -59,7 +74,12 @@ class TimelineEntry extends StatelessWidget {
       ),
     );
 
-    final card = _ExperienceCard(experience: experience);
+    final card = _TimelineCard(
+      title: title,
+      subtitle: subtitle,
+      description: description,
+      tags: tags,
+    );
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,9 +136,18 @@ class _Node extends StatelessWidget {
   }
 }
 
-class _ExperienceCard extends StatelessWidget {
-  const _ExperienceCard({required this.experience});
-  final ExperienceModel experience;
+class _TimelineCard extends StatelessWidget {
+  const _TimelineCard({
+    required this.title,
+    required this.subtitle,
+    required this.description,
+    required this.tags,
+  });
+
+  final String title;
+  final String subtitle;
+  final String description;
+  final List<String> tags;
 
   @override
   Widget build(BuildContext context) {
@@ -128,12 +157,12 @@ class _ExperienceCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            experience.role,
+            title,
             style: AppTypography.headlineMd.copyWith(color: AppColors.onSurface),
           ),
           const SizedBox(height: 12),
           Text(
-            experience.company.toUpperCase(),
+            subtitle.toUpperCase(),
             style: AppTypography.labelCaps.copyWith(
               color: AppColors.onSurfaceVariant,
               height: 1.5,
@@ -141,16 +170,16 @@ class _ExperienceCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            experience.description,
+            description,
             style: AppTypography.bodyMd.copyWith(color: AppColors.onSurfaceVariant),
           ),
-          if (experience.techStack.isNotEmpty) ...[
+          if (tags.isNotEmpty) ...[
             const SizedBox(height: 12),
             Wrap(
               spacing: 4,
               runSpacing: 4,
               children: [
-                for (final tech in experience.techStack) TechTag(tech, subtle: true),
+                for (final tag in tags) TechTag(tag, subtle: true),
               ],
             ),
           ],

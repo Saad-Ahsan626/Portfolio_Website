@@ -1,0 +1,20 @@
+[
+  {
+    "id": "edu_uet_bscs",
+    "title": "Computer Science Student",
+    "institution": "University of Engineering and Technology, Lahore",
+    "duration": "2024 — 2028",
+    "description": "Pursuing a BS in Computer Science and working through the core curriculum, from programming fundamentals and object-oriented design to data structures, databases, operating systems, networks, software engineering and artificial intelligence.",
+    "subjects": [
+      "Programming Fundamentals",
+      "Object-Oriented Programming",
+      "Data Structures & Algorithms",
+      "Discrete Structures",
+      "Database Systems",
+      "Operating Systems",
+      "Computer Networks",
+      "Software Engineering",
+      "Artificial Intelligence"
+    ]
+  }
+]

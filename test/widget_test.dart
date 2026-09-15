@@ -38,6 +38,19 @@ void main() {
       expect(experience.first.role, 'Full-Stack Mobile Engineer');
     });
 
+    test('education lives apart from work experience', () async {
+      final experience = await repository.fetchExperience();
+      final education = await repository.fetchEducation();
+
+      expect(education, isNotEmpty);
+      expect(education.first.title, 'Computer Science Student');
+      expect(education.first.subjects, contains('Data Structures & Algorithms'));
+      expect(
+        experience.map((e) => e.company),
+        isNot(contains(education.first.institution)),
+      );
+    });
+
     test('skills.json parses', () async {
       final skills = await repository.fetchSkills();
       expect(skills.map((s) => s.name), containsAll(['Flutter', 'NestJS', 'System Design']));
