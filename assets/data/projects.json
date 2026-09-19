@@ -6,6 +6,7 @@
     "kind": "Full-stack App",
     "year": "2026",
     "description": "One feed for every event on campus. Students follow societies, save events and get reminders without signing up, societies publish from their own portal, and admins moderate, all on an offline-first Flutter app backed by Supabase.",
+    "metaDescription": "Campus Pulse: an offline-first Flutter and Supabase app for campus events, with society portals, reminders and moderation. Case study by Muhammad Saad Ahsan.",
     "techStack": [
       "Flutter",
       "Supabase",
@@ -106,6 +107,7 @@
     "kind": "Full-stack App",
     "year": "2026",
     "description": "A tutoring platform that turns a photographed school diary into lessons and practice. Teachers review and publish the AI's draft, students practise with AI feedback, and every result flows back to the teacher.",
+    "metaDescription": "AI Tuition: a tutoring platform that turns a photographed school diary into lessons, built on Flutter, Node.js and Gemini. Case study by Muhammad Saad Ahsan.",
     "techStack": [
       "Flutter",
       "Node.js",
@@ -186,6 +188,7 @@
     "kind": "Mobile App",
     "year": "2026",
     "description": "A Flutter weather app that goes beyond the forecast: live conditions, hourly and 3-day forecasts and air quality, paired with a physics-based thermal model that estimates the temperature inside your room.",
+    "metaDescription": "A Flutter weather app with forecasts, air quality and a physics-based model of the temperature inside your room. A case study by Muhammad Saad Ahsan.",
     "techStack": [
       "Flutter",
       "Riverpod",

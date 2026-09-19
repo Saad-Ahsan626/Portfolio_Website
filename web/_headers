@@ -3,7 +3,7 @@
 # Cross-origin isolation lets the WebAssembly renderer (flutter build web
 # --wasm) use multiple threads. Without it the site still works, rendering
 # single-threaded. `credentialless` keeps cross-origin fetches such as Google
-# Fonts, the CanvasKit CDN and EmailJS working.
+# Fonts and the CanvasKit CDN working.
 /*
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: credentialless

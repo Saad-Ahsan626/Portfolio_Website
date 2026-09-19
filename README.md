@@ -2,7 +2,7 @@
 
 Personal portfolio of a Full-Stack Mobile Engineer, built with Flutter for the web.
 
-A one-page site (hero, projects, experience, about, contact) plus a case-study page for every project at `/#/projects/<id>`. The visual design lives in `plan/*.dc.html`: a black and gold palette set in Oswald, Playfair Display and JetBrains Mono.
+A one-page site (hero, projects, education, experience, about, contact) plus a case-study page for every project at `/projects/<id>`. The visual design lives in `plan/*.dc.html`: a black and gold palette set in Oswald, Playfair Display and JetBrains Mono.
 
 ## Tech stack
 
@@ -20,7 +20,7 @@ A one-page site (hero, projects, experience, about, contact) plus a case-study p
 
 ```
 lib/
-├── app.dart                  MaterialApp.router + theme
+├── app.dart                  MaterialApp.router, theme, browser-tab title
 ├── core/
 │   ├── constants/            breakpoints, contact links
 │   ├── router/               routes and section navigation
@@ -41,8 +41,8 @@ lib/
 
 All copy that changes over time is data, not code:
 
-- `assets/data/projects.json`: cards and full case studies (overview, architecture, features, screens, challenge and approach). The `id` is the URL slug. Set `githubUrl` to `null` for private repositories and the source button is hidden.
-- `assets/data/experience.json`: timeline entries, newest first.
+- `assets/data/projects.json`: cards and full case studies (overview, architecture, features, screens, challenge and approach). The `id` is the URL slug. `metaDescription` is the snippet Google shows for the case study; keep it under about 155 characters. Set `githubUrl` to `null` for private repositories and the source button is hidden.
+- `assets/data/education.json` and `assets/data/experience.json`: timeline entries, newest first.
 - `assets/data/skills.json`: the Core Competencies pills.
 
 To add case-study screenshots, drop WebP files in `assets/projects-images/` and list them under the project's `screens`.
@@ -63,11 +63,16 @@ flutter test
 ## Building for production
 
 ```bash
-flutter build web --wasm
-python tool/serve_web.py    # preview at http://localhost:8080
+python tool/build_site.py
 ```
 
-`--wasm` compiles to WebAssembly. Browsers with WasmGC (Chrome, Edge, Firefox) get the faster skwasm renderer, and the rest fall back to JavaScript and CanvasKit automatically. `tool/serve_web.py` serves the build gzip-compressed with the headers below, so it shows the load time you'll get in production.
+```bash
+python tool/serve_web.py
+```
+
+`tool/build_site.py` runs `flutter build web --wasm` and then adds the SEO layer (see [Search engines](#search-engines)). Always build with it rather than calling `flutter build web` directly, or the deployed site loses its search text, structured data, case-study pages and sitemap.
+
+`--wasm` compiles to WebAssembly. Browsers with WasmGC (Chrome, Edge, Firefox) get the faster skwasm renderer, and the rest fall back to JavaScript and CanvasKit automatically. `tool/serve_web.py` previews the build at http://localhost:8080, gzip-compressed with the headers below and with Cloudflare Pages' URL handling, so it shows the load time and routing you'll get in production.
 
 ### Load-time notes
 
@@ -86,6 +91,36 @@ python tool/serve_web.py    # preview at http://localhost:8080
   ```
 
   On Vercel, put the same two headers in `vercel.json` under `"headers"`.
+
+## Search engines
+
+Flutter draws the page on a canvas, so on its own a crawler finds almost no text. `tool/build_site.py` fixes that after each build, using the same JSON the app reads:
+
+- **Text version of the page.** A visually hidden copy of the content (name, about, projects, education, experience, skills, contact) replaces the `<!-- seo:content -->` marker in `index.html`. Search engines and screen readers read it; visitors see the Flutter app.
+- **Structured data.** JSON-LD for `ProfilePage`, `Person` and `WebSite` replaces `<!-- seo:head -->`. The `Person` lists the name variants, job title, portrait, GitHub and LinkedIn (`sameAs`), UET Lahore and Codrax, which is what connects searches for "Saad Ahsan" to this site.
+- **A page per case study.** `build/web/projects/<id>.html` has its own title, `metaDescription`, canonical URL, social tags, breadcrumb data and text. Cloudflare Pages serves it at `/projects/<id>`, where Flutter takes over and routes to the same case study.
+- **`sitemap.xml`**, listed in `web/robots.txt`.
+
+The site uses path URLs (`/projects/campus-pulse`, not `/#/projects/campus-pulse`) because search engines ignore everything after `#`. The browser-tab title follows the route (`lib/app.dart`).
+
+The hero and About paragraphs are written in Dart, so the script keeps its own copy (`HERO_LINE`, `ABOUT_TEXT`). Update both when you change that copy.
+
+### Google Search Console (one time)
+
+1. Open [Search Console](https://search.google.com/search-console), **Add property** → **URL prefix** → `https://saadahsan626.pages.dev/`.
+2. Choose **HTML tag** verification and copy the `content` value of the tag Google shows.
+3. Add the tag to `web/index.html`, next to the other `<meta>` tags, then rebuild and deploy:
+
+   ```html
+   <meta name="google-site-verification" content="YOUR-TOKEN">
+   ```
+
+4. Click **Verify**, then **Sitemaps** → submit `sitemap.xml`.
+5. **URL inspection** → paste `https://saadahsan626.pages.dev/` → **Request indexing**. Repeat for each case study.
+
+Optionally, in [Bing Webmaster Tools](https://www.bing.com/webmasters), **Import from Google Search Console** covers Bing, DuckDuckGo and Yahoo.
+
+Links from other sites decide how fast and how high the site appears. Put `https://saadahsan626.pages.dev` in the GitHub profile's **Website** field, the portfolio repository's **About → Website**, LinkedIn's **Contact info → Website** and the CV.
 
 ## Contact form
 
@@ -120,7 +155,7 @@ npx wrangler pages secret put BREVO_API_KEY
 Every release:
 
 ```bash
-flutter build web --wasm
+python tool/build_site.py
 ```
 
 ```bash
@@ -132,7 +167,7 @@ npx wrangler pages deploy
 Copy `.dev.vars.example` to `.dev.vars` (git-ignored) and add your Brevo key, then:
 
 ```bash
-flutter build web --wasm
+python tool/build_site.py
 ```
 
 ```bash

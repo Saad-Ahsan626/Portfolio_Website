@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Path URLs (/projects/x) instead of hash URLs, so pages can be indexed.
+  flutter_web_plugins:
+    sdk: flutter
 
   # State Management
   flutter_riverpod: ^2.5.1

@@ -1,7 +1,8 @@
 """Serve build/web locally the way production should: gzip-compressed and
-cross-origin isolated, so the WebAssembly renderer can use multiple threads.
+cross-origin isolated, so the WebAssembly renderer can use multiple threads,
+with Cloudflare Pages' URL handling (pretty URLs and the SPA fallback).
 
-    flutter build web --wasm
+    python tool/build_site.py
     python tool/serve_web.py            # http://localhost:8080
 
 `python -m http.server` also works, but it sends neither compression nor the
@@ -31,6 +32,18 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
         self.send_header('Cross-Origin-Embedder-Policy', 'credentialless')
         super().end_headers()
+
+    def translate_path(self, path):
+        # Match Cloudflare Pages: /projects/x serves projects/x.html, and any
+        # other unknown path gets index.html so the Flutter router handles it.
+        resolved = super().translate_path(path)
+        if os.path.isfile(resolved):
+            return resolved
+        if os.path.isdir(resolved) and os.path.isfile(os.path.join(resolved, 'index.html')):
+            return os.path.join(resolved, 'index.html')
+        if os.path.isfile(resolved.rstrip('/\\') + '.html'):
+            return resolved.rstrip('/\\') + '.html'
+        return os.path.join(os.getcwd(), 'index.html')
 
     def send_head(self):
         path = self.translate_path(self.path)

@@ -41,6 +41,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     // Unknown URLs fall back to the home page instead of an error screen.
     redirect: (context, state) {
       final path = state.uri.path;
+      // Hosts may add a trailing slash; route it to the canonical path.
+      if (path.length > 1 && path.endsWith('/')) {
+        return path.substring(0, path.length - 1);
+      }
       if (path == AppRoutes.home || path.startsWith('/projects/')) return null;
       return AppRoutes.home;
     },

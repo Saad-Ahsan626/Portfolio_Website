@@ -8,15 +8,19 @@
   <!-- ── Primary SEO ── -->
   <title>Muhammad Saad Ahsan — Full-Stack Mobile Engineer</title>
   <meta name="description"
-    content="Full-Stack Mobile Engineer building scalable mobile products, from Flutter apps to secure TypeScript and NestJS backends. Available for freelance projects and collaboration.">
+    content="Muhammad Saad Ahsan (Saad Ahsan) is a Full-Stack Mobile Engineer from Pakistan, building Flutter apps and the Node.js and NestJS backends behind them.">
   <meta name="keywords"
     content="Full-stack mobile engineer, Flutter developer, Dart, NestJS, TypeScript, Node.js, Prisma, backend development, system design, mobile app development">
   <meta name="author" content="Muhammad Saad Ahsan">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://saadahsan626.pages.dev/">
 
   <!-- ── Open Graph (WhatsApp, Facebook, LinkedIn previews) ── -->
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="profile">
+  <meta property="og:site_name" content="Muhammad Saad Ahsan">
+  <meta property="og:locale" content="en_US">
+  <meta property="profile:first_name" content="Saad">
+  <meta property="profile:last_name" content="Ahsan">
   <meta property="og:url" content="https://saadahsan626.pages.dev/">
   <meta property="og:title" content="Muhammad Saad Ahsan — Full-Stack Mobile Engineer">
   <meta property="og:description"
@@ -24,6 +28,7 @@
   <meta property="og:image" content="https://saadahsan626.pages.dev/icons/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Muhammad Saad Ahsan, Full-Stack Mobile Engineer">
 
   <!-- ── Twitter Card ── -->
   <meta name="twitter:card" content="summary_large_image">
@@ -32,6 +37,9 @@
   <meta name="twitter:description"
     content="Building scalable mobile products, from intuitive Flutter interfaces to resilient backend systems.">
   <meta name="twitter:image" content="https://saadahsan626.pages.dev/icons/og-image.png">
+  <meta name="twitter:image:alt" content="Muhammad Saad Ahsan, Full-Stack Mobile Engineer">
+
+  <!-- seo:head — structured data, filled in by tool/build_site.py -->
 
   <!-- ── Icons ── -->
   <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
@@ -309,6 +317,21 @@
     ::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
+    /* Crawlable, screen-reader text version of what Flutter draws on the
+       canvas (injected by tool/build_site.py). Visually hidden, not display:
+       none, so search engines and assistive tech still read it. */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     ::selection {
       background: rgba(198, 168, 124, 0.35);
       color: var(--text);
@@ -317,6 +340,7 @@
 </head>
 
 <body>
+  <!-- seo:content — text version of the page, filled in by tool/build_site.py -->
   <!-- Preview of the page, replaced once Flutter draws its first frame -->
   <div id="preview" aria-busy="true">
     <header class="pv-nav">
@@ -337,10 +361,10 @@
       <div class="pv-copy">
         <div>
           <p class="pv-build">I BUILD</p>
-          <h1 class="pv-role">
+          <p class="pv-role">
             <span class="sizer" aria-hidden="true">FULL-STACK PRODUCTS.<i class="pv-cursor"></i></span>
             <span>MOBILE EXPERIENCES.<i class="pv-cursor" aria-hidden="true"></i></span>
-          </h1>
+          </p>
         </div>
         <p class="pv-lead">I am Muhammad Saad Ahsan, a Full-Stack Mobile Engineer building scalable products, from intuitive Flutter interfaces to resilient backend systems.</p>
         <div class="pv-actions" aria-hidden="true">
