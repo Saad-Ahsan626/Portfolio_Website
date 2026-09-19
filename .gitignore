@@ -44,3 +44,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /plan
+
+# Cloudflare Pages / Wrangler
+.dev.vars
+.wrangler/
+node_modules/

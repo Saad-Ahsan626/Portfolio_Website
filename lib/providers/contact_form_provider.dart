@@ -74,6 +74,10 @@ class ContactFormNotifier extends Notifier<ContactFormState> {
   /// Minimum gap between two sends from the same visitor session.
   static const sendCooldown = Duration(seconds: 60);
 
+  /// Contact API on the site's own origin. It only exists on Cloudflare Pages
+  /// (or `npx wrangler pages dev`), not under `flutter run`.
+  static const contactEndpoint = '/api/contact';
+
   static final _emailRegex = RegExp(r'^[\w\-\.+]+@([\w\-]+\.)+[A-Za-z]{2,}$');
 
   DateTime? _lastSentAt;
@@ -154,22 +158,15 @@ class ContactFormNotifier extends Notifier<ContactFormState> {
     state = state.copyWith(status: FormStatus.sending);
 
     try {
-      final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
-
+      // Same-origin Cloudflare Pages Function (functions/api/contact.js),
+      // which holds the Brevo key and sends the email.
       final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        Uri.base.resolve(contactEndpoint),
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'service_id': 'service_74naubi',
-          'template_id': 'template_j85ul93',
-          'user_id': 'mV0fgQffNiNd1ZP0K',
-          'template_params': {
-            'user_name': state.name.trim(),
-            'user_email': state.email.trim(),
-            'user_message': state.message.trim(),
-          }
+          'name': state.name.trim(),
+          'email': state.email.trim(),
+          'message': state.message.trim(),
         }),
       );
 
@@ -178,11 +175,13 @@ class ContactFormNotifier extends Notifier<ContactFormState> {
         state = state.copyWith(status: FormStatus.success);
       } else {
         state = state.copyWith(status: FormStatus.error);
-        debugPrint('EmailJS Error: ${response.body}');
+        if (kDebugMode) {
+          debugPrint('Contact endpoint ${response.statusCode}: ${response.body}');
+        }
       }
     } catch (e) {
       state = state.copyWith(status: FormStatus.error);
-      debugPrint('Network Error: $e');
+      if (kDebugMode) debugPrint('Contact request failed: $e');
     }
 
     final failed = state.status == FormStatus.error;

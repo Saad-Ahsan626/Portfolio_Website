@@ -1,0 +1,2 @@
+# Copy to .dev.vars (git-ignored) for `npx wrangler pages dev`.
+BREVO_API_KEY=your-brevo-api-key

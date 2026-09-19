@@ -1,0 +1,18 @@
+# Cloudflare Pages project for https://saadahsan626.pages.dev
+#
+# Deploy (from the repo root, after `flutter build web --wasm`):
+#   npx wrangler pages deploy
+# Local preview with the contact function (needs .dev.vars):
+#   npx wrangler pages dev
+
+name = "saadahsan626"
+pages_build_output_dir = "build/web"
+compatibility_date = "2025-09-01"
+
+[vars]
+# Where contact-form messages are delivered. Must be a sender verified in Brevo.
+CONTACT_EMAIL = "saadahsan039@gmail.com"
+
+# BREVO_API_KEY is a secret — never commit it. Set it once with:
+#   npx wrangler pages secret put BREVO_API_KEY
+# and locally in .dev.vars (see .dev.vars.example).

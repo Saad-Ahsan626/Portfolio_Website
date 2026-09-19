@@ -12,7 +12,8 @@ A one-page site (hero, projects, experience, about, contact) plus a case-study p
 | State | Riverpod |
 | Routing | go_router, nested so the one-page shell stays mounted under case studies |
 | Animation | flutter_animate |
-| Contact form | EmailJS REST API |
+| Contact form | Cloudflare Pages Function + Brevo transactional email |
+| Hosting | Cloudflare Pages — https://saadahsan626.pages.dev |
 | Fonts | google_fonts |
 
 ## Project structure
@@ -88,4 +89,54 @@ python tool/serve_web.py    # preview at http://localhost:8080
 
 ## Contact form
 
-Messages are sent from the browser through EmailJS. In the EmailJS dashboard, restrict the service to your production domain so the public keys can't be reused elsewhere. The form also validates input, limits field lengths and allows one send per minute.
+The form posts to `/api/contact`, a Cloudflare Pages Function in [`functions/api/contact.js`](functions/api/contact.js). It validates the input again on the server, refuses requests from other sites, and emails the message to `CONTACT_EMAIL` through Brevo with **Reply-To set to the visitor**. The Brevo API key is a Pages secret and never reaches the browser. The Flutter form keeps its own validation, field limits and one-send-per-minute cooldown.
+
+`/api/contact` only exists on Cloudflare (or under `npx wrangler pages dev`), so sending from `flutter run` shows "Couldn't send".
+
+### One-time Brevo setup
+
+1. **Verify the sender:** Senders, Domains & Dedicated IPs → Senders → add `saadahsan039@gmail.com` (the `CONTACT_EMAIL` in `wrangler.toml`) and confirm it.
+2. **Create an API key:** Settings → SMTP & API → API Keys → generate `portfolio-contact`. It is shown once.
+3. **Allow Cloudflare's IPs:** Security → Authorised IPs → turn off IP blocking. Cloudflare Functions call from changing IPs, and Brevo rejects unknown ones otherwise.
+
+## Deploying (Cloudflare Pages)
+
+The site is the Pages project **`saadahsan626`**, configured in [`wrangler.toml`](wrangler.toml). Deploy with Wrangler rather than the dashboard's drag-and-drop upload, which does not include the `functions/` folder.
+
+First time only:
+
+```bash
+npx wrangler login
+```
+
+```bash
+npx wrangler pages project create saadahsan626 --production-branch main
+```
+
+```bash
+npx wrangler pages secret put BREVO_API_KEY
+```
+
+Every release:
+
+```bash
+flutter build web --wasm
+```
+
+```bash
+npx wrangler pages deploy
+```
+
+### Testing the contact form locally
+
+Copy `.dev.vars.example` to `.dev.vars` (git-ignored) and add your Brevo key, then:
+
+```bash
+flutter build web --wasm
+```
+
+```bash
+npx wrangler pages dev
+```
+
+Open the local URL Wrangler prints and send a test message. It should arrive from "Portfolio Contact", and **Reply** should address the visitor.
