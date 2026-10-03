@@ -9,7 +9,7 @@ class Links {
   static const String emailUrl = 'mailto:$email';
   static const String github = 'https://github.com/Saad-Ahsan626';
   static const String githubHandle = 'Saad-Ahsan626';
-  static const String linkedin = 'https://www.linkedin.com/in/saad-ahsan-55201336a/';
+  static const String linkedin = 'https://www.linkedin.com/in/muhammad-saad-ahsan-55201336a/';
   static const String linkedinHandle = 'saad-ahsan';
 
   static const social = [

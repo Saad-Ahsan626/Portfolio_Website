@@ -36,7 +36,7 @@ SHORT_NAME = 'Saad Ahsan'
 JOB_TITLE = 'Full-Stack Mobile Engineer'
 EMAIL = 'saadahsan039@gmail.com'
 GITHUB = 'https://github.com/Saad-Ahsan626'
-LINKEDIN = 'https://www.linkedin.com/in/saad-ahsan-55201336a/'
+LINKEDIN = 'https://www.linkedin.com/in/muhammad-saad-ahsan-55201336a/'
 PORTRAIT = f'{SITE}/assets/assets/images/saad.jpg'
 OG_IMAGE = f'{SITE}/icons/og-image.png'
 
