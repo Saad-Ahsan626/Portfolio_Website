@@ -1,11 +1,13 @@
-# Cloudflare Pages project for https://saadahsan626.pages.dev
+# This earlier Flutter version is no longer deployed. The project name below
+# is deliberately not "saadahsan626" (which now serves the new portfolio),
+# so a deploy from here can never replace the live site.
 #
 # Deploy (from the repo root, after `flutter build web --wasm`):
 #   npx wrangler pages deploy
 # Local preview with the contact function (needs .dev.vars):
 #   npx wrangler pages dev
 
-name = "saadahsan626"
+name = "saadahsan626-flutter"
 pages_build_output_dir = "build/web"
 compatibility_date = "2025-09-01"
 

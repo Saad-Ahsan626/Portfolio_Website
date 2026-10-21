@@ -1,5 +1,7 @@
 # Muhammad Saad Ahsan — Portfolio
 
+> **Archived.** This is the earlier Flutter Web version of my portfolio. It has been replaced by my new portfolio, live at **https://saadahsan626.pages.dev**. The code here is kept for reference and is no longer deployed.
+
 Personal portfolio of a Full-Stack Mobile Engineer, built with Flutter for the web.
 
 A one-page site (hero, projects, education, experience, about, contact) plus a case-study page for every project at `/projects/<id>`. The visual design lives in `plan/*.dc.html`: a black and gold palette set in Oswald, Playfair Display and JetBrains Mono.
@@ -13,7 +15,7 @@ A one-page site (hero, projects, education, experience, about, contact) plus a c
 | Routing | go_router, nested so the one-page shell stays mounted under case studies |
 | Animation | flutter_animate |
 | Contact form | Cloudflare Pages Function + Brevo transactional email |
-| Hosting | Cloudflare Pages — https://saadahsan626.pages.dev |
+| Hosting | Cloudflare Pages (no longer deployed) |
 | Fonts | google_fonts |
 
 ## Project structure
@@ -136,7 +138,7 @@ The form posts to `/api/contact`, a Cloudflare Pages Function in [`functions/api
 
 ## Deploying (Cloudflare Pages)
 
-The site is the Pages project **`saadahsan626`**, configured in [`wrangler.toml`](wrangler.toml). Deploy with Wrangler rather than the dashboard's drag-and-drop upload, which does not include the `functions/` folder.
+[`wrangler.toml`](wrangler.toml) now names the Pages project **`saadahsan626-flutter`**, not `saadahsan626` (which serves the new portfolio), so deploying from here can never replace the live site. Deploy with Wrangler rather than the dashboard's drag-and-drop upload, which does not include the `functions/` folder.
 
 First time only:
 
@@ -145,7 +147,7 @@ npx wrangler login
 ```
 
 ```bash
-npx wrangler pages project create saadahsan626 --production-branch main
+npx wrangler pages project create saadahsan626-flutter --production-branch main
 ```
 
 ```bash
